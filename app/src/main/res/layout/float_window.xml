@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/float_window"
+    android:layout_width="170dp"
+    android:layout_height="45dp"
+    android:background="@drawable/float_shape"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/ll_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/float_icon"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@mipmap/playimage" />
+
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/float_progressBar"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:indeterminateDrawable="@drawable/progress_bar_drawable"
+                android:paddingLeft="2dp"
+                android:paddingStart="2dp"
+                android:paddingTop="2dp" />
+
+            <TextView
+                android:id="@+id/float_fm"
+                android:layout_width="65dp"
+                android:layout_height="15dp"
+                android:layout_toEndOf="@id/float_fm"
+                android:layout_toRightOf="@id/float_fm"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/float_text"
+                android:layout_width="80dp"
+                android:layout_height="65dp"
+                android:layout_below="@id/float_progressBar"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center_vertical"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/float_play"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/play_btn_play_pause_selector" />
+    </LinearLayout>
+
+</LinearLayout>

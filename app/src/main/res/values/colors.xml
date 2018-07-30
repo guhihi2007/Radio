@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#ffffff</color>
+    <color name="white_8p">#14FFFFFF</color>
+
+    <!--通用背景色-->
+    <color name="common_bg">@color/white</color>
+    <!--通用触摸背景色-->
+    <color name="common_touch_bg">#E3E3E3</color>
+
+    <color name="google_blue">#0057e7</color>
+    <color name="google_red">#d62d20</color>
+    <color name="google_yellow">#FBBC05</color>
+
+    <color name="text_default_color">#888888</color>
+
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="item"
+            type="cn.yuntk.radio.bean.FMBean" />
+
+        <variable
+            name="itemClickPresenter"
+            type="cn.yuntk.radio.base.ItemClickPresenter" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/touch_bg"
+        android:onClick="@{(v)->itemClickPresenter.onItemClick(v,item)}">
+
+        <ProgressBar
+            android:id="@+id/item_progressBar"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateDrawable="@drawable/progress_bar_drawable"
+            android:paddingLeft="10dp"
+            android:visibility="@{item.playing ? View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="40dp"
+            android:text="@{item.name}" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

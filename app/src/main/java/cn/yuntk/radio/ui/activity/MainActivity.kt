@@ -1,0 +1,208 @@
+package cn.yuntk.radio.ui.activity
+
+import android.content.Intent
+import android.databinding.ObservableField
+import android.graphics.Color
+import android.support.design.widget.NavigationView
+import android.support.v4.app.Fragment
+import android.support.v4.view.GravityCompat
+import android.support.v7.app.ActionBarDrawerToggle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import cn.yuntk.radio.Constants
+import cn.yuntk.radio.Constants.FOREIGN_CODE
+import cn.yuntk.radio.Constants.NATION_CODE
+import cn.yuntk.radio.Constants.NET_CODE
+import cn.yuntk.radio.Constants.PROVINCE_CODE
+import cn.yuntk.radio.Constants.channelList
+
+import cn.yuntk.radio.R
+import cn.yuntk.radio.base.BaseActivity
+import cn.yuntk.radio.base.ItemClickPresenter
+import cn.yuntk.radio.bean.ChannelBean
+import cn.yuntk.radio.bean.FMBean
+import cn.yuntk.radio.bean.messageEvent.ListenEvent
+import cn.yuntk.radio.databinding.ActivityMainBinding
+import cn.yuntk.radio.view.FloatViewManager
+import cn.yuntk.radio.manager.PlayServiceManager
+import cn.yuntk.radio.play.QuitTimer
+import cn.yuntk.radio.service.LockService
+import cn.yuntk.radio.ui.fragment.FragmentByChannelCode
+import cn.yuntk.radio.utils.*
+import cn.yuntk.radio.view.TimingDialog
+import io.vov.vitamio.Vitamio
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+
+class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<ChannelBean>, NavigationView.OnNavigationItemSelectedListener {
+
+    private var temp: Fragment? = null
+    override fun getLayoutId(): Int = R.layout.activity_main
+    private var dialog: TimingDialog? = null
+    private var field = ObservableField<FMBean>()
+    override fun initView() {
+        /**--------应用初始化--------*/
+        SPUtil.init(this)
+        Vitamio.isInitialized(applicationContext)
+        PlayServiceManager.start(this)
+        PlayServiceManager.bind(this)
+        startService(Intent(this, LockService::class.java))
+        /**--------应用初始化--------*/
+
+        val toolbar = mBinding.toolbar
+        setSupportActionBar(toolbar)
+
+        val drawer = mBinding.drawerLayout
+        val toggle = ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+
+        mBinding.navView.apply {
+            setNavigationItemSelectedListener(this@MainActivity)
+            itemIconTintList = null
+        }
+
+
+        registerEventBus()
+    }
+
+    override fun loadData() {
+        changeFragment(FragmentByChannelCode.newInstance(channelList[0].name, channelList[0].chanelCode), channelList[0].name)
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+
+        //悬浮框内数据
+        field.set(SPUtil.getInstance().getObject(Constants.LAST_PLAY, FMBean::class.java))
+        if (field.get() != null)
+            FloatViewManager.getInstance().attach(this)
+        FloatViewManager.getInstance().add(this, this, field.get())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        FloatViewManager.getInstance().detach(this)
+
+    }
+
+    override fun onItemClick(view: View?, item: ChannelBean) {
+        onCloseDrawerLayout()
+        changeFragment(FragmentByChannelCode.newInstance(item.name, item.chanelCode), item.name)
+    }
+
+    //悬浮窗点击回调
+    override fun onClick(view: View?) {
+        if (field.get() != null) {
+            when (view?.id) {
+                R.id.ll_out -> {
+                    log("MainActivity onClick ll_out==${view.id}")
+                    jumpActivity(ListenerFMBeanActivity::class.java, field.get())
+                }
+                R.id.float_play -> {
+                    log("MainActivity onClick float_play==${view.id}")
+                    view.isSelected = !view.isSelected
+                    val state = PlayServiceManager.getListenerState()
+                    if (state == Constants.STATE_IDLE || state == Constants.STATE_PAUSE) {
+                        PlayServiceManager.play(field.get()!!, this)
+                    } else {
+                        PlayServiceManager.pauseContinue()
+                    }
+                }
+            }
+        }
+    }
+
+    //接受定时停止时，更新悬浮窗按钮状态
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun isListening(event: ListenEvent) {
+        log("MainActivity 接受定时停止时，更新悬浮窗按钮状态==$event")
+
+        FloatViewManager.getInstance().floatingView.float_play.isSelected = event.status == Constants.STATE_PLAYING
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_nation_code -> replaceFragment(item.title.toString(), NATION_CODE)
+            R.id.nav_province_code -> replaceFragment(item.title.toString(), PROVINCE_CODE)
+            R.id.nav_foreign_code -> replaceFragment(item.title.toString(), FOREIGN_CODE)
+            R.id.nav_net_code -> replaceFragment(item.title.toString(), NET_CODE)
+
+            R.id.nav_timingClose -> {
+                dialog = TimingDialog(this, object : ItemClickPresenter<Any> {
+                    override fun onItemClick(view: View?, item: Any) {
+                        log(item.toString())
+                        startTimer(item)
+                        dialog!!.dismiss()
+                    }
+                })
+                dialog!!.setTitle("定时关闭")
+                dialog!!.setItems(resources.getStringArray(R.array.timer_text))
+                dialog!!.show()
+            }
+
+            R.id.nav_favorite -> {
+                jumpActivity(CollectionActivity::class.java, null)
+            }
+            R.id.nav_about_us -> {
+
+            }
+            R.id.nav_feed_back -> {
+
+            }
+
+
+        }
+        onCloseDrawerLayout()
+        return true
+    }
+
+    private fun startTimer(item: Any) {
+        val minute: Long = when (item) {
+            "10分钟后" -> 1
+            "20分钟后" -> 20
+            "30分钟后" -> 30
+            "45分钟后" -> 45
+            "60分钟后" -> 60
+            "90分钟后" -> 60
+            else -> 0
+        }
+        QuitTimer.start(minute * 60 * 1000)
+        if (minute > 0)
+            toast(getString(R.string.timer_set, minute.toString()))
+        else
+            toast(getString(R.string.timer_cancel))
+    }
+
+    private fun onCloseDrawerLayout() {
+        mBinding.drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+//        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    private fun replaceFragment(name: String, chanelCode: String) {
+        changeFragment(FragmentByChannelCode.newInstance(name, chanelCode), name)
+    }
+
+    private fun changeFragment(fragment: Fragment, title: String?) {
+        supportActionBar?.title = title
+        switchFragment(temp, fragment)
+        temp = fragment
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PlayServiceManager.unbind(this)
+        unRegisterEventBus()
+    }
+
+    override fun isFullScreen(): Boolean = false
+
+}

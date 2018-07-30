@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--<data>-->
+
+        <!--<variable-->
+            <!--name="vm"-->
+            <!--type="cn.yuntk.radio.viewmodel.MainViewModel" />-->
+    <!--</data>-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="?actionBarSize">
+
+
+        <ImageView
+            android:id="@+id/rl_nv_head_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/nav_header_height"
+            android:background="@mipmap/ic_launcher" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/nv_menu_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/rl_nv_head_imageview" />
+    </RelativeLayout>
+</layout>

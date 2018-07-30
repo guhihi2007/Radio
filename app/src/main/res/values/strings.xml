@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">radio</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_delete">删除</string>
+    <string name="radio_nation">国家电台</string>
+    <string name="radio_province">省市电台</string>
+    <string name="radio_foreign">国外电台</string>
+    <string name="radio_net">网络电台</string>
+    <string name="contract_us">联系我们</string>
+    <string name="about_us">关于我们</string>
+    <string name="feed_back">意见反馈</string>
+    <string name="timingClose">定时关闭</string>
+    <string name="timer_set">设置成功，将于%s分钟后关闭</string>
+    <string name="timer_cancel">定时停止播放已取消</string>
+    <string name="radio_favorite">收藏管理</string>
+
+</resources>

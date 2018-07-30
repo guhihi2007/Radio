@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="item"
+            type="String" />
+
+        <variable
+            name="itemClickPresenter"
+            type="cn.yuntk.radio.base.ItemClickPresenter" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/touch_bg"
+        android:onClick="@{(v)->itemClickPresenter.onItemClick(v,item)}">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="40dp"
+            android:text="@{item}" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>
