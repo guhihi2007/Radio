@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools">
 
     <data>
+
+        <import type="android.view.View" />
 
         <variable
             name="item"
@@ -12,18 +16,63 @@
             type="cn.yuntk.radio.base.ItemClickPresenter" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="60dp"
+        android:background="@drawable/touch_bg"
         android:onClick="@{(v)->itemClickPresenter.onItemClick(v,item)}"
         android:paddingLeft="10dp">
 
+        <ImageView
+            android:id="@+id/item_navigation_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            bind:image="@{item.resId}" />
+
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/item_navigation_title"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/item_navigation_icon"
+            android:layout_toRightOf="@id/item_navigation_icon"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:text="@{item.name}" />
+
+        <!--<ImageView-->
+        <!--android:id="@+id/item_navigation_new"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:includeFontPadding="false"-->
+        <!--android:paddingEnd="40dp"-->
+        <!--android:paddingRight="40dp"-->
+        <!--android:paddingStart="40dp"-->
+        <!--android:src="@mipmap/small_new"-->
+        <!--android:visibility="@{item.newVisible ? View.VISIBLE :View.GONE}" />-->
+        <TextView
+            android:id="@+id/item_navigation_new"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="45dp"
+            android:layout_marginRight="45dp"
+            android:background="@drawable/oval_shape"
             android:gravity="center"
-            android:text="@{item.name}"
-            android:textSize="15sp" />
-    </LinearLayout>
+            android:includeFontPadding="false"
+            android:text="new"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+
+            android:visibility="@{item.newVisible ? View.VISIBLE :View.GONE}" />
+    </RelativeLayout>
 </layout>

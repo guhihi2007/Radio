@@ -1,6 +1,7 @@
 package cn.yuntk.radio.base
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
@@ -11,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.manager.PlayServiceManager
+import cn.yuntk.radio.viewmodel.Injection
+import io.reactivex.disposables.CompositeDisposable
 
 /**
  * Author : Gupingping
@@ -22,7 +25,7 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment(), Presenter {
 
     protected lateinit var mBinding: VB
     protected lateinit var mContext: Context
-
+    protected val disposable = CompositeDisposable()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         mContext = activity ?: throw Exception("activity 为null")
@@ -52,5 +55,8 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment(), Presenter {
     override fun onClick(view: View?) {
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.clear()
+    }
 }

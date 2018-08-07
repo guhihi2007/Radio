@@ -14,6 +14,9 @@ android {
         vectorDrawables.useSupportLibrary = true
         //渠道统一维度
         flavorDimensions "versionCode"
+        //生成buildTime字段
+        resValue("string", "build_time", buildTime())
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -64,6 +67,9 @@ android {
         }
     }
 }
+def buildTime() {
+    return new Date().format("yyyy-MM-dd HH:mm", TimeZone.getTimeZone(TimeZone.getDefault().getID()))
+}
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -82,7 +88,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
     //rx android
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
@@ -97,13 +103,22 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     //vitamio音频播放库
     implementation project(path: ':vitamio')
-
     //room
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     kapt 'android.arch.persistence.room:compiler:1.1.1'
     //    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
     // RxJava support for Room
     implementation 'android.arch.persistence.room:rxjava2:1.1.1'
+    // 阿里反馈
+    implementation 'com.aliyun.ams:alicloud-android-feedback:3.1.1@aar'
+    implementation 'com.aliyun.ams:alicloud-android-utdid:1.1.5.3'
+    implementation 'com.aliyun.ams:alicloud-android-ut:5.1.0'
+    implementation 'com.aliyun.ams:alicloud-android-utils:1.0.3'
+    //阿里反馈需要
+    implementation 'com.android.support:support-v4:27.1.1'
+    //分包
+    implementation 'com.android.support:multidex:1.0.3'
+
 }
 repositories {
     mavenCentral()
@@ -113,7 +128,28 @@ kotlin {
         coroutines "enable"
     }
 }
-//使用生成文件
-//kapt {
-//    generateStubs = true
+
+
+//分包
+//afterEvaluate {
+//    tasks.matching {
+//        it.name.startsWith('dex')
+//    }.each { dx ->
+//        def listFile = project.rootDir.absolutePath+'/app/maindexlist.txt'
+//        if (dx.additionalParameters == null) {
+//            dx.additionalParameters = []
+//        }
+//        //表示当方法数越界时则生成多个dex文件（我的没有越界，貌似也生成了两个）
+//        dx.additionalParameters += '--multi-dex'
+//        //这个指定了listFile中的类（即maindexlist.txt中的类）会打包到主dex中，不过注意下一条。
+//        dx.additionalParameters += '--collection_delete-dex-list=' +listFile
+//        //表明只有-collection_delete-dex-list所指定的类（在我的配置中，就是app目录下的maindexlist.txt中包含的类）才能打包到主dex中，如果没有这个选项，上个选项就会失效
+//        dx.additionalParameters += '--minimal-collection_delete-dex'
+//    }
+//}
+//
+//tasks.whenTaskAdded { task ->
+//    if (task.name.contains('AndroidTest') || task.name.contains('Test')) {
+//        task.enabled = false
+//    }
 //}

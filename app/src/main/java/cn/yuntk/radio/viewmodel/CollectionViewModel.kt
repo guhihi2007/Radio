@@ -2,9 +2,9 @@ package cn.yuntk.radio.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import cn.yuntk.radio.bean.FMBean
-import cn.yuntk.radio.db.FMBeanDao
+import cn.yuntk.radio.bean.HistoryFMBean
+import cn.yuntk.radio.db.CollectionFMBeanDao
 import io.reactivex.Completable
-import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 
@@ -13,7 +13,7 @@ import io.reactivex.Single
  * Date : 2018/7/24
  * Mail : gu12pp@163.com
  */
-class FMBeanViewModel(private val dao: FMBeanDao) : ViewModel() {
+class CollectionViewModel(private val dao: CollectionFMBeanDao) : ViewModel() {
 
     //查询数据库是否有保存这个频道
     fun isCollectionFMBean(fmBean: FMBean): Single<Boolean> {
@@ -23,14 +23,14 @@ class FMBeanViewModel(private val dao: FMBeanDao) : ViewModel() {
     }
 
     //添加至数据库
-    fun addFMBean(fmBean: FMBean): Completable {
+    fun addFMBeanToCollection(fmBean: FMBean): Completable {
         return Completable.fromAction {
             dao.insertDB(fmBean)
         }
     }
 
     //数据库中移除
-    fun removeFMBean(fmBean: FMBean): Completable {
+    fun removeFMBeanFromCollection(fmBean: FMBean): Completable {
         return Completable.fromAction {
             dao.removeFromDB(fmBean)
         }
@@ -46,4 +46,5 @@ class FMBeanViewModel(private val dao: FMBeanDao) : ViewModel() {
     fun getList(): Maybe<List<FMBean>> {
         return dao.getCollections()
     }
+
 }

@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="vm"
+            type="cn.yuntk.radio.viewmodel.MainViewModel" />
+    </data>
+
     <android.support.v4.widget.DrawerLayout
 
         android:id="@+id/drawer_layout"
@@ -46,15 +53,43 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/nav_header_main"
-            app:menu="@menu/drawer_menu"/>
-
+            android:fitsSystemWindows="true">
+            <!--方式一，系统菜单，不能添加new提示-->
+            <!--app:headerLayout="@layout/nav_header_main"-->
+            <!--app:menu="@menu/drawer_menu"-->
+            <!--方式二，include外部菜单-->
             <!--<include-->
-                <!--android:id="@+id/nv_menu_layout"-->
-                <!--layout="@layout/layout_menu" />-->
-            <!---->
-        <!--</android.support.design.widget.NavigationView>-->
+            <!--android:id="@+id/nv_menu_layout"-->
+            <!--layout="@layout/layout_menu"-->
+            <!--app:vm="@{vm}" />-->
+            <!--方式三，直接写布局，方便databing调用-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <!--android:paddingBottom="?actionBarSize"-->
+
+                <ImageView
+                    android:id="@+id/rl_nv_head_imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/nav_header_height"
+                    android:background="@drawable/side_nav_bar"
+                    android:padding="15dp"
+                    android:src="@mipmap/playimage" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/nv_menu_recycler_view"
+                    android:layout_width="match_parent"
+                    android:background="@color/white"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:text="设置" />
+            </LinearLayout>
+        </android.support.design.widget.NavigationView>
 
     </android.support.v4.widget.DrawerLayout>
 </layout>

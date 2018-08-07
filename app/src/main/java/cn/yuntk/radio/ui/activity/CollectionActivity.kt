@@ -1,25 +1,16 @@
 package cn.yuntk.radio.ui.activity
 
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.ObservableArrayList
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.CheckBox
 import android.widget.CompoundButton
 import cn.yuntk.radio.R
-import cn.yuntk.radio.adapter.BaseDataBindingAdapter
 import cn.yuntk.radio.adapter.CheckBoxDataBindingAdapter
 import cn.yuntk.radio.base.BaseActivity
-import cn.yuntk.radio.base.CheckBoxPresenter
-import cn.yuntk.radio.base.ItemClickPresenter
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.databinding.ActivityCollectionBinding
 import cn.yuntk.radio.utils.log
-import cn.yuntk.radio.viewmodel.FMBeanViewModel
-import cn.yuntk.radio.viewmodel.Injection
-import cn.yuntk.radio.viewmodel.ViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -32,8 +23,8 @@ import io.reactivex.schedulers.Schedulers
 class CollectionActivity : BaseActivity<ActivityCollectionBinding>(), CompoundButton.OnCheckedChangeListener {
 
 
-//    private lateinit var viewModelFactory: ViewModelFactory
-//    private lateinit var viewModel: FMBeanViewModel
+//    private lateinit var viewModelFactory: CollectionViewModelFactory
+//    private lateinit var viewModel: CollectionViewModel
     private lateinit var adapter: CheckBoxDataBindingAdapter
     private val list = ArrayList<FMBean>()
     override fun onClick(view: View?) {
@@ -52,8 +43,8 @@ class CollectionActivity : BaseActivity<ActivityCollectionBinding>(), CompoundBu
 
     override fun initView() {
         //构建viewModel
-//        viewModelFactory = Injection.provideFMBeanViewModelFactory(this)
-//        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FMBeanViewModel::class.java)
+//        viewModelFactory = Injection.provideCollectionViewModelFactory(this)
+//        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CollectionViewModel::class.java)
 
         mBinding.run {
             initBackToolbar(toolbar)
@@ -79,7 +70,7 @@ class CollectionActivity : BaseActivity<ActivityCollectionBinding>(), CompoundBu
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(R.menu.collection_delete, menu)
         return true
     }
 

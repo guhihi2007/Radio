@@ -7,10 +7,12 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import cn.yuntk.radio.bean.FMBean
+import cn.yuntk.radio.bean.HistoryFMBean
 import cn.yuntk.radio.service.MyBinder
 import cn.yuntk.radio.service.PlayService
 import cn.yuntk.radio.utils.LT
 import cn.yuntk.radio.utils.logE
+import cn.yuntk.radio.viewmodel.Injection
 
 /**
  * Author : Gupingping

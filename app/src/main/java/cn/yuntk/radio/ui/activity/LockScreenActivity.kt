@@ -1,5 +1,6 @@
 package cn.yuntk.radio.ui.activity
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
 import android.graphics.drawable.AnimationDrawable
 import android.view.View
@@ -13,6 +14,9 @@ import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.databinding.ActivityLockScreenBinding
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.utils.*
+import cn.yuntk.radio.viewmodel.Injection
+import cn.yuntk.radio.viewmodel.PageViewModel
+import cn.yuntk.radio.viewmodel.PageViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
@@ -24,7 +28,7 @@ import java.util.*
  * Date : 2018/7/27
  * Mail : gu12pp@163.com
  */
-class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
+open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
 
     override fun isFullScreen(): Boolean = true
 
@@ -34,6 +38,10 @@ class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
 
     private var mTime: Time = Time()
     private lateinit var timeReceiver: BroadcastReceiver
+
+    private lateinit var pageViewModel: PageViewModel
+    private lateinit var pageViewModelFactory: PageViewModelFactory
+
     override fun initView() {
         getDate()
         mBinding.run {
@@ -50,13 +58,24 @@ class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
             anim(lockScreenUnlockIv)
         }
 
-        disposable.add(viewModel.getList()
+
+        //查库，当前页面的所有FMBean-------start
+        pageViewModelFactory = Injection.providePageViewModelFactory(this)
+
+        pageViewModel = ViewModelProviders.of(this, pageViewModelFactory).get(PageViewModel::class.java)
+
+        disposable.add(pageViewModel.getListByPage(SPUtil.getInstance().getString(Constants.CURRENT_PAGE))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    log("异步查库getList==$it")
-                    playList.addAll(it)
+                    log("pageFMBeanDB 异步查库getList==${it.size}")
+                    it.forEach {
+                        playList.add(it.fmBean!!)
+                    }
                 })
+        //查库，当前页面的所有FMBean-------end
+
+
         timeReceiver = timeReceiver { getDate() }
         registerTimeListener(timeReceiver)
         registerEventBus()
@@ -98,7 +117,7 @@ class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
                             lockScreenPlay.isSelected = !lockScreenPlay.isSelected
                         }
                     } else {
-                        toast("收藏里没有了")
+                        toast("已经到顶了")
                     }
                 }
             //播放暂停
@@ -118,7 +137,7 @@ class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
                             lockScreenPlay.isSelected = !lockScreenPlay.isSelected
                         }
                     } else {
-                        toast("收藏里没有了")
+                        toast("已经到底了")
                     }
                 }
 

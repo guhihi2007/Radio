@@ -1,7 +1,6 @@
 package cn.yuntk.radio.ui.activity
 
 import android.app.Dialog
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.databinding.ObservableArrayList
 import android.graphics.Point
@@ -19,9 +18,6 @@ import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.databinding.ActivityListenerFmBeanBinding
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.utils.*
-import cn.yuntk.radio.viewmodel.FMBeanViewModel
-import cn.yuntk.radio.viewmodel.Injection
-import cn.yuntk.radio.viewmodel.ViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
@@ -36,8 +32,6 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerFmBeanBinding>(), It
 
     private lateinit var mFmBean: FMBean
     private lateinit var bottomDialog: Dialog
-//    private lateinit var viewModelFactory: ViewModelFactory
-//    private lateinit var viewModel: FMBeanViewModel
 
     override fun getLayoutId(): Int = R.layout.activity_listener_fm_bean
 
@@ -51,15 +45,11 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerFmBeanBinding>(), It
         }
         bottomDialog = Dialog(this, R.style.BottomDialog)
 
-//        构建viewModel
-//        viewModelFactory = Injection.provideFMBeanViewModelFactory(this)
-//        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FMBeanViewModel::class.java)
-
         registerEventBus()
     }
 
     override fun loadData() {
-        //异步查裤并更新收藏按钮
+        //异步查库并更新收藏按钮
         disposable.add(viewModel.isCollectionFMBean(mFmBean)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -103,14 +93,14 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerFmBeanBinding>(), It
                 favoriteImageView -> {
                     favoriteImageView.isSelected = !favoriteImageView.isSelected
                     if (favoriteImageView.isSelected) {
-                        disposable.add(viewModel.addFMBean(mFmBean)
+                        disposable.add(viewModel.addFMBeanToCollection(mFmBean)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe {
                                     toast("添加成功")
                                 })
                     } else {
-                        disposable.add(viewModel.removeFMBean(mFmBean)
+                        disposable.add(viewModel.removeFMBeanFromCollection(mFmBean)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe {
@@ -181,7 +171,14 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerFmBeanBinding>(), It
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun isListening(event: ListenEvent) {
+        log("收听界面接收广播，更新页面状态==$event")
         mBinding.run {
+            if (event.fmBean != null) {
+                mFmBean = event.fmBean!!
+                toolbar.title = event.fmBean!!.name
+                listenerText.text = event.fmBean!!.radioFm
+                executePendingBindings()
+            }
             when (event.status) {
                 Constants.STATE_PLAYING -> {
                     doStart()
@@ -194,7 +191,6 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerFmBeanBinding>(), It
                 }
             }
         }
-
     }
 
     private fun startOrStop() {
@@ -230,7 +226,8 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerFmBeanBinding>(), It
         super.onDestroy()
         unRegisterEventBus()
     }
-    override fun isFullScreen(): Boolean =false
+
+    override fun isFullScreen(): Boolean = false
 
 
 }

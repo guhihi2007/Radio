@@ -63,37 +63,38 @@ fun String.decodeUnicode(): String {
 //region log
 fun String.logE(tag: String? = null) {
     if (BuildConfig.DEBUG)
-        if (tag.isNullOrEmpty()) Lg.e(this) else LogUtils.e(this, tag = tag!!)
+        Lg.e(this)
+//        if (tag.isNullOrEmpty()) Lg.e(this) else LogUtils.e(this, tag = tag!!)
 }
 
 fun String.logI(tag: String? = null) {
     if (BuildConfig.DEBUG)
-    if (tag.isNullOrEmpty()) Lg.i(this) else LogUtils.i(this, tag = tag!!)
+        if (tag.isNullOrEmpty()) Lg.i(this) else LogUtils.i(this, tag = tag!!)
 }
 
 fun String.logD(tag: String? = null) {
     if (BuildConfig.DEBUG)
-    if (tag.isNullOrEmpty()) Lg.d(this) else LogUtils.d(this, tag = tag!!)
+        if (tag.isNullOrEmpty()) Lg.d(this) else LogUtils.d(this, tag = tag!!)
 }
 
 fun String.logV(tag: String? = null) {
     if (BuildConfig.DEBUG)
-    if (tag.isNullOrEmpty()) Lg.v(this) else LogUtils.v(this, tag = tag!!)
+        if (tag.isNullOrEmpty()) Lg.v(this) else LogUtils.v(this, tag = tag!!)
 }
 
 fun String.logW(tag: String? = null) {
     if (BuildConfig.DEBUG)
-    if (tag.isNullOrEmpty()) Lg.w(this) else LogUtils.w(this, tag = tag!!)
+        if (tag.isNullOrEmpty()) Lg.w(this) else LogUtils.w(this, tag = tag!!)
 }
 
 fun String.logWtf(tag: String? = null) {
     if (BuildConfig.DEBUG)
-    if (tag.isNullOrEmpty()) LogUtils.wtf(this) else LogUtils.wtf(this, tag = tag!!)
+        if (tag.isNullOrEmpty()) LogUtils.wtf(this) else LogUtils.wtf(this, tag = tag!!)
 }
 
 fun Exception.log(tag: String? = null) {
     if (BuildConfig.DEBUG)
-    if (tag.isNullOrEmpty()) Lg.e(this) else LogUtils.e(this, tag = tag!!)
+        if (tag.isNullOrEmpty()) Lg.e(this) else LogUtils.e(this, tag = tag!!)
 }
 //endregion
 

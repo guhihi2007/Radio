@@ -2,6 +2,8 @@ package cn.yuntk.radio.service
 
 import android.app.Activity
 import android.app.Service
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -23,6 +25,12 @@ import cn.yuntk.radio.Constants.STATE_IDLE
 import cn.yuntk.radio.Constants.STATE_PREPARING
 import cn.yuntk.radio.Constants.STATE_PLAYING
 import cn.yuntk.radio.Constants.STATE_PAUSE
+import cn.yuntk.radio.viewmodel.CollectionViewModel
+import cn.yuntk.radio.viewmodel.HistoryViewMode
+import cn.yuntk.radio.viewmodel.Injection
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 /**
  * Author : Gupingping
@@ -44,6 +52,7 @@ class PlayService : Service() {
     private val mListenerList = CopyOnWriteArrayList<OnPlayerEventListener>()
     private var mPlayState = STATE_IDLE
     private lateinit var myBinder: MyBinder
+    private val disposable = CompositeDisposable()
 
     override fun onCreate() {
         super.onCreate()
@@ -93,7 +102,7 @@ class PlayService : Service() {
 
     fun play(fmBean: FMBean, context: Activity) {
         currentFMBean = fmBean
-        SPUtil.getInstance().putObject(Constants.LAST_PLAY, fmBean)
+        saveFMBean(fmBean, context)
         mPlayer.reset()
         mPlayer.setDataSource(fmBean.radioUrl)
         mPlayer.prepareAsync()
@@ -104,14 +113,32 @@ class PlayService : Service() {
         }
         mPlayer.setOnCompletionListener {
             log("setOnCompletionListener")
+            postEvent(ListenEvent(STATE_IDLE))
         }
         mPlayer.setOnPreparedListener {
             log("setOnPreparedListener")
             mPlayer.start()
             mPlayState = STATE_PLAYING
-            postEvent(ListenEvent(STATE_PLAYING))
+            postEvent(ListenEvent(STATE_PLAYING, fmBean))
         }
         context.volumeControlStream = AudioManager.STREAM_MUSIC
+    }
+
+    private fun saveFMBean(fmBean: FMBean, context: Activity) {
+        SPUtil.getInstance().putObject(Constants.LAST_PLAY, fmBean)//记录上次播放
+        //收听记录存库
+        val viewModel = ViewModelProvider
+                .AndroidViewModelFactory
+                .getInstance(context.application)
+                .create(HistoryViewMode::class.java)
+
+        disposable.add(viewModel.saveHistory(fmBean)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    log("saveFMBean to History Success")
+                })
+
     }
 
     fun playPause() {
@@ -120,6 +147,10 @@ class PlayService : Service() {
             STATE_PREPARING -> stop()
             STATE_PLAYING -> pause()
             STATE_PAUSE -> start()
+            STATE_IDLE -> {
+                if (currentFMBean != null)
+                    play(currentFMBean!!, applicationContext as Activity)
+            }
         }
     }
 
@@ -196,7 +227,7 @@ class PlayService : Service() {
             mMediaSessionManager!!.release()
         }
         unregisterReceiver(mNoisyReceiver)
-
+        disposable.clear()
         //        unregisterReceiver(mNotificationReceiver);
 //        MusicNotification.cancelAll()
         super.onDestroy()

@@ -21,6 +21,10 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://maven.google.com' }
+        //阿里云反馈
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/repositories/releases/'
+        }
     }
 }
 

@@ -14,10 +14,12 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:name=".RadioApplication"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup"><!--replace字段因feedback:3.1.6 冲突添加-->
         <activity
             android:name=".ui.activity.MainActivity"
             android:label="@string/app_name"
@@ -61,6 +63,9 @@
             android:screenOrientation="portrait"
             android:noHistory="true"
             android:taskAffinity="cn.yuntk.radio.ui.activity"/>
+        <activity android:name=".ui.activity.AboutUsActivity" />
+        <activity android:name=".ui.activity.AppInfoActivity" />
+        <activity android:name=".ui.activity.HistoryActivity" />
     </application>
 
 </manifest>

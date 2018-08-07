@@ -14,9 +14,9 @@ import android.view.Window
 import android.view.WindowManager
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.manager.PlayServiceManager
-import cn.yuntk.radio.viewmodel.FMBeanViewModel
+import cn.yuntk.radio.viewmodel.CollectionViewModel
 import cn.yuntk.radio.viewmodel.Injection
-import cn.yuntk.radio.viewmodel.ViewModelFactory
+import cn.yuntk.radio.viewmodel.CollectionViewModelFactory
 import io.reactivex.disposables.CompositeDisposable
 
 
@@ -31,8 +31,8 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
     protected lateinit var mContext: Context
 
     protected val disposable = CompositeDisposable()
-    private lateinit var viewModelFactory: ViewModelFactory
-    protected lateinit var viewModel: FMBeanViewModel
+    private lateinit var viewModelFactory: CollectionViewModelFactory
+    protected lateinit var viewModel: CollectionViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,14 +41,16 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
         }
         mBinding = DataBindingUtil.setContentView<VB>(this, getLayoutId())
         mContext = this
+        Injection.init(this)
 
         //构建viewModel
-        viewModelFactory = Injection.provideFMBeanViewModelFactory(this)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FMBeanViewModel::class.java)
+        viewModelFactory = Injection.provideCollectionViewModelFactory(this)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(CollectionViewModel::class.java)
 
         initView()
         loadData()
     }
+
 
     abstract fun isFullScreen(): Boolean
 

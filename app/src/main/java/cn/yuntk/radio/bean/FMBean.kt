@@ -8,6 +8,7 @@ import java.io.Serializable
  * Author : Gupingping
  * Date : 2018/7/11
  * Mail : gu12pp@163.com
+ * entity 描述：收藏FMBean
  */
 @Entity(tableName = "TB_FMBean")
 @TypeConverters(Converters::class)
@@ -43,6 +44,7 @@ data class FMBean(@PrimaryKey(autoGenerate = false)
     var addTime: Any? = null
     var updateTime: Long = 0
     var isSelected: Boolean = false
+    //是否正在播放
     var isPlaying: Boolean = false
     override fun toString(): String {
         return "FMBean(name='$name', radioId=$radioId, parentId=$parentId, radioFm=$radioFm, radioUrl=$radioUrl, backUrl=$backUrl, state=$state, sort=$sort, level=$level, isExisUrl=$isExisUrl, addTime=$addTime, updateTime=$updateTime, isSelected=$isSelected, isPlaying=$isPlaying)"

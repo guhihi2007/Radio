@@ -18,22 +18,70 @@ package cn.yuntk.radio.viewmodel
 
 import android.content.Context
 import cn.yuntk.radio.db.AppDataBase
-import cn.yuntk.radio.db.FMBeanDao
-//import cn.yuntk.radio.db.LastFMBeanDao
+import cn.yuntk.radio.db.CollectionFMBeanDao
+import cn.yuntk.radio.db.HistoryFMBeanDao
+import cn.yuntk.radio.db.PageFMBeanDao
 
 /**
  * Enables injection of data sources.
  */
 object Injection {
 
+    private lateinit var collectionFMBeanDao: CollectionFMBeanDao
+    private lateinit var pageFMBeanDao: PageFMBeanDao
+    private lateinit var historyDao: HistoryFMBeanDao
+    fun init(context: Context) {
+        collectionFMBeanDao = provideCollectionDao(context)
+        pageFMBeanDao = providePageDao(context)
+        historyDao = AppDataBase.getInstance(context).getHistoryDao()
+    }
+
+    fun getCollectionDao(): CollectionFMBeanDao {
+        return collectionFMBeanDao
+    }
+
+    fun getPageDao(): PageFMBeanDao {
+        return pageFMBeanDao
+    }
+
+    fun getHistoryDao(): HistoryFMBeanDao {
+        return historyDao
+    }
+
     //提供FMBeanDao
-    fun provideFMBeanDao(context: Context): FMBeanDao {
+    fun provideCollectionDao(context: Context): CollectionFMBeanDao {
         val database = AppDataBase.getInstance(context)
-        return database.getFMBeanDao()
+        return database.getCollectionDao()
     }
+
     //构建ViewModelFactory
-    fun provideFMBeanViewModelFactory(context: Context): ViewModelFactory {
-        val dataSource = provideFMBeanDao(context)
-        return ViewModelFactory(dataSource)
+    fun provideCollectionViewModelFactory(context: Context): CollectionViewModelFactory {
+//        val dataSource = provideCollectionDao(context)
+        val dataSource = getCollectionDao()
+        return CollectionViewModelFactory(dataSource)
     }
+
+
+    fun providePageDao(context: Context): PageFMBeanDao {
+        val dataBase = AppDataBase.getInstance(context)
+        return dataBase.getPageDao()
+    }
+
+    fun providePageViewModelFactory(context: Context): PageViewModelFactory {
+//        val dataSource = providePageDao(context)
+        val dataSource = getPageDao()
+        return PageViewModelFactory(dataSource)
+    }
+
+    fun provideHistoryDao(context: Context): HistoryFMBeanDao {
+        val dataBase = AppDataBase.getInstance(context)
+        return dataBase.getHistoryDao()
+    }
+
+    fun provideHistoryViewModelFactory(context: Context): HistoryViewModelFactory {
+//        val dataSource = providePageDao(context)
+//        val dataSource = getHistoryDao()
+        return HistoryViewModelFactory()
+    }
+
 }

@@ -6,30 +6,30 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_nation_code"
-            android:icon="@mipmap/icon_province"
+            android:icon="@drawable/icon_nation"
             android:title="@string/radio_nation" />
         <item
             android:id="@+id/nav_province_code"
-            android:icon="@mipmap/icon_radio"
+            android:icon="@mipmap/icon_province"
             android:title="@string/radio_province" />
         <item
             android:id="@+id/nav_foreign_code"
-            android:icon="@mipmap/icon_radio"
+            android:icon="@drawable/icon_foreign"
             android:title="@string/radio_foreign" />
         <item
             android:id="@+id/nav_net_code"
-            android:icon="@mipmap/icon_radio"
+            android:icon="@drawable/icon_net"
             android:title="@string/radio_net" />
     </group>
     <item android:title="设置">
         <menu>
             <item
                 android:id="@+id/nav_timingClose"
-                android:icon="@mipmap/timing"
+                android:icon="@drawable/icon_timingclose"
                 android:title="@string/timingClose" />
             <item
                 android:id="@+id/nav_favorite"
-                android:icon="@mipmap/favorite"
+                android:icon="@drawable/icon_favorite"
                 android:title="@string/radio_favorite" />
         </menu>
     </item>
@@ -38,11 +38,11 @@
         <menu>
             <item
                 android:id="@+id/nav_about_us"
-                android:icon="@mipmap/icon_about_us"
+                android:icon="@drawable/icon_about_us"
                 android:title="@string/about_us" />
             <item
                 android:id="@+id/nav_feed_back"
-                android:icon="@drawable/navigation_chat"
+                android:icon="@drawable/icon_feedback"
                 android:title="@string/feed_back" />
         </menu>
     </item>
