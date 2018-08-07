@@ -1,5 +1,6 @@
 package cn.yuntk.radio
 
+import android.app.Application
 import android.support.multidex.MultiDexApplication
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI
 
@@ -8,7 +9,8 @@ import com.alibaba.sdk.android.feedback.impl.FeedbackAPI
  * Date : 2018/8/2
  * Mail : gu12pp@163.com
  */
-class RadioApplication : MultiDexApplication() {
+class RadioApplication : Application() {
+    //: MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         FeedbackAPI.init(this, Constants.FEED_BACK_KEY, Constants.FEED_BACK_SECRET)

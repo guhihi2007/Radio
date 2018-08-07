@@ -16,7 +16,6 @@ import cn.yuntk.radio.databinding.ActivityHistoryBinding
 import cn.yuntk.radio.utils.log
 import cn.yuntk.radio.utils.toast
 import cn.yuntk.radio.viewmodel.HistoryViewMode
-import cn.yuntk.radio.viewmodel.HistoryViewModelFactory
 import cn.yuntk.radio.viewmodel.Injection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -42,7 +41,7 @@ class HistoryActivity : BaseActivity<ActivityHistoryBinding>(), ItemClickPresent
             presenter = this@HistoryActivity
             toolbar.title = "收听记录"
             historyRecycler.layoutManager = LinearLayoutManager(mContext)
-            adapter = BaseDataBindingAdapter(this@HistoryActivity, R.layout.item_fm_bean, this@HistoryActivity, historyViewModel.historyList)
+            adapter = BaseDataBindingAdapter(this@HistoryActivity, R.layout.item_history_fm_bean, this@HistoryActivity, historyViewModel.historyList)
             historyRecycler.adapter = adapter
             //异步查库
             disposable.add(historyViewModel.getHistoryFMBean()
@@ -58,10 +57,6 @@ class HistoryActivity : BaseActivity<ActivityHistoryBinding>(), ItemClickPresent
 
     override fun loadData() {
 
-    }
-
-    override fun onClick(view: View?) {
-        log("onClick==${view?.id.toString()}")
     }
 
     override fun onItemClick(view: View?, item: FMBean) {

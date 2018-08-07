@@ -27,6 +27,7 @@ object Constants {
     const val COLLECTION = "collection"
     const val HISTORY = "history"
     const val FEEDBACK = "feedback"
+    const val UPDATE = "update"
     const val ABOUTUS = "about_us"
 
     var channelList = ObservableArrayList<ChannelBean>().apply {
@@ -40,6 +41,7 @@ object Constants {
         add(ChannelBean("收听记录", HISTORY, R.drawable.icon_favorite))
         add(ChannelBean("联系我们", "-1", -1))
         add(ChannelBean("问题反馈", FEEDBACK, R.drawable.icon_feedback))
+        add(ChannelBean("检查更新", UPDATE, R.drawable.icon_feedback))
         add(ChannelBean("关于我们", ABOUTUS, R.drawable.icon_about_us))
 
     }

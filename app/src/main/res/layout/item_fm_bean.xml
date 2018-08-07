@@ -13,20 +13,26 @@
             type="cn.yuntk.radio.base.ItemClickPresenter" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@drawable/touch_bg"
+        android:background="@drawable/gradient_left_to_right"
         android:onClick="@{(v)->itemClickPresenter.onItemClick(v,item)}"
-        android:paddingLeft="10dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingLeft="20dp">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="@{item.name}"
+            android:textColor="@color/white"
             android:textSize="15sp" />
-    </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white" />
+    </RelativeLayout>
 </layout>

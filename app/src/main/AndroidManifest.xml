@@ -9,12 +9,12 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
+        android:name=".RadioApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:name=".RadioApplication"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -55,17 +55,37 @@
         <!--excludeFromRecents 让锁屏Activity不显示在近期任务中-->
         <!--launchMode 保证锁屏Activity有一个单独的Task-->
         <!--noHistory 如果用户通过Home按键让我们的应用进入后台, 我们会让这个activity销毁-->
-        <activity android:name=".ui.activity.LockScreenActivity"
+        <activity
+            android:name=".ui.activity.LockScreenActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/LockScreenBase"
             android:exported="false"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
             android:noHistory="true"
-            android:taskAffinity="cn.yuntk.radio.ui.activity"/>
+            android:screenOrientation="portrait"
+            android:taskAffinity="cn.yuntk.radio.ui.activity"
+            android:theme="@style/LockScreenBase" />
         <activity android:name=".ui.activity.AboutUsActivity" />
         <activity android:name=".ui.activity.AppInfoActivity" />
         <activity android:name=".ui.activity.HistoryActivity" />
+        <!--自动升级SDK-->
+        <activity
+            android:name="com.iflytek.autoupdate.IFlytekUpdateDialog"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <service
+            android:name="com.iflytek.autoupdate.IFlytekDownloadService"
+            android:enabled="true"
+            android:process=":IFlytekDownloadService" />
+        <meta-data
+            android:name="IFLYTEK_CHANNEL"
+            android:value="${RADIO_CHANNEL_VALUE}" />
+        <meta-data
+            android:name="IFLYTEK_APPKEY"
+            android:value="5b694e3c" />
+        <!-- 自动升级SDK -->
     </application>
 
 </manifest>

@@ -24,6 +24,7 @@ import cn.yuntk.radio.Constants.NATION_CODE
 import cn.yuntk.radio.Constants.NET_CODE
 import cn.yuntk.radio.Constants.PROVINCE_CODE
 import cn.yuntk.radio.Constants.TIMIMG
+import cn.yuntk.radio.Constants.UPDATE
 import cn.yuntk.radio.Constants.channelList
 
 import cn.yuntk.radio.R
@@ -36,6 +37,7 @@ import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.databinding.ActivityMainBinding
 import cn.yuntk.radio.view.FloatViewManager
 import cn.yuntk.radio.manager.PlayServiceManager
+import cn.yuntk.radio.manager.UpdateManager
 import cn.yuntk.radio.play.QuitTimer
 import cn.yuntk.radio.service.LockService
 import cn.yuntk.radio.ui.fragment.FragmentByChannelCode
@@ -60,9 +62,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         /**--------应用初始化--------*/
         SPUtil.init(this)
         Vitamio.isInitialized(applicationContext)
-        PlayServiceManager.start(this)
-        PlayServiceManager.bind(this)
+        PlayServiceManager.init(this)
         startService(Intent(this, LockService::class.java))
+        UpdateManager.check(this)
         /**--------应用初始化--------*/
 
         /**--------布局初始化--------*/
@@ -154,6 +156,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
             }
             FEEDBACK -> {
                 FeedbackAPI.openFeedbackActivity()
+            }
+            UPDATE -> {
+                UpdateManager.check(this)
             }
         }
     }

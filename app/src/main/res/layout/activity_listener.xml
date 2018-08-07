@@ -18,7 +18,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary">
+        android:background="@color/color_listener">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -76,8 +76,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:textColor="@color/white"
-                android:text="@{fmBean.radioFm}" />
+                android:text="@{fmBean.radioFm}"
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -102,7 +102,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:onClick="@{(v)->presenter.onClick(v)}"
-                android:src="@drawable/play_btn_favorite_unfavorite_selector" />
+                android:src="@drawable/collection_uncollection_selector" />
 
             <ImageView
                 android:id="@+id/playImageView"
@@ -116,12 +116,12 @@
 
             <ImageView
                 android:id="@+id/collectionList_ImageView"
-                android:layout_width="wrap_content"
+                android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:onClick="@{(v)->presenter.onClick(v)}"
-                android:src="@mipmap/ic_play_btn_list" />
+                android:src="@drawable/icon_listener_favorite_list" />
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </layout>

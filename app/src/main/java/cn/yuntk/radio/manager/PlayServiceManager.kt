@@ -28,14 +28,19 @@ object PlayServiceManager {
         conn = PlayServiceConnection()
     }
 
-    fun start(activity: Activity) {
+    fun init(activity: Activity) {
+        start(activity)
+        bind(activity)
+    }
+
+   private fun start(activity: Activity) {
         val intent = Intent()
         intent.setClass(activity, PlayService::class.java)
         activity.startService(intent)
     }
 
     //绑定service
-    fun bind(activity: Activity) {
+    private  fun bind(activity: Activity) {
         val intent = Intent()
         intent.setClass(activity, PlayService::class.java)
         val isBind = activity.bindService(intent, conn, Context.BIND_AUTO_CREATE)

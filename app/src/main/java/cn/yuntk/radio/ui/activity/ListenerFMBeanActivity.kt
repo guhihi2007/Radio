@@ -15,7 +15,7 @@ import cn.yuntk.radio.base.BaseActivity
 import cn.yuntk.radio.base.ItemClickPresenter
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
-import cn.yuntk.radio.databinding.ActivityListenerFmBeanBinding
+import cn.yuntk.radio.databinding.ActivityListenerBinding
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.utils.*
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,12 +28,12 @@ import org.greenrobot.eventbus.ThreadMode
  * Date : 2018/7/19
  * Mail : gu12pp@163.com
  */
-class ListenerFMBeanActivity : BaseActivity<ActivityListenerFmBeanBinding>(), ItemClickPresenter<FMBean> {
+class ListenerFMBeanActivity : BaseActivity<ActivityListenerBinding>(), ItemClickPresenter<FMBean> {
 
     private lateinit var mFmBean: FMBean
     private lateinit var bottomDialog: Dialog
 
-    override fun getLayoutId(): Int = R.layout.activity_listener_fm_bean
+    override fun getLayoutId(): Int = R.layout.activity_listener
 
     override fun initView() {
         mFmBean = intent.getSerializableExtra(Constants.KEY_SERIALIZABLE) as FMBean
@@ -210,12 +210,12 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerFmBeanBinding>(), It
             PlayServiceManager.pauseContinue()
     }
 
-    private fun ActivityListenerFmBeanBinding.doStart() {
+    private fun ActivityListenerBinding.doStart() {
         mBinding.roundView.start()
         playImageView.isSelected = true
     }
 
-    private fun ActivityListenerFmBeanBinding.doPause() {
+    private fun ActivityListenerBinding.doPause() {
         mBinding.roundView.pause()
         playImageView.isSelected = false
 

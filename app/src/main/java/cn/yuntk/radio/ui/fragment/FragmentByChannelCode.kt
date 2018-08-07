@@ -5,6 +5,7 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableList
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.View
 import cn.yuntk.radio.Constants
@@ -57,8 +58,8 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
         mBinding.vm = mainViewModel
         val mAdapter = BaseDataBindingAdapter(mContext, R.layout.item_fm_bean, this, mainViewModel.fmBeanList)
         mBinding.homeFragmentRecycler.apply {
-            //            layoutManager = LinearLayoutManager(mContext)
-            layoutManager = GridLayoutManager(mContext, 2)
+            layoutManager = LinearLayoutManager(mContext)
+//            layoutManager = GridLayoutManager(mContext, 2)
             adapter = mAdapter
         }
 

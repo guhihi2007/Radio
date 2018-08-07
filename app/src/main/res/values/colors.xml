@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#fe0000</color>
+    <color name="colorPrimaryDark">#fe0000</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#ffffff</color>
     <color name="white_8p">#14FFFFFF</color>
@@ -16,5 +16,12 @@
     <color name="google_yellow">#FBBC05</color>
 
     <color name="text_default_color">#888888</color>
+
+    <color name="gradient_start">#651f1f</color>
+    <color name="gradient_end">#c64b44</color>
+
+    <color name="color_listener">#bf4842</color>
+
+    <color name="leading_title">#444444</color>
 
 </resources>
