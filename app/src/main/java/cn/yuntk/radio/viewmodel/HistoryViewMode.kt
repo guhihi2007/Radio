@@ -7,6 +7,8 @@ import cn.yuntk.radio.bean.HistoryFMBean
 import cn.yuntk.radio.utils.Lg
 import io.reactivex.Completable
 import io.reactivex.Maybe
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Author : Gupingping
@@ -22,6 +24,7 @@ class HistoryViewMode : ViewModel() {
         return Maybe.fromAction {
             Injection.getHistoryDao().getHistoryList().map {
                 Lg.e("HistoryViewMode map==${it.fmBean!!.name}")
+                it.fmBean!!.addTime = getDate(it.time)
                 historyList.add(it.fmBean!!)
                 it.fmBean!!
             }
@@ -31,16 +34,21 @@ class HistoryViewMode : ViewModel() {
     fun saveHistory(fmBean: FMBean): Completable {
         return Completable.fromAction {
             val historyFMBean = HistoryFMBean()
+            historyFMBean.name = fmBean.name
+            historyFMBean.time = System.currentTimeMillis()
             historyFMBean.fmBean = fmBean
             Injection.getHistoryDao().saveHistory(historyFMBean)
         }
     }
-
 
     fun removeAll(): Completable {
         return Completable.fromAction {
             Injection.getHistoryDao()
                     .clearHistory(Injection.getHistoryDao().getHistoryList())
         }
+    }
+
+    private fun getDate(time: Long): String {
+        return SimpleDateFormat("HH:mm MM-dd").format(Date(time))
     }
 }

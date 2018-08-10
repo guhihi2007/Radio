@@ -20,3 +20,17 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -ignorewarnings
+-dontwarn com.yanzhenjie.permission.**
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
+-keep class com.umeng.** {*;}
+-keepclassmembers class * {
+       public <init> (org.json.JSONObject);
+    }
+-keepclassmembers enum * {
+        public static **[] values();
+        public static ** valueOf(java.lang.String);
+    }
+-keep public class cn.yuntk.radio.R$*{
+    public static final int *;
+    }

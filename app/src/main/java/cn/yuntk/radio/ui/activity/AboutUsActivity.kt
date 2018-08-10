@@ -21,6 +21,7 @@ class AboutUsActivity : BaseActivity<ActivityAboutUsBinding>() {
 
     override fun initView() {
         mBinding.run {
+            initBackToolbar(toolbar)
             toolbar.title = "关于我们"
             presenter = this@AboutUsActivity
             aboutUsTitle.text = resources.getString(R.string.app_name)

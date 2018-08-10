@@ -1,6 +1,7 @@
 package cn.yuntk.radio.ui.fragment
 
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.Observable
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableList
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.View
+import cn.yuntk.radio.BR.presenter
 import cn.yuntk.radio.Constants
 import cn.yuntk.radio.Constants.CHANNEL_CODE
 import cn.yuntk.radio.Constants.CHANNEL_NAME
@@ -15,6 +17,7 @@ import cn.yuntk.radio.R
 import cn.yuntk.radio.adapter.BaseDataBindingAdapter
 import cn.yuntk.radio.base.BaseFragment
 import cn.yuntk.radio.base.ItemClickPresenter
+import cn.yuntk.radio.base.Presenter
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.databinding.FragmentByChannelCodeBinding
 import cn.yuntk.radio.ui.activity.CityChannelActivity
@@ -55,14 +58,16 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
 
     override fun initView() {
         mainViewModel.loadFMBeanByChannel(channelCode)
-        mBinding.vm = mainViewModel
         val mAdapter = BaseDataBindingAdapter(mContext, R.layout.item_fm_bean, this, mainViewModel.fmBeanList)
-        mBinding.homeFragmentRecycler.apply {
-            layoutManager = LinearLayoutManager(mContext)
+        mBinding.run {
+            vm = mainViewModel
+            presenter = this@FragmentByChannelCode
+            homeFragmentRecycler.apply {
+                layoutManager = LinearLayoutManager(mContext)
 //            layoutManager = GridLayoutManager(mContext, 2)
-            adapter = mAdapter
+                adapter = mAdapter
+            }
         }
-
 
         //构建存库操作--------------start
         pageViewModelFactory = Injection.providePageViewModelFactory(activity!!)
@@ -114,9 +119,35 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
         })
         //构建存库操作--------------end
 
+        mainViewModel.loadFailed.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                activity?.log("initView loadFailed==${mainViewModel.loadFailed.get()}")
+
+            }
+        })
+
     }
 
+    override fun onClick(view: View?) {
+        mBinding.run {
+            when (view?.id) {
+                R.id.tv_refresh -> {
+                    mainViewModel.fmBeanList.clear()
+                    mainViewModel.loadFMBeanByChannel(channelCode)
+                    vm = mainViewModel
+                    executePendingBindings()
+                }
+                R.id.tv_set_net -> {
 
+                }
+                else -> {
+                }
+            }
+        }
+
+    }
+
+    //homeFragmentRecycler item点击回调
     override fun onItemClick(view: View?, item: FMBean) {
         activity?.log("onItemClick==$item")
         if (item.isExisUrl == 1) {

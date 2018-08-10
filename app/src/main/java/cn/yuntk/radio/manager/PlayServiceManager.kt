@@ -7,12 +7,10 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import cn.yuntk.radio.bean.FMBean
-import cn.yuntk.radio.bean.HistoryFMBean
-import cn.yuntk.radio.service.MyBinder
+import cn.yuntk.radio.service.MyPlayServiceBinder
 import cn.yuntk.radio.service.PlayService
 import cn.yuntk.radio.utils.LT
 import cn.yuntk.radio.utils.logE
-import cn.yuntk.radio.viewmodel.Injection
 
 /**
  * Author : Gupingping
@@ -33,14 +31,14 @@ object PlayServiceManager {
         bind(activity)
     }
 
-   private fun start(activity: Activity) {
+    private fun start(activity: Activity) {
         val intent = Intent()
         intent.setClass(activity, PlayService::class.java)
         activity.startService(intent)
     }
 
     //绑定service
-    private  fun bind(activity: Activity) {
+    private fun bind(activity: Activity) {
         val intent = Intent()
         intent.setClass(activity, PlayService::class.java)
         val isBind = activity.bindService(intent, conn, Context.BIND_AUTO_CREATE)
@@ -73,13 +71,25 @@ object PlayServiceManager {
         return playService?.isPlaying() ?: false
     }
 
+    fun getPageList(): List<FMBean> {
+        return playService?.getPageList() ?: ArrayList<FMBean>()
+    }
+
+    fun next(activity: Activity): FMBean? {
+        return playService?.next(activity)
+    }
+
+    fun pre(activity: Activity): FMBean? {
+        return playService?.pre(activity)
+    }
+
     class PlayServiceConnection : ServiceConnection {
         override fun onServiceDisconnected(name: ComponentName?) {
             "PlayService onServiceDisconnected".logE(LT.RadioNet)
         }
 
         override fun onServiceConnected(name: ComponentName?, iBinder: IBinder) {
-            val myBinder = iBinder as MyBinder
+            val myBinder = iBinder as MyPlayServiceBinder
             val playService: PlayService = myBinder.mService
             PlayServiceManager.playService = playService
             "PlayService onServiceConnected playService==$playService".logE(LT.RadioNet)

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/exit_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:text="@string/exit_tips"
+        android:textColor="@color/back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <View
+        android:id="@+id/exit_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#e6e6ed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exit_tips" />
+
+    <TextView
+        android:id="@+id/exit_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exit_msg"
+        android:layout_marginTop="25dp"
+        android:textColor="@color/leading_title"
+        android:textSize="13sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exit_line" />
+
+    <TextView
+        android:id="@+id/exit_confirm"
+        android:layout_width="140dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/background_exit_confirm"
+        android:gravity="center"
+        android:text="@string/exit_confirm"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/exit_cancel"
+        app:layout_constraintTop_toBottomOf="@id/exit_msg" />
+
+    <TextView
+        android:id="@+id/exit_cancel"
+        android:layout_width="140dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/background_exit_cancel"
+        android:gravity="center"
+        android:text="@string/exit_cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/exit_confirm"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exit_msg" />
+</android.support.constraint.ConstraintLayout>

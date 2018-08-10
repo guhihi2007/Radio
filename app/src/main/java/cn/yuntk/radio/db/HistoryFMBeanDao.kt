@@ -20,7 +20,7 @@ interface HistoryFMBeanDao {
     fun saveHistory(historyFMBean: HistoryFMBean)
 
     //查询当前页面的FMBan
-    @Query("SELECT * FROM HISTORY_FMBEAN  ORDER BY id DESC ")
+    @Query("SELECT * FROM HISTORY_FMBEAN  ORDER BY time DESC ")
     fun getHistoryList(): List<HistoryFMBean>
 
     @Delete

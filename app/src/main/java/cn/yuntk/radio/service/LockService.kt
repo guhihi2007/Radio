@@ -20,27 +20,33 @@ import cn.yuntk.radio.utils.log
 class LockService : Service() {
 
     private lateinit var receiver: BroadcastReceiver
-    var lockStatus = Constants.LOCK_SCREEN_ON
-    override fun onBind(intent: Intent?): IBinder = throw UnsupportedOperationException("Not yet implemented")
+    private var hasJump = false
+    private lateinit var myBinder: MyLockServiceBinder
 
+    var lockStatus = Constants.LOCK_SCREEN_ON
+    override fun onBind(intent: Intent?): IBinder = myBinder
     override fun onCreate() {
+        myBinder = MyLockServiceBinder(this)
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
+                log("LockService onReceive ==${intent?.action}")
 
-                if (lockStatus == Constants.LOCK_SCREEN_OFF) {
-                    stopSelf()
-                    return
-                }
-
-                if (intent?.action == Intent.ACTION_SCREEN_OFF && PlayServiceManager.isListenerFMBean()) {
-                    log("ACTION_SCREEN_OFF jumpActivity LockScreenActivity")
-                    jumpActivity(LockScreenActivity::class.java)
-                }
+//                if (lockStatus == Constants.LOCK_SCREEN_OFF) {
+//                    stopSelf()
+//                    return
+//                }
+                if (!getHasJump())
+                    if (intent?.action == Intent.ACTION_SCREEN_OFF && PlayServiceManager.isListenerFMBean()) {
+                        log(" jumpActivity LockScreenActivity")
+                        hasJump = true
+                        jumpActivity(LockScreenActivity::class.java)
+                    }
             }
         }
 
         val filter = IntentFilter()
         filter.addAction(Intent.ACTION_SCREEN_OFF)
+        filter.addAction(Intent.ACTION_SCREEN_ON)
         registerReceiver(receiver, filter)
     }
 
@@ -50,6 +56,17 @@ class LockService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        log(" LockScreenActivity onDestroy")
+
         unregisterReceiver(receiver)
     }
+
+    fun setJump(boolean: Boolean) {
+        hasJump = boolean
+    }
+
+    private fun getHasJump(): Boolean {
+        return hasJump
+    }
+
 }

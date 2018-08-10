@@ -1,27 +1,24 @@
 package cn.yuntk.radio.ui.activity
 
-import android.arch.lifecycle.ViewModelProviders
-import android.content.BroadcastReceiver
+import android.content.*
 import android.graphics.drawable.AnimationDrawable
+import android.os.IBinder
 import android.view.View
 import android.widget.ImageView
 import cn.yuntk.radio.Constants
 import cn.yuntk.radio.R
 import cn.yuntk.radio.base.BaseActivity
-import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.bean.Time
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.databinding.ActivityLockScreenBinding
 import cn.yuntk.radio.manager.PlayServiceManager
+import cn.yuntk.radio.service.LockService
+import cn.yuntk.radio.service.MyLockServiceBinder
 import cn.yuntk.radio.utils.*
-import cn.yuntk.radio.viewmodel.Injection
-import cn.yuntk.radio.viewmodel.PageViewModel
-import cn.yuntk.radio.viewmodel.PageViewModelFactory
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
+
 
 /**
  * Author : Gupingping
@@ -34,46 +31,24 @@ open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
 
     override fun getLayoutId(): Int = R.layout.activity_lock_screen
 
-    private var playList = ArrayList<FMBean>()
-
     private var mTime: Time = Time()
     private lateinit var timeReceiver: BroadcastReceiver
-
-    private lateinit var pageViewModel: PageViewModel
-    private lateinit var pageViewModelFactory: PageViewModelFactory
-
+    private lateinit var conn: LockServiceConnection
+    private var service: LockService? = null
     override fun initView() {
         getDate()
         mBinding.run {
             fmBean = PlayServiceManager.getListenerFMBean()
             presenter = this@LockScreenActivity
             lockScreenDrag.setOnReleasedListener {
+                log("lockScreenDrag finish")
                 finish()
             }
 
             time = mTime
 
             lockScreenPlay.isSelected = PlayServiceManager.isListenerFMBean()
-
-            anim(lockScreenUnlockIv)
         }
-
-
-        //查库，当前页面的所有FMBean-------start
-        pageViewModelFactory = Injection.providePageViewModelFactory(this)
-
-        pageViewModel = ViewModelProviders.of(this, pageViewModelFactory).get(PageViewModel::class.java)
-
-        disposable.add(pageViewModel.getListByPage(SPUtil.getInstance().getString(Constants.CURRENT_PAGE))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    log("pageFMBeanDB 异步查库getList==${it.size}")
-                    it.forEach {
-                        playList.add(it.fmBean!!)
-                    }
-                })
-        //查库，当前页面的所有FMBean-------end
 
 
         timeReceiver = timeReceiver { getDate() }
@@ -83,7 +58,6 @@ open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
 
     private fun getDate() {
         log("getDate")
-
         val calender = Calendar.getInstance()
         mTime.hours.set("${calender.get(Calendar.HOUR_OF_DAY)}:${if (calender.get(Calendar.MINUTE) < 10) "0" else ""}${calender.get(Calendar.MINUTE)}")
         mTime.dates.set("${calender.get(Calendar.MONTH) + 1}月${if (calender.get(Calendar.DAY_OF_MONTH) < 10) "0" else ""}${calender.get(Calendar.DAY_OF_MONTH)}日")
@@ -99,45 +73,50 @@ open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
     }
 
     override fun loadData() {
+        conn = LockServiceConnection()
+        val intent = Intent()
+        intent.setClass(this, LockService::class.java)
+        bindService(intent, conn, Context.BIND_AUTO_CREATE)
+
     }
 
     override fun onClick(view: View?) {
-        val index = playList.indexOf(PlayServiceManager.getListenerFMBean())
-        log("list=${playList.size},index=$index")
         mBinding.run {
             when (view?.id) {
-            //上一曲
+                //上一曲
                 lockScreenPre.id -> {
-                    if (playList.size > 1 && index != 0) {
-                        fmBean = playList[index - 1]
-                        listenerRadio(playList[index - 1], this@LockScreenActivity)
-
-                        //暂停时切换，按钮变化
-                        if (!lockScreenPlay.isSelected) {
-                            lockScreenPlay.isSelected = !lockScreenPlay.isSelected
+                    lockScreenPre.clickWithTrigger {
+                        val playFMBean = PlayServiceManager.next(this@LockScreenActivity)
+                        if (playFMBean == null) {
+                            toast("已经到顶了")
+                        } else {
+                            //暂停时切换，按钮变化
+                            mBinding.fmBean = playFMBean
+                            if (!lockScreenPlay.isSelected) {
+                                lockScreenPlay.isSelected = !lockScreenPlay.isSelected
+                            }
                         }
-                    } else {
-                        toast("已经到顶了")
                     }
                 }
-            //播放暂停
+                //播放暂停
                 lockScreenPlay.id -> {
                     log("lockScreen pauseContinue")
                     lockScreenPlay.isSelected = !lockScreenPlay.isSelected
                     PlayServiceManager.pauseContinue()
                 }
-            //下一曲
+                //下一曲
                 lockScreenNext.id -> {
-                    if (playList.size > 1 && index < playList.size - 1) {
-                        fmBean = playList[index + 1]
-                        listenerRadio(playList[index + 1], this@LockScreenActivity)
-
-                        //暂停时切换，按钮变化
-                        if (!lockScreenPlay.isSelected) {
-                            lockScreenPlay.isSelected = !lockScreenPlay.isSelected
+                    lockScreenNext.clickWithTrigger {
+                        val preFMBean = PlayServiceManager.pre(this@LockScreenActivity)
+                        if (preFMBean == null) {
+                            toast("已经到底了")
+                        } else {
+                            //暂停时切换，按钮变化
+                            mBinding.fmBean = preFMBean
+                            if (!lockScreenPlay.isSelected) {
+                                lockScreenPlay.isSelected = !lockScreenPlay.isSelected
+                            }
                         }
-                    } else {
-                        toast("已经到底了")
                     }
                 }
 
@@ -167,19 +146,49 @@ open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
         //不响应Back按键
     }
 
-    private fun anim(imageView: ImageView): AnimationDrawable {
-        val mAnimation = AnimationDrawable()
-        mAnimation.addFrame(resources.getDrawable(R.mipmap.arrow_1), 200)
-        mAnimation.addFrame(resources.getDrawable(R.mipmap.arrow_2), 200)
-        mAnimation.addFrame(resources.getDrawable(R.mipmap.arrow_3), 400)
-        imageView.setImageDrawable(mAnimation)
-        mAnimation.start()
-        return mAnimation
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        mBinding.run {
+            anim(lockScreenUnlockIv)
+        }
+
+    }
+
+    private fun anim(imageView: ImageView) {
+//        val mAnimation = AnimationDrawable()
+//        mAnimation.addFrame(resources.getDrawable(R.drawable.arrow_1), 500)
+//        mAnimation.addFrame(resources.getDrawable(R.drawable.arrow_2), 400)
+//        mAnimation.addFrame(resources.getDrawable(R.drawable.arrow_3), 300)
+//        mAnimation.addFrame(resources.getDrawable(R.drawable.arrow_4), 200)
+//        mAnimation.addFrame(resources.getDrawable(R.drawable.arrow_5), 400)
+//        imageView.setImageDrawable(mAnimation)
+//        mAnimation.start()
+        imageView.setBackgroundResource(R.drawable.unlock_frame)
+        val anim = imageView.background as AnimationDrawable
+        anim.start()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        service?.setJump(false)
+        unbindService(conn)
         unRegisterEventBus()
         unRegisterTimeListener(timeReceiver)
+    }
+
+
+    inner class LockServiceConnection : ServiceConnection {
+        override fun onServiceDisconnected(name: ComponentName?) {
+            "LockService onServiceDisconnected".logE(LT.RadioNet)
+        }
+
+
+        override fun onServiceConnected(name: ComponentName?, iBinder: IBinder) {
+            val myBinder = iBinder as MyLockServiceBinder
+            service = myBinder.mService
+            service?.setJump(true)
+            "LockService onServiceConnected".logE(LT.RadioNet)
+        }
+
     }
 }

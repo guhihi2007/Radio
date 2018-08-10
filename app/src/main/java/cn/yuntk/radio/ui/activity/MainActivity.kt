@@ -10,10 +10,8 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import cn.yuntk.radio.BuildConfig
 import cn.yuntk.radio.Constants
 import cn.yuntk.radio.Constants.ABOUTUS
 import cn.yuntk.radio.Constants.COLLECTION
@@ -43,10 +41,14 @@ import cn.yuntk.radio.service.LockService
 import cn.yuntk.radio.ui.fragment.FragmentByChannelCode
 import cn.yuntk.radio.utils.*
 import cn.yuntk.radio.view.TimingDialog
+import cn.yuntk.radio.view.widget.ExitDialog
 import cn.yuntk.radio.viewmodel.Injection
 import cn.yuntk.radio.viewmodel.MainViewModel
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI
 import com.alibaba.sdk.android.feedback.util.IUnreadCountCallback
+import com.tencent.bugly.crashreport.CrashReport
+import com.umeng.analytics.MobclickAgent
+import com.umeng.commonsdk.UMConfigure
 import io.vov.vitamio.Vitamio
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -61,10 +63,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
     override fun initView() {
         /**--------应用初始化--------*/
         SPUtil.init(this)
-        Vitamio.isInitialized(applicationContext)
-        PlayServiceManager.init(this)
+        if (Vitamio.isInitialized(applicationContext)) {
+            log("Vitamio isInitialized")
+            PlayServiceManager.init(this)
+        }
         startService(Intent(this, LockService::class.java))
-        UpdateManager.check(this)
+        FeedbackAPI.init(application, Constants.FEED_BACK_KEY, Constants.FEED_BACK_SECRET)
+        if (!BuildConfig.DEBUG) {
+            log("CrashReport initCrashReport")
+            CrashReport.initCrashReport(application, "cfa043fff6", false)
+        }
+        UMConfigure.init(application, "5b6a5dc0b27b0a590b000106", BuildConfig.FLAVOR, UMConfigure.DEVICE_TYPE_PHONE, null)
         /**--------应用初始化--------*/
 
         /**--------布局初始化--------*/
@@ -103,6 +112,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
 
     override fun loadData() {
         changeFragment(FragmentByChannelCode.newInstance(channelList[0].name, channelList[0].chanelCode), channelList[0].name)
+        UpdateManager.check(this)
     }
 
 
@@ -114,6 +124,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         if (field.get() != null)
             FloatViewManager.getInstance().attach(this)
         FloatViewManager.getInstance().add(this, this, field.get())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //友盟统计
+        MobclickAgent.onResume(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        //友盟统计
+        MobclickAgent.onPause(this)
     }
 
     override fun onStop() {
@@ -300,5 +322,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
             vm = mainViewModel
             executePendingBindings()
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        return if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                onCloseDrawerLayout()
+            } else
+                ExitDialog(this).show()
+            true
+        } else
+            super.onKeyDown(keyCode, event)
     }
 }

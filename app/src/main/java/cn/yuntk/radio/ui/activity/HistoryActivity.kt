@@ -13,6 +13,7 @@ import cn.yuntk.radio.base.BaseActivity
 import cn.yuntk.radio.base.ItemClickPresenter
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.databinding.ActivityHistoryBinding
+import cn.yuntk.radio.utils.jumpActivity
 import cn.yuntk.radio.utils.log
 import cn.yuntk.radio.utils.toast
 import cn.yuntk.radio.viewmodel.HistoryViewMode
@@ -61,7 +62,8 @@ class HistoryActivity : BaseActivity<ActivityHistoryBinding>(), ItemClickPresent
 
     override fun onItemClick(view: View?, item: FMBean) {
         log("onItemClick==$item")
-
+        jumpActivity(ListenerFMBeanActivity::class.java, item)
+        finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

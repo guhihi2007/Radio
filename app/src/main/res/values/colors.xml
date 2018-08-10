@@ -23,5 +23,8 @@
     <color name="color_listener">#bf4842</color>
 
     <color name="leading_title">#444444</color>
+    <color name="back">#333333</color>
+
+    <color name="transparent_half">#99000000</color>
 
 </resources>

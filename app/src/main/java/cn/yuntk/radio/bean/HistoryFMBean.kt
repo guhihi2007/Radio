@@ -13,8 +13,11 @@ import org.jetbrains.annotations.NotNull
 @Entity(tableName = "HISTORY_FMBEAN")
 @TypeConverters(Converters::class)
 class HistoryFMBean(@PrimaryKey(autoGenerate = false)
-                    var id: Long = System.currentTimeMillis()) {
+                    @NotNull
+                    @ColumnInfo(name = "HistoryName")
+                    var name: String = "null") {
 
+    var time: Long = System.currentTimeMillis()
     @Embedded
     var fmBean: FMBean? = null
 

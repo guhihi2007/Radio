@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <import type="android.view.View" />
 
         <variable
             name="vm"
             type="cn.yuntk.radio.viewmodel.MainViewModel" />
+
+        <variable
+            name="presenter"
+            type="cn.yuntk.radio.base.Presenter" />
     </data>
 
 
@@ -18,10 +25,16 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/home_fragment_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_left_to_right"
+            android:visibility="@{vm.loadFailed.get() ? View.GONE:View.VISIBLE}" />
 
         <include
             android:id="@+id/layout_net_error"
-            layout="@layout/comm_net_error" />
+            layout="@layout/comm_net_error"
+            android:visibility="@{vm.loadFailed.get() ? View.VISIBLE:View.GONE}"
+            app:presenter="@{presenter}"
+            />
+
     </LinearLayout>
 </layout>

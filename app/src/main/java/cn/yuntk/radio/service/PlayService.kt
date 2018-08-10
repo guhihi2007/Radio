@@ -3,12 +3,13 @@ package cn.yuntk.radio.service
 import android.app.Activity
 import android.app.Service
 import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.databinding.ObservableArrayList
 import android.media.AudioManager
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.util.Log
@@ -25,9 +26,7 @@ import cn.yuntk.radio.Constants.STATE_IDLE
 import cn.yuntk.radio.Constants.STATE_PREPARING
 import cn.yuntk.radio.Constants.STATE_PLAYING
 import cn.yuntk.radio.Constants.STATE_PAUSE
-import cn.yuntk.radio.viewmodel.CollectionViewModel
-import cn.yuntk.radio.viewmodel.HistoryViewMode
-import cn.yuntk.radio.viewmodel.Injection
+import cn.yuntk.radio.viewmodel.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -45,21 +44,26 @@ class PlayService : Service() {
     private val mNoisyReceiver = NoisyAudioStreamReceiver()
     private val mNoisyFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
     private val mHandler = Handler()
-    //主播放器
     private lateinit var mPlayer: io.vov.vitamio.MediaPlayer
     private var mAudioFocusManager: AudioFocusManager? = null
     private var mMediaSessionManager: MediaSessionManager? = null
     private val mListenerList = CopyOnWriteArrayList<OnPlayerEventListener>()
     private var mPlayState = STATE_IDLE
-    private lateinit var myBinder: MyBinder
+    private lateinit var myBinder: MyPlayServiceBinder
     private val disposable = CompositeDisposable()
-
+    private var list = ObservableArrayList<FMBean>()
+    private var currentIndex = -1
+    private var lastPage = ""
     override fun onCreate() {
         super.onCreate()
         "PlayService onCreate=${javaClass.simpleName}".logE(LT.RadioNet)
-        myBinder = MyBinder(this)
+        myBinder = MyPlayServiceBinder(this)
         mAudioFocusManager = AudioFocusManager(this)
-        mMediaSessionManager = MediaSessionManager(this)
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+//            mMediaSessionManager = MediaSessionManager(this)
+//        } else {
+//            log("SDK_INT==${Build.VERSION.SDK_INT} < 21")
+//        }
         mPlayer = io.vov.vitamio.MediaPlayer(this, true)
         registerReceiver(mNoisyReceiver, mNoisyFilter)
 //        MusicNotification.init(this)
@@ -70,6 +74,25 @@ class PlayService : Service() {
                 }
             }
         })
+    }
+
+    private fun QueryPageList() {
+        //查库，当前页面的所有FMBean-------start
+        val page = SPUtil.getInstance().getString(Constants.CURRENT_PAGE)
+        if (lastPage != page) {
+            lastPage = page
+            if (page != null) {
+                val pageViewModel = PageViewModel(Injection.getPageDao())
+                disposable.add(pageViewModel.getListByPage(page)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            log("PlayService QueryPageList 异步查库getList==${it.size}")
+                            list.addAll(it.map { it.fmBean })
+                        })
+            }
+        }
+        //查库，当前页面的所有FMBean-------end
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -100,15 +123,21 @@ class PlayService : Service() {
 
     private var currentFMBean: FMBean? = null
 
-    fun play(fmBean: FMBean, context: Activity) {
+    fun play(fmBean: FMBean, context: Activity?) {
+        //TODO 检查网络
         currentFMBean = fmBean
-        saveFMBean(fmBean, context)
+        //保存记录
+        if (context != null) {
+            saveFMBean(fmBean, context)
+            context.volumeControlStream = AudioManager.STREAM_MUSIC
+        }
+        QueryPageList()
         mPlayer.reset()
         mPlayer.setDataSource(fmBean.radioUrl)
         mPlayer.prepareAsync()
         mPlayState = STATE_PREPARING
         mPlayer.setOnBufferingUpdateListener { mp, percent ->
-            log("setOnBufferingUpdateListener percent=$percent")
+//            log("setOnBufferingUpdateListener percent=$percent")
 
         }
         mPlayer.setOnCompletionListener {
@@ -121,7 +150,21 @@ class PlayService : Service() {
             mPlayState = STATE_PLAYING
             postEvent(ListenEvent(STATE_PLAYING, fmBean))
         }
-        context.volumeControlStream = AudioManager.STREAM_MUSIC
+
+        currentIndex = list.indexOf(fmBean)
+    }
+
+    fun play(position: Int, context: Activity): FMBean? {
+        if (list.isEmpty()) return null
+        var mPlayingPosition = position
+        if (position < 0) {
+            mPlayingPosition = list.size - 1
+        } else if (position >= list.size) {
+            mPlayingPosition = 0
+        }
+        currentIndex = mPlayingPosition
+        play(list[mPlayingPosition], context)
+        return list[mPlayingPosition]
     }
 
     private fun saveFMBean(fmBean: FMBean, context: Activity) {
@@ -149,7 +192,7 @@ class PlayService : Service() {
             STATE_PAUSE -> start()
             STATE_IDLE -> {
                 if (currentFMBean != null)
-                    play(currentFMBean!!, applicationContext as Activity)
+                    play(currentFMBean!!, null)
             }
         }
     }
@@ -184,9 +227,13 @@ class PlayService : Service() {
 
     }
 
-    fun next() {
+    fun next(activity: Activity): FMBean? {
+        return play(currentIndex + 1, activity)
     }
 
+    fun pre(activity: Activity): FMBean? {
+        return play(currentIndex - 1, activity)
+    }
 
     fun isPlaying(): Boolean {
         return mPlayState == STATE_PLAYING
@@ -248,13 +295,17 @@ class PlayService : Service() {
         return mPlayState
     }
 
+    fun getPageList(): List<FMBean> {
+        return list
+    }
+
     inner class MyBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
             if (action == Actions.ACTION_PLAY_START) {
                 playPause()
             } else if (action == Actions.ACTION_PLAY_NEXT) {
-                next()
+                next(applicationContext as Activity)
             }
         }
     }

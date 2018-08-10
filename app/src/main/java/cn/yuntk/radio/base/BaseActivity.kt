@@ -6,6 +6,7 @@ import android.content.Context
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
@@ -33,12 +34,13 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
     protected val disposable = CompositeDisposable()
     private lateinit var viewModelFactory: CollectionViewModelFactory
     protected lateinit var viewModel: CollectionViewModel
-
+    protected lateinit var handler: Handler
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isFullScreen()) {
             configScreen()
         }
+        handler = Handler(mainLooper)
         mBinding = DataBindingUtil.setContentView<VB>(this, getLayoutId())
         mContext = this
         Injection.init(this)

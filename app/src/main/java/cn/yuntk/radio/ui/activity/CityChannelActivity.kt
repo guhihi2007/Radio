@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableList
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import cn.yuntk.radio.Constants
 import cn.yuntk.radio.R
@@ -44,8 +45,8 @@ class CityChannelActivity : BaseActivity<ActivityCityChannelBinding>(), ItemClic
             vm = mainViewModel
             initBackToolbar(toolbar)
             toolbar.title = "城市之音"
-//            cityChannelRecycler.layoutManager = LinearLayoutManager(mContext)
-            cityChannelRecycler.layoutManager = GridLayoutManager(mContext, 2)
+            cityChannelRecycler.layoutManager = LinearLayoutManager(mContext)
+//            cityChannelRecycler.layoutManager = GridLayoutManager(mContext, 2)
             cityChannelRecycler.adapter = BaseDataBindingAdapter(mContext, R.layout.item_fm_bean,
                     this@CityChannelActivity, mainViewModel.fmBeanList)
         }
