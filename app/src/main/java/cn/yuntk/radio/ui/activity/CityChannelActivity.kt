@@ -1,9 +1,11 @@
 package cn.yuntk.radio.ui.activity
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
+import android.databinding.Observable
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableList
-import android.support.v7.widget.GridLayoutManager
+import android.provider.Settings
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import cn.yuntk.radio.Constants
@@ -33,20 +35,21 @@ class CityChannelActivity : BaseActivity<ActivityCityChannelBinding>(), ItemClic
     override fun isFullScreen(): Boolean = false
 
     private val mainViewModel = MainViewModel()
-    private var cityFMBean: FMBean? = null
+    private lateinit var cityFMBean: FMBean
     private lateinit var pageViewModel: PageViewModel
     private lateinit var pageViewModelFactory: PageViewModelFactory
 
     override fun getLayoutId(): Int = R.layout.activity_city_channel
 
     override fun initView() {
+        showLoading()
         cityFMBean = intent?.getSerializableExtra(Constants.KEY_SERIALIZABLE) as FMBean
         mBinding.run {
             vm = mainViewModel
+            presenter = this@CityChannelActivity
             initBackToolbar(toolbar)
             toolbar.title = "城市之音"
             cityChannelRecycler.layoutManager = LinearLayoutManager(mContext)
-//            cityChannelRecycler.layoutManager = GridLayoutManager(mContext, 2)
             cityChannelRecycler.adapter = BaseDataBindingAdapter(mContext, R.layout.item_fm_bean,
                     this@CityChannelActivity, mainViewModel.fmBeanList)
         }
@@ -69,9 +72,12 @@ class CityChannelActivity : BaseActivity<ActivityCityChannelBinding>(), ItemClic
 
             override fun onItemRangeInserted(sender: ObservableArrayList<FMBean>?, positionStart: Int, itemCount: Int) {
                 Lg.e("fmBeanList onItemRangeInserted sender==${sender?.size}")
+
                 //保存当前页面FMBean,用于锁屏时查询当前页播放列表
                 if (sender != null && sender.size > 0) {
                     if (sender[0].isExisUrl == 1) {
+                        dismissDialog()
+                        mainViewModel.loadFailed.set(false)
                         SPUtil.getInstance().putString(Constants.CURRENT_PAGE, cityFMBean!!.name)
                         disposable.add(pageViewModel.getListByPage(cityFMBean!!.name)
                                 .subscribeOn(Schedulers.io())
@@ -98,14 +104,47 @@ class CityChannelActivity : BaseActivity<ActivityCityChannelBinding>(), ItemClic
             }
 
         })
+
+        mainViewModel.loadFailed.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                log("initView loadFailed==${mainViewModel.loadFailed.get()}")
+                dismissDialog()
+            }
+        })
     }
 
     override fun loadData() {
         mainViewModel.loadFMBeanByChannel(cityFMBean?.radioId.toString(), "4")
     }
 
+    override fun onClick(view: View?) {
+        mBinding.run {
+            when (view?.id) {
+                R.id.tv_refresh -> {
+                    retryLoadData()
+                }
+                R.id.tv_set_net -> {
+                    startActivityForResult(Intent(Settings.ACTION_SETTINGS), Constants.SET_NET_CODE)
+                }
+                else -> {
+                }
+            }
+        }
+
+    }
+
+    private fun retryLoadData() {
+        showLoading()
+        mBinding.run {
+            mainViewModel.fmBeanList.clear()
+            mainViewModel.loadFMBeanByChannel(cityFMBean?.radioId.toString(), "4")
+            executePendingBindings()
+        }
+    }
+
     override fun onItemClick(view: View?, item: FMBean) {
         log("onItemClick==$item")
+        item.cityName = cityFMBean.name
         jumpActivity(ListenerFMBeanActivity::class.java, item)
     }
 

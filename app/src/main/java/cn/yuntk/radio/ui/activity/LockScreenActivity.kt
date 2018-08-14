@@ -36,8 +36,8 @@ open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
     private lateinit var conn: LockServiceConnection
     private var service: LockService? = null
     override fun initView() {
-        getDate()
         mBinding.run {
+            getDate()
             fmBean = PlayServiceManager.getListenerFMBean()
             presenter = this@LockScreenActivity
             lockScreenDrag.setOnReleasedListener {

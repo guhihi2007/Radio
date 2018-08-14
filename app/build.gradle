@@ -59,7 +59,7 @@ android {
             signingConfig signingConfigs.release
             debuggable false  //可以debug
             minifyEnabled false //启用Proguard
-//            shrinkResources true //是否清理无用资源,依赖于minifyEnabled
+//            shrinkResources false //是否清理无用资源,依赖于minifyEnabled
 //            zipAlignEnabled true //是否启用zipAlign压缩
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -67,7 +67,7 @@ android {
             signingConfig signingConfigs.release
             debuggable true  //可以debug
             minifyEnabled false //启用Proguard
-//            shrinkResources true //是否清理无用资源,依赖于minifyEnabled
+//            shrinkResources false //是否清理无用资源,依赖于minifyEnabled
 //            zipAlignEnabled true //是否启用zipAlign压缩
         }
     }

@@ -61,7 +61,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
     private var field = ObservableField<FMBean>()
     private var mainViewModel: MainViewModel = MainViewModel()
     override fun initView() {
-        /**--------应用初始化--------*/
+        /**--------应用必要初始化--------*/
         SPUtil.init(this)
         if (Vitamio.isInitialized(applicationContext)) {
             log("Vitamio isInitialized")
@@ -70,11 +70,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         startService(Intent(this, LockService::class.java))
         FeedbackAPI.init(application, Constants.FEED_BACK_KEY, Constants.FEED_BACK_SECRET)
         if (!BuildConfig.DEBUG) {
-            log("CrashReport initCrashReport")
-            CrashReport.initCrashReport(application, "cfa043fff6", false)
+            log("CrashReport/UMConfigure init ")
+            CrashReport.initCrashReport(application, Constants.BUGLY_KEY, false)
+            UMConfigure.init(application, Constants.UMENG_KEY, BuildConfig.FLAVOR, UMConfigure.DEVICE_TYPE_PHONE, null)
         }
-        UMConfigure.init(application, "5b6a5dc0b27b0a590b000106", BuildConfig.FLAVOR, UMConfigure.DEVICE_TYPE_PHONE, null)
-        /**--------应用初始化--------*/
+        /**--------应用初必要始化--------*/
 
         /**--------布局初始化--------*/
         val toolbar = mBinding.toolbar
@@ -105,14 +105,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
 
         /**--------获取反馈回复--------*/
         getFeedbackUnreadCounts()
-
-
     }
 
 
     override fun loadData() {
         changeFragment(FragmentByChannelCode.newInstance(channelList[0].name, channelList[0].chanelCode), channelList[0].name)
-        UpdateManager.check(this)
+        UpdateManager.check(this, true)
     }
 
 
@@ -180,7 +178,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
                 FeedbackAPI.openFeedbackActivity()
             }
             UPDATE -> {
-                UpdateManager.check(this)
+                UpdateManager.check(this, false)
             }
         }
     }
@@ -258,7 +256,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
 
     private fun startTimer(item: Any) {
         val minute: Long = when (item) {
-            "10分钟后" -> 1
+            "10分钟后" -> 10
             "20分钟后" -> 20
             "30分钟后" -> 30
             "45分钟后" -> 45

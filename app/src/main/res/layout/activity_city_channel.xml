@@ -3,10 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View" />
 
         <variable
             name="vm"
             type="cn.yuntk.radio.viewmodel.MainViewModel" />
+
+        <variable
+            name="presenter"
+            type="cn.yuntk.radio.base.Presenter" />
     </data>
 
 
@@ -34,8 +39,15 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/city_channel_recycler"
-            android:background="@drawable/gradient_left_to_right"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_left_to_right"
+            android:visibility="@{safeUnbox(vm.loadFailed) ? View.GONE:View.VISIBLE}" />
+
+        <include
+            android:id="@+id/layout_net_error"
+            layout="@layout/comm_net_error"
+            android:visibility="@{safeUnbox(vm.loadFailed) ? View.VISIBLE:View.GONE}"
+            app:presenter="@{presenter}" />
     </LinearLayout>
 </layout>

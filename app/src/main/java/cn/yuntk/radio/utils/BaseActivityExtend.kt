@@ -1,6 +1,7 @@
 package cn.yuntk.radio.utils
 
 import android.app.Activity
+import android.app.Application
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,6 +9,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -73,6 +75,12 @@ fun Activity.timeReceiver(method: () -> Unit): BroadcastReceiver {
 }
 
 fun Activity.toast(msg: String) {
+    Handler(mainLooper).post {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun Application.toast(msg: String) {
     Handler(mainLooper).post {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }

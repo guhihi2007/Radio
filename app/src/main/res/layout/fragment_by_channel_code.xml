@@ -27,12 +27,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/gradient_left_to_right"
-            android:visibility="@{vm.loadFailed.get() ? View.GONE:View.VISIBLE}" />
+            android:visibility="@{safeUnbox(vm.loadFailed) ? View.GONE:View.VISIBLE}" />
 
         <include
             android:id="@+id/layout_net_error"
             layout="@layout/comm_net_error"
-            android:visibility="@{vm.loadFailed.get() ? View.VISIBLE:View.GONE}"
+            android:visibility="@{safeUnbox(vm.loadFailed) ? View.VISIBLE:View.GONE}"
             app:presenter="@{presenter}"
             />
 

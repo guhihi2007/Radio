@@ -17,7 +17,6 @@ import cn.yuntk.radio.Constants
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.manager.AudioFocusManager
-import cn.yuntk.radio.manager.MediaSessionManager
 import cn.yuntk.radio.play.*
 import cn.yuntk.radio.utils.*
 import kotlinx.coroutines.experimental.*
@@ -46,7 +45,6 @@ class PlayService : Service() {
     private val mHandler = Handler()
     private lateinit var mPlayer: io.vov.vitamio.MediaPlayer
     private var mAudioFocusManager: AudioFocusManager? = null
-    private var mMediaSessionManager: MediaSessionManager? = null
     private val mListenerList = CopyOnWriteArrayList<OnPlayerEventListener>()
     private var mPlayState = STATE_IDLE
     private lateinit var myBinder: MyPlayServiceBinder
@@ -59,11 +57,11 @@ class PlayService : Service() {
         "PlayService onCreate=${javaClass.simpleName}".logE(LT.RadioNet)
         myBinder = MyPlayServiceBinder(this)
         mAudioFocusManager = AudioFocusManager(this)
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-//            mMediaSessionManager = MediaSessionManager(this)
-//        } else {
-//            log("SDK_INT==${Build.VERSION.SDK_INT} < 21")
-//        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            MediaSessionManager.get().init(this)
+        } else {
+            log("SDK_INT==${Build.VERSION.SDK_INT} < 21")
+        }
         mPlayer = io.vov.vitamio.MediaPlayer(this, true)
         registerReceiver(mNoisyReceiver, mNoisyFilter)
 //        MusicNotification.init(this)
@@ -76,7 +74,7 @@ class PlayService : Service() {
         })
     }
 
-    private fun QueryPageList() {
+    private fun queryPageList() {
         //查库，当前页面的所有FMBean-------start
         val page = SPUtil.getInstance().getString(Constants.CURRENT_PAGE)
         if (lastPage != page) {
@@ -87,7 +85,7 @@ class PlayService : Service() {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {
-                            log("PlayService QueryPageList 异步查库getList==${it.size}")
+                            log("PlayService queryPageList 异步查库getList==${it.size}")
                             list.addAll(it.map { it.fmBean })
                         })
             }
@@ -125,19 +123,24 @@ class PlayService : Service() {
 
     fun play(fmBean: FMBean, context: Activity?) {
         //TODO 检查网络
+        if (!NetworkUtils.isAvailable(this)) {
+            application.toast("网络异常")
+            return
+        }
         currentFMBean = fmBean
-        //保存记录
+        SPUtil.getInstance().putObject(Constants.LAST_PLAY, fmBean)//记录上次播放
+        //保存所有收听记录
         if (context != null) {
             saveFMBean(fmBean, context)
             context.volumeControlStream = AudioManager.STREAM_MUSIC
         }
-        QueryPageList()
+        queryPageList()
         mPlayer.reset()
         mPlayer.setDataSource(fmBean.radioUrl)
         mPlayer.prepareAsync()
         mPlayState = STATE_PREPARING
         mPlayer.setOnBufferingUpdateListener { mp, percent ->
-//            log("setOnBufferingUpdateListener percent=$percent")
+            //            log("setOnBufferingUpdateListener percent=$percent")
 
         }
         mPlayer.setOnCompletionListener {
@@ -150,11 +153,12 @@ class PlayService : Service() {
             mPlayState = STATE_PLAYING
             postEvent(ListenEvent(STATE_PLAYING, fmBean))
         }
-
+        MediaSessionManager.get().updateMetaData(fmBean)
+        MediaSessionManager.get().updatePlaybackState(mPlayState)
         currentIndex = list.indexOf(fmBean)
     }
 
-    fun play(position: Int, context: Activity): FMBean? {
+    fun play(position: Int, context: Activity?): FMBean? {
         if (list.isEmpty()) return null
         var mPlayingPosition = position
         if (position < 0) {
@@ -168,7 +172,6 @@ class PlayService : Service() {
     }
 
     private fun saveFMBean(fmBean: FMBean, context: Activity) {
-        SPUtil.getInstance().putObject(Constants.LAST_PLAY, fmBean)//记录上次播放
         //收听记录存库
         val viewModel = ViewModelProvider
                 .AndroidViewModelFactory
@@ -179,7 +182,7 @@ class PlayService : Service() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    log("saveFMBean to History Success")
+                    log("saveFMBean to History Success==${fmBean.name}")
                 })
 
     }
@@ -201,9 +204,13 @@ class PlayService : Service() {
         if (!isPreparing() && !isPausing()) {
             return
         }
-        mPlayer.start()
-        mPlayState = STATE_PLAYING
-        postEvent(ListenEvent(STATE_PLAYING))
+        if (mAudioFocusManager?.requestAudioFocus() == true) {
+            mPlayer.start()
+            mPlayState = STATE_PLAYING
+            MediaSessionManager.get().updatePlaybackState(mPlayState)
+            postEvent(ListenEvent(STATE_PLAYING))
+        }
+
 
     }
 
@@ -213,6 +220,7 @@ class PlayService : Service() {
         }
         mPlayer.pause()
         mPlayState = STATE_PAUSE
+        MediaSessionManager.get().updatePlaybackState(mPlayState)
         postEvent(ListenEvent(STATE_PAUSE))
 
     }
@@ -227,11 +235,11 @@ class PlayService : Service() {
 
     }
 
-    fun next(activity: Activity): FMBean? {
+    fun next(activity: Activity?): FMBean? {
         return play(currentIndex + 1, activity)
     }
 
-    fun pre(activity: Activity): FMBean? {
+    fun pre(activity: Activity?): FMBean? {
         return play(currentIndex - 1, activity)
     }
 
@@ -270,9 +278,6 @@ class PlayService : Service() {
             mAudioFocusManager!!.abandonAudioFocus()
         }
 
-        if (mMediaSessionManager != null) {
-            mMediaSessionManager!!.release()
-        }
         unregisterReceiver(mNoisyReceiver)
         disposable.clear()
         //        unregisterReceiver(mNotificationReceiver);
@@ -299,13 +304,17 @@ class PlayService : Service() {
         return list
     }
 
+    fun getCurrentIndex(): Long {
+        return currentIndex.toLong()
+    }
+
     inner class MyBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
             if (action == Actions.ACTION_PLAY_START) {
                 playPause()
             } else if (action == Actions.ACTION_PLAY_NEXT) {
-                next(applicationContext as Activity)
+                next(null)
             }
         }
     }

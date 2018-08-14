@@ -32,11 +32,11 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerBinding>(), ItemClic
 
     private lateinit var mFmBean: FMBean
     private lateinit var bottomDialog: Dialog
-
     override fun getLayoutId(): Int = R.layout.activity_listener
 
     override fun initView() {
         mFmBean = intent.getSerializableExtra(Constants.KEY_SERIALIZABLE) as FMBean
+        log("ListenerFMBeanActivity  initView mFmBean cityName=${mFmBean.cityName}")
         mFmBean.isPlaying = true
         initBackToolbar(mBinding.toolbar)
         mBinding.run {
@@ -81,15 +81,15 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerBinding>(), ItemClic
     override fun onClick(view: View?) {
         mBinding.run {
             when (view) {
-            //旋转view
+                //旋转view
                 roundView -> {
                     startOrStop()
                 }
-            //播放按钮
+                //播放按钮
                 playImageView -> {
                     startOrStop()
                 }
-            //加入收藏
+                //加入收藏
                 favoriteImageView -> {
                     favoriteImageView.isSelected = !favoriteImageView.isSelected
                     if (favoriteImageView.isSelected) {
@@ -108,7 +108,7 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerBinding>(), ItemClic
                                 })
                     }
                 }
-            //展示收藏
+                //展示收藏
                 collectionListImageView -> {
                     showCollectionList(this@ListenerFMBeanActivity)
                 }

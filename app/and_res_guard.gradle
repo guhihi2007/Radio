@@ -26,15 +26,15 @@ andResGuard {
             "R.id.ifltek_*",
 
             //友盟
-//            "R.string.umeng*",
-//            "R.string.UM*",
-//            "R.layout.umeng*",
-//            "R.drawable.umeng*",
-//            "R.id.umeng*",
-//            "R.anim.umeng*",
-//            "R.color.umeng*",
-//            "R.style.*UM*",
-//            "R.style.umeng*",
+            "R.string.umeng*",
+            "R.string.UM*",
+            "R.layout.umeng*",
+            "R.drawable.umeng*",
+            "R.id.umeng*",
+            "R.anim.umeng*",
+            "R.color.umeng*",
+            "R.style.*UM*",
+            "R.style.umeng*",
 
     ]
     compressFilePattern = [

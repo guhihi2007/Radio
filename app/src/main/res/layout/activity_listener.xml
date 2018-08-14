@@ -33,7 +33,6 @@
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:title="@{fmBean.name}" />
-
         </android.support.design.widget.AppBarLayout>
 
         <LinearLayout
@@ -121,7 +120,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="2"
                 android:onClick="@{(v)->presenter.onClick(v)}"
-                android:src="@drawable/icon_listener_favorite_list" />
+                android:src="@mipmap/icon_listener_favorite_list" />
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </layout>

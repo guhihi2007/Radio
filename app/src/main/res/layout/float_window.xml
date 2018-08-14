@@ -74,6 +74,7 @@
             android:id="@+id/float_play"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:padding="5dp"
             android:src="@drawable/play_btn_play_pause_selector" />
     </LinearLayout>
 

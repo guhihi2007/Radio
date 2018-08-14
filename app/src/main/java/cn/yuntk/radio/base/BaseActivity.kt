@@ -15,6 +15,7 @@ import android.view.Window
 import android.view.WindowManager
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.manager.PlayServiceManager
+import cn.yuntk.radio.view.loading.LoadingDialog
 import cn.yuntk.radio.viewmodel.CollectionViewModel
 import cn.yuntk.radio.viewmodel.Injection
 import cn.yuntk.radio.viewmodel.CollectionViewModelFactory
@@ -35,11 +36,14 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
     private lateinit var viewModelFactory: CollectionViewModelFactory
     protected lateinit var viewModel: CollectionViewModel
     protected lateinit var handler: Handler
+    protected lateinit var loadingDialog: LoadingDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isFullScreen()) {
             configScreen()
         }
+        loadingDialog = LoadingDialog.instance(this)
+        loadingDialog.setCancelable(true)
         handler = Handler(mainLooper)
         mBinding = DataBindingUtil.setContentView<VB>(this, getLayoutId())
         mContext = this
@@ -107,6 +111,14 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         this.window.addFlags(// 有密码的情况下,覆盖在锁屏界面上
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+    }
+
+    protected fun dismissDialog(){
+        loadingDialog.dismiss()
+    }
+
+    protected fun showLoading(){
+        loadingDialog.show()
     }
 
 }

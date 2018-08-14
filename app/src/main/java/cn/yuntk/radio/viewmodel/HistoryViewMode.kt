@@ -24,7 +24,10 @@ class HistoryViewMode : ViewModel() {
         return Maybe.fromAction {
             Injection.getHistoryDao().getHistoryList().map {
                 Lg.e("HistoryViewMode map==${it.fmBean!!.name}")
-                it.fmBean!!.addTime = getDate(it.time)
+                it.fmBean!!.listenerTime = getDate(it.time)
+                if (it.fmBean!!.cityName != null) {
+                    it.fmBean!!.name = it.fmBean!!.cityName + "-" + it.fmBean!!.name
+                }
                 historyList.add(it.fmBean!!)
                 it.fmBean!!
             }

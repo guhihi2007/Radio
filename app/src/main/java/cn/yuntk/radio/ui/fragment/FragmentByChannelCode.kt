@@ -1,10 +1,12 @@
 package cn.yuntk.radio.ui.fragment
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.databinding.Observable
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableList
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
@@ -22,10 +24,7 @@ import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.databinding.FragmentByChannelCodeBinding
 import cn.yuntk.radio.ui.activity.CityChannelActivity
 import cn.yuntk.radio.ui.activity.ListenerFMBeanActivity
-import cn.yuntk.radio.utils.Lg
-import cn.yuntk.radio.utils.SPUtil
-import cn.yuntk.radio.utils.jumpActivity
-import cn.yuntk.radio.utils.log
+import cn.yuntk.radio.utils.*
 import cn.yuntk.radio.viewmodel.Injection
 import cn.yuntk.radio.viewmodel.MainViewModel
 import cn.yuntk.radio.viewmodel.PageViewModel
@@ -57,6 +56,7 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
     }
 
     override fun initView() {
+        loadingDialog.show()
         mainViewModel.loadFMBeanByChannel(channelCode)
         val mAdapter = BaseDataBindingAdapter(mContext, R.layout.item_fm_bean, this, mainViewModel.fmBeanList)
         mBinding.run {
@@ -87,6 +87,7 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
 
             override fun onItemRangeInserted(sender: ObservableArrayList<FMBean>?, positionStart: Int, itemCount: Int) {
                 Lg.e("fmBeanList onItemRangeInserted sender==${sender?.size}")
+                loadingDialog.dismiss()
                 //保存当前页面FMBean,用于锁屏时查询当前页播放列表
                 if (sender != null && sender.size > 0) {
                     if (sender[0].isExisUrl == 1) {
@@ -95,6 +96,7 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe {
+                                    mainViewModel.loadFailed.set(false)
                                     if (it.isEmpty()) {
                                         //如果没有当前页面数据才保存
                                         disposable.add(pageViewModel.saveList(channelName, mainViewModel.fmBeanList)
@@ -106,6 +108,7 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
                                         )
                                     } else {
                                         Lg.e("已经保存过了，不继续")
+
                                     }
                                 })
 
@@ -122,7 +125,7 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
         mainViewModel.loadFailed.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 activity?.log("initView loadFailed==${mainViewModel.loadFailed.get()}")
-
+                dismissDialog()
             }
         })
 
@@ -132,19 +135,36 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
         mBinding.run {
             when (view?.id) {
                 R.id.tv_refresh -> {
-                    mainViewModel.fmBeanList.clear()
-                    mainViewModel.loadFMBeanByChannel(channelCode)
-                    vm = mainViewModel
-                    executePendingBindings()
+                    retryLoadData()
                 }
                 R.id.tv_set_net -> {
-
+                    startActivityForResult(Intent(Settings.ACTION_SETTINGS), Constants.SET_NET_CODE)
                 }
                 else -> {
                 }
             }
         }
 
+    }
+
+    private fun retryLoadData() {
+        showLoading()
+        mBinding.run {
+            mainViewModel.fmBeanList.clear()
+            mainViewModel.loadFMBeanByChannel(channelCode)
+            executePendingBindings()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (!NetworkUtils.isAvailable(mContext)) {
+            activity?.toast("网络异常")
+            return
+        }
+        if (requestCode == Constants.SET_NET_CODE) {
+            retryLoadData()
+        }
     }
 
     //homeFragmentRecycler item点击回调
@@ -155,6 +175,7 @@ class FragmentByChannelCode : BaseFragment<FragmentByChannelCodeBinding>(), Item
             activity?.jumpActivity(ListenerFMBeanActivity::class.java, item)
         } else {
             //跳转子页面
+
             startCityChannelActivity(item)
         }
     }

@@ -23,24 +23,19 @@ class LockService : Service() {
     private var hasJump = false
     private lateinit var myBinder: MyLockServiceBinder
 
-    var lockStatus = Constants.LOCK_SCREEN_ON
     override fun onBind(intent: Intent?): IBinder = myBinder
     override fun onCreate() {
         myBinder = MyLockServiceBinder(this)
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 log("LockService onReceive ==${intent?.action}")
-
-//                if (lockStatus == Constants.LOCK_SCREEN_OFF) {
-//                    stopSelf()
-//                    return
-//                }
-                if (!getHasJump())
+                if (!getHasJump()) {
                     if (intent?.action == Intent.ACTION_SCREEN_OFF && PlayServiceManager.isListenerFMBean()) {
                         log(" jumpActivity LockScreenActivity")
                         hasJump = true
                         jumpActivity(LockScreenActivity::class.java)
                     }
+                }
             }
         }
 
@@ -57,7 +52,6 @@ class LockService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         log(" LockScreenActivity onDestroy")
-
         unregisterReceiver(receiver)
     }
 

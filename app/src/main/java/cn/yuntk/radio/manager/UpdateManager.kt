@@ -22,7 +22,7 @@ class UpdateManager {
     companion object {
 
         @JvmStatic
-        fun check(context: Activity) {
+        fun check(context: Activity, isFromMain: Boolean) {
             val updManager = IFlytekUpdate.getInstance(context.application)
             updManager.setDebugMode(true)
             updManager.setParameter(UpdateConstants.EXTRA_WIFIONLY, "false")
@@ -39,7 +39,8 @@ class UpdateManager {
                             "updateVersion=${info.updateVersion}" + "\n" +
                             "updateVersionCode=${info.updateVersionCode}")
                     if (info.updateType == UpdateType.NoNeed) {
-                        context.toast("已经是最新版本")
+                        if (!isFromMain)
+                            context.toast("已经是最新版本")
                         return@autoUpdate
                     }
                     updManager.showUpdateInfo(context, info)

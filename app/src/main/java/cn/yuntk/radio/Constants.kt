@@ -31,18 +31,18 @@ object Constants {
     const val ABOUTUS = "about_us"
 
     var channelList = ObservableArrayList<ChannelBean>().apply {
-        add(ChannelBean("国家电台", NATION_CODE, R.drawable.icon_nation))
-        add(ChannelBean("省市电台", PROVINCE_CODE, R.drawable.icon_province))
-        add(ChannelBean("国外电台", FOREIGN_CODE, R.drawable.icon_foreign))
-        add(ChannelBean("网络电台", NET_CODE, R.drawable.icon_net))
+        add(ChannelBean("国家电台", NATION_CODE, R.mipmap.icon_nation))
+        add(ChannelBean("省市电台", PROVINCE_CODE, R.mipmap.icon_province))
+        add(ChannelBean("国外电台", FOREIGN_CODE, R.mipmap.icon_foreign))
+        add(ChannelBean("网络电台", NET_CODE, R.mipmap.icon_net))
         add(ChannelBean("设置", "-1", -1))
-        add(ChannelBean("定时关闭", TIMIMG, R.drawable.icon_timingclose))
-        add(ChannelBean("收藏管理", COLLECTION, R.drawable.icon_favorite))
-        add(ChannelBean("收听记录", HISTORY, R.drawable.icon_history))
+        add(ChannelBean("定时关闭", TIMIMG, R.mipmap.icon_timingclose))
+        add(ChannelBean("收藏管理", COLLECTION, R.mipmap.icon_favorite))
+        add(ChannelBean("收听记录", HISTORY, R.mipmap.icon_history))
         add(ChannelBean("联系我们", "-1", -1))
-        add(ChannelBean("问题反馈", FEEDBACK, R.drawable.icon_feedback))
-        add(ChannelBean("检查更新", UPDATE, R.drawable.icon_update))
-        add(ChannelBean("关于我们", ABOUTUS, R.drawable.icon_about_us))
+        add(ChannelBean("问题反馈", FEEDBACK, R.mipmap.icon_feedback))
+        add(ChannelBean("检查更新", UPDATE, R.mipmap.icon_update))
+        add(ChannelBean("关于我们", ABOUTUS, R.mipmap.icon_about_us))
 
     }
     //播放状态
@@ -51,14 +51,13 @@ object Constants {
     const val STATE_PLAYING = 2
     const val STATE_PAUSE = 3
 
-    const val LAST_PLAY = "last_play"
-
-    const val LOCK_SCREEN_ON = 1//亮屏
-    const val LOCK_SCREEN_OFF = 0//锁屏
+    const val LAST_PLAY = "last_play" //上一次播放频道
     const val CURRENT_PAGE = "current_page"//锁屏前页面
 
     const val FEED_BACK_KEY = "25007022"
     const val FEED_BACK_SECRET = "1c83a8f067e09ff796c23751a547b74a"
-//    const val FEED_BACK_KEY = "24899986"
-//    const val FEED_BACK_SECRET = "739e172512a378292486984b7d079ba8"
+    const val BUGLY_KEY = "cfa043fff6"
+    const val UMENG_KEY = "5b6a5dc0b27b0a590b000106"
+
+    const val SET_NET_CODE = 1111
 }

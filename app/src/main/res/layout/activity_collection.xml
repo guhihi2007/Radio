@@ -38,41 +38,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/ll_toolBar" />
-
-        <LinearLayout
-            android:id="@+id/ll_select_delete"
-            android:layout_width="match_parent"
-            android:layout_height="57dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/colorPrimary"
-            android:orientation="horizontal"
-            android:visibility="invisible"
-            tools:visibility="invisible">
-
-            <TextView
-                android:id="@+id/tvSelectAll"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:padding="15dp"
-                android:text="全选"
-                android:onClick="@{(v)->presenter.onClick(v)}"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tvDelete"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:padding="15dp"
-                android:textColor="@color/white"
-                android:onClick="@{(v)->presenter.onClick(v)}"
-                android:text="删除"
-                android:textSize="16sp" />
-        </LinearLayout>
     </RelativeLayout>
 
 </layout>
