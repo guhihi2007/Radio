@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="true"
+    android:background="@android:color/white"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/my_toolbar_layout"/>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/setting_ll1"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="50dip">
+    <TextView
+        android:textColor="@color/color_20"
+        android:text="清理缓存"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/setting_ll2"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="50dip">
+        <TextView
+            android:textColor="@color/color_20"
+            android:text="分享朋友"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/setting_ll3"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="50dip">
+        <TextView
+            android:textColor="@color/color_20"
+            android:text="意见反馈"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <View
+        android:background="@color/color_e5e5e5"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dip"/>
+
+</LinearLayout>

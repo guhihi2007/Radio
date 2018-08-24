@@ -39,14 +39,28 @@
 
             </android.support.design.widget.AppBarLayout>
 
-            <FrameLayout
-                android:id="@+id/container"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/gradient_left_to_right"
+                android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            </FrameLayout>
+                <FrameLayout
+                    android:id="@+id/ll_ad"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:visibility="gone"
+                    android:background="@drawable/gradient_left_to_right"/>
+
+                <FrameLayout
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/gradient_left_to_right">
+
+                </FrameLayout>
+            </LinearLayout>
+
         </android.support.design.widget.CoordinatorLayout>
 
         <!--抽屉布局-->

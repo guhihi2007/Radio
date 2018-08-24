@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="true"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/my_toolbar_layout"/>
+
+    <LinearLayout
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_height="50dip">
+
+        <android.support.v7.widget.SearchView
+            android:background="@drawable/listener_shape_rect"
+            android:id="@+id/search_view"
+            android:layout_width="0dip"
+            android:imeOptions="actionSearch"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.SearchView>
+
+        <TextView
+            android:visibility="gone"
+            android:padding="10dip"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:text="搜索"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_marginTop="5dip"
+        android:background="@android:color/white"
+        android:id="@+id/history_linearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dip"
+        android:minHeight="50dip"
+        android:orientation="vertical">
+
+        <cn.yuntk.radio.ibook.widget.FlowTagLayout
+            android:id="@+id/flow_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp" />
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/history_rv"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+
+        android:id="@+id/local_history_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/listener_pop_window_history"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

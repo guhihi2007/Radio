@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
-import cn.yuntk.radio.Constants
+import cn.yuntk.radio.ibook.XApplication
+import cn.yuntk.radio.ibook.activity.ScreenOffAcivity
+import cn.yuntk.radio.ibook.service.AudioPlayer
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.ui.activity.LockScreenActivity
 import cn.yuntk.radio.utils.jumpActivity
@@ -30,10 +32,25 @@ class LockService : Service() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 log("LockService onReceive ==${intent?.action}")
                 if (!getHasJump()) {
-                    if (intent?.action == Intent.ACTION_SCREEN_OFF && PlayServiceManager.isListenerFMBean()) {
-                        log(" jumpActivity LockScreenActivity")
-                        hasJump = true
-                        jumpActivity(LockScreenActivity::class.java)
+                    if (intent?.action == Intent.ACTION_SCREEN_OFF) {
+
+                        XApplication.sInstance.isBackGroud=true
+
+                        if (PlayServiceManager.isListenerFMBean()) {
+                            log(" jumpActivity LockScreenActivity")
+                            hasJump = true
+                            jumpActivity(LockScreenActivity::class.java)
+                            return
+                        }
+                        if (status == "stop") {
+                            stopSelf()
+                            return
+                        }
+                        if (AudioPlayer.get().isPlaying || AudioPlayer.get().isPreparing){
+                            jumpActivity(ScreenOffAcivity::class.java)
+
+                        }
+
                     }
                 }
             }
@@ -63,4 +80,8 @@ class LockService : Service() {
         return hasJump
     }
 
+    companion object {
+        var status = "default"
+
+    }
 }

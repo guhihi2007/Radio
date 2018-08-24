@@ -39,9 +39,6 @@ import java.util.concurrent.Executors;
 
 import cn.yuntk.radio.bean.FMBean;
 
-/**
- * Created by lfh on 2016/8/13.
- */
 public class SPUtil {
 
     private static SPUtil prefsUtil;

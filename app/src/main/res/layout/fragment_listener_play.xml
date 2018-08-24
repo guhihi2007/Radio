@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_play_page_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/play_page_default_bg" />
+
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_50p"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <include layout="@layout/include_play_page_volume_bar" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dip"
+            android:orientation="vertical"
+            android:layout_marginBottom="5dip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:paddingRight="20dip"
+                android:lineSpacingMultiplier="1.2"
+                android:paddingLeft="20dip"
+                android:textColor="@android:color/white"
+                android:id="@+id/con_tv"
+                android:text="加载中..."
+                android:maxLines="4"
+                android:ellipsize="end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+
+        <!--<android.support.v4.view.ViewPager-->
+            <!--android:id="@+id/vp_play_page"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:overScrollMode="never" />-->
+
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="0dip">
+
+            <cn.yuntk.radio.ibook.widget.AlbumCoverView
+                android:layout_marginTop="10dip"
+                android:id="@+id/album_cover_view"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="50dip"
+                android:layout_marginRight="50dip"
+                android:layout_centerInParent="true"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin" />
+
+            <include layout="@layout/listener_layout_native_ad"
+                android:id="@+id/nativeADContainer"
+                android:visibility="gone"
+                android:layout_width="250dp"
+                android:layout_height="200dip"
+                android:layout_centerInParent="true" />
+
+            <FrameLayout
+                android:id="@+id/ad_container_fl"
+                android:layout_width="250dip"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+
+        </RelativeLayout>
+
+
+        <cn.yuntk.radio.ibook.widget.IndicatorLayout
+            android:id="@+id/il_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp" />
+
+        <include layout="@layout/include_play_page_controller" />
+    </LinearLayout>
+
+</FrameLayout>

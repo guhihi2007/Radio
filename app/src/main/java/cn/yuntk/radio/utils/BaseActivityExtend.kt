@@ -2,6 +2,7 @@ package cn.yuntk.radio.utils
 
 import android.app.Activity
 import android.app.Application
+import android.app.FragmentTransaction
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -17,6 +18,7 @@ import android.widget.Toast
 import cn.yuntk.radio.Constants
 import cn.yuntk.radio.R
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
+import cn.yuntk.radio.ibook.fragment.LoadingFragment
 import org.greenrobot.eventbus.EventBus
 import java.io.Serializable
 
@@ -25,6 +27,7 @@ import java.io.Serializable
  * Date : 2018/7/15
  * Mail : gu12pp@163.com
  */
+//容器切换fragment
 fun AppCompatActivity.switchFragment(current: Fragment?, targetFg: Fragment, tag: String? = null) {
     val ft = supportFragmentManager.beginTransaction()
     current?.run { ft.hide(this) }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:gravity="center"
+        android:text="TITLE"
+        android:textColor="@color/color_20"
+        android:id="@+id/pop_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="40dip" />
+    <View
+        android:background="@color/color_e5e5e5"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dip"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/content_rv"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+    <View
+        android:background="@color/color_e5e5e5"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dip"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:text="BACK"
+        android:id="@+id/pop_back_tv"
+        android:textColor="@color/color_20"
+        android:layout_height="40dip" />
+
+</LinearLayout>

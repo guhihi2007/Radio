@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_height="45dip"
+    android:paddingLeft="10dip"
+    android:paddingRight="10dip">
+
+    <TextView
+        android:id="@+id/book_name_tv"
+        android:text="111"
+        android:maxLines="2"
+        android:ellipsize="end"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/book_status_tv"
+        android:textColor="@color/color_20"
+        android:gravity="center_vertical"
+        android:layout_width="0dip"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_height="40dip" />
+
+    <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/book_name_tv"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/book_status_tv"
+        android:text="111"
+        app:layout_constraintHorizontal_weight="1"
+        android:textColor="@color/color_20"
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="40dip" />
+
+    <View
+        android:background="@color/color_e5e5e5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/book_info_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dip"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -16,6 +16,8 @@ import cn.yuntk.radio.base.ItemClickPresenter
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.databinding.ActivityListenerBinding
+import cn.yuntk.radio.ibook.ads.ADConstants
+import cn.yuntk.radio.ibook.ads.AdController
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.utils.*
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -32,6 +34,7 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerBinding>(), ItemClic
 
     private lateinit var mFmBean: FMBean
     private lateinit var bottomDialog: Dialog
+    private lateinit var builder: AdController
     override fun getLayoutId(): Int = R.layout.activity_listener
 
     override fun initView() {
@@ -46,6 +49,12 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerBinding>(), ItemClic
         bottomDialog = Dialog(this, R.style.BottomDialog)
 
         registerEventBus()
+        //广告展示
+        builder = AdController.Builder(this)
+                .setContainer(mBinding.adContainerFl)
+                .setPage(ADConstants.LISTENING_PAGE)
+                .create()
+        builder.show()
     }
 
     override fun loadData() {
@@ -75,6 +84,7 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerBinding>(), ItemClic
             roundView.start()
             playImageView.isSelected = true
         }
+
     }
 
 
@@ -225,6 +235,7 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerBinding>(), ItemClic
     override fun onDestroy() {
         super.onDestroy()
         unRegisterEventBus()
+        builder.destroy()
     }
 
     override fun isFullScreen(): Boolean = false

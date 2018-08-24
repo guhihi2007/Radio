@@ -12,7 +12,11 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
         //微信Android资源混淆打包工具
-        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.9'
+//        classpath 'com.tencent.mm:AndResGuard-gradle-plugin:1.2.9'
+        //greendao 配置步骤一
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
+        //walle多渠道打包 配置步骤一
+        classpath 'com.meituan.android.walle:plugin:1.1.6'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

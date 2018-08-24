@@ -255,7 +255,7 @@ class PlayService : Service() {
         return mPlayState == STATE_PREPARING
     }
 
-    private fun isIdle(): Boolean {
+    fun isIdle(): Boolean {
         return mPlayState == STATE_IDLE
     }
 

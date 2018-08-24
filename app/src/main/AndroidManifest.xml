@@ -10,18 +10,59 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!--听书需要-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
+    <!-- 用于判断当前程序是否在显示 -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <!-- 音频权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!-- 悬浮对讲需要权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+    <!-- 受广播需要的权限 -->
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <!-- 震动权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- 获取基本信息，例如IMSI,IMEI等 -->
+    <!-- 允许程序里面写保护锁 -->
+    <uses-permission android:name="android.permission.WRITE_SECURES" />
+    <!-- 状态栏操作，锁屏界面禁止展开 -->
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <!-- 写SD卡权限 -->
+    <!-- 电源锁 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 蓝牙 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!-- 闹钟，为什么没效果？ -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+
+    <!-- 悬浮窗口可拖动 -->
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--bugly升級需要-->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <application
+        android:name=".ibook.XApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="${app_name_channel}"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup"><!--replace字段因feedback:3.1.6 冲突添加-->
         <activity
+            android:name=".ui.activity.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen"
-            android:name=".ui.activity.SplashActivity">
+            android:theme="@style/AppTheme.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,8 +96,8 @@
 
             />
         <activity
-            android:screenOrientation="portrait"
-            android:name=".ui.activity.CollectionActivity" />
+            android:name=".ui.activity.CollectionActivity"
+            android:screenOrientation="portrait" />
         <!--excludeFromRecents 让锁屏Activity不显示在近期任务中-->
         <!--launchMode 保证锁屏Activity有一个单独的Task-->
         <!--noHistory 如果用户通过Home按键让我们的应用进入后台, 我们会让这个activity销毁-->
@@ -72,27 +113,100 @@
         <activity android:name=".ui.activity.AboutUsActivity" />
         <activity android:name=".ui.activity.AppInfoActivity" />
         <activity android:name=".ui.activity.HistoryActivity" />
-        <!--自动升级SDK-->
+        <!--bugly升级需要-->
         <activity
-            android:name="com.iflytek.autoupdate.IFlytekUpdateDialog"
-            android:configChanges="keyboard|keyboardHidden|orientation"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:theme="@android:style/Theme.Translucent" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
 
+        <!--听书需要-->
+        <activity
+            android:name=".ibook.MainActivity"
+            android:resizeableActivity="false"
+            android:screenOrientation="portrait"></activity>
+
+        <!--开屏广告-->
+        <activity
+            android:name=".ibook.activity.SplashADActivity"
+            android:resizeableActivity="false"
+            android:screenOrientation="portrait" />
+
+        <!-- 接入广点通权限 start -->
         <service
-            android:name="com.iflytek.autoupdate.IFlytekDownloadService"
-            android:enabled="true"
-            android:process=":IFlytekDownloadService" />
+            android:name="com.qq.e.comm.DownloadService"
+            android:exported="false" />
 
-        <meta-data
-            android:name="IFLYTEK_CHANNEL"
-            android:value="${RADIO_CHANNEL_VALUE}" />
-        <meta-data
-            android:name="IFLYTEK_APPKEY"
-            android:value="5b694e3c" />
-        <!-- 自动升级SDK -->
+        <activity
+            android:name="com.qq.e.ads.ADActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
+        <!-- 接入广点通权限 end -->
+
+
+        <activity
+            android:name=".ibook.activity.BookDetailActivity"
+            android:launchMode="standard"
+            android:resizeableActivity="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ibook.activity.BookPlayActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+
+        <service android:name=".service.PlayService" />
+
+        <receiver android:name=".ibook.receiver.StatusBarReceiver">
+            <intent-filter>
+                <action android:name="me.wcy.music.STATUS_BAR_ACTIONS" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".ibook.receiver.DownloadReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
+        <!--版本低于21 媒体按钮监听-->
+        <receiver android:name=".ibook.receiver.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+        <!-- 悬浮窗口 -->
+        <service
+            android:name=".ibook.service.FloatViewService"
+            android:enabled="true"
+            android:exported="true" />
+        <service android:name=".ibook.service.PlayService" />
+
+        <activity
+            android:name=".ibook.activity.StoryTellingListActivity"
+            android:launchMode="standard"
+            android:resizeableActivity="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ibook.activity.BookSearchActivtity"
+            android:launchMode="standard"
+            android:resizeableActivity="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ibook.activity.SettingActivity"
+            android:launchMode="standard"
+            android:resizeableActivity="false"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ibook.activity.ScreenOffAcivity" />
+        <activity
+            android:name=".ibook.activity.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
     </application>
 
 </manifest>

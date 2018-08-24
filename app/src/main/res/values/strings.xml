@@ -24,4 +24,66 @@
     <string name="exit_confirm">退出</string>
     <string name="exit_cancel">取消</string>
 
+    <!-- 听书需要 -->
+    <string name="net_work_error_tip">请检查网络是否连接</string>
+    <string name="server_access_error_tip">服务器开小差了,请稍后重试!</string>
+    <string name="parse_error_tip">解析错误</string>
+    <string name="connection_error_tip">服务器连接失败</string>
+    <string name="ssl_error_tip">证书验证失败</string>
+    <string name="unknow_error_tip">未知错误</string>
+    <string name="load_again">加载失败，请重试</string>
+    <string name="loading">加载中...</string>
+
+    <string name="load_mp3_fail">获取音频地址失败，请重新进入</string>
+
+    <string name="string_search">搜索</string>
+    <string name="string_game">游戏</string>
+    <string name="recent_updates">最近更新</string>
+    <string name="hot_storytelling">热门评书</string>
+    <string name="hot_book">热门小说</string>
+    <string name="the_latest_serial">最新连载</string>
+
+    <string name="index1">首页</string>
+    <string name="classif">分类</string>
+    <string name="collect">收藏</string>
+    <string name="collect_cancle">取消收藏</string>
+    <string name="history">历史</string>
+    <string name="download">下载</string>
+    <string name="download_done">已下载</string>
+    <string name="download_ing">正在下载</string>
+    <string name="setting">设置</string>
+
+    <string name="book_detail_type">类型</string>
+    <string name="book_detail_status">状态</string>
+    <string name="book_detail_date">日期</string>
+    <string name="book_detail_page">章节</string>
+    <string name="book_detail_page_skip">章节跳转</string>
+    <string name="book_detail_order">排序</string>
+    <string name="book_detail_download">下载</string>
+    <string name="book_detail_last_page">上次听到</string>
+
+    <string name="play_time_start">00:00</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="data_empty">暂无数据</string>
+    <string name="book_sleep">睡眠</string>
+
+    <string name="tips">温馨提示</string>
+    <string name="play_tips">当前处于移动网络，确定打开移动网络播放开关吗？</string>
+    <string name="play_tips_sure">立即打开</string>
+    <string name="download_tips">当前处于移动网络，下载将消耗较多流量，是否继续下载？</string>
+    <string name="download_tips_sure">继续下载</string>
+    <string name="cancel">取消</string>
+    <string name="sure">确定</string>
+    <string name="unable_to_play">暂时无法播放</string>
+    <string name="unable_to_error_play_url">播放地址获取失败</string>
+    <string name="sure_exit_app">确定退出应用</string>
+
+    <string name="hadr_loading">努力加载中...</string>
+    <string name="collect_succ_tip">收藏成功</string>
+    <string name="collect_cancle_tip">取消收藏成功</string>
+    <string name="unknown">未知</string>
+    <string name="download_success">%s下载完成</string>
+    <string name="unable_to_download">暂时无法下载</string>
+    <string name="now_download">正在下载：%s</string>
 </resources>

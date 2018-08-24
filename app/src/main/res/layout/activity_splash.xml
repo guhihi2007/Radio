@@ -5,35 +5,39 @@
     android:layout_height="match_parent"
     android:background="@mipmap/bg_splash_ad">
 
-
     <FrameLayout
-        android:id="@+id/splash_container"
+        android:id="@+id/splash_fragment_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/app_logo" />
+        android:layout_height="match_parent" />
+    <!--<FrameLayout-->
+    <!--android:id="@+id/radio_splash_container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_above="@+id/radio_app_logo" />-->
 
-    <TextView
-        android:id="@+id/skip_view"
-        android:layout_width="96dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="16dp"
-        android:background="@drawable/background_circle"
-        android:gravity="center"
-        android:text="点击跳过"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        android:visibility="invisible" />
+    <!--<TextView-->
+    <!--android:id="@+id/radio_skip_view"-->
+    <!--android:layout_width="96dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_margin="16dp"-->
+    <!--android:background="@drawable/background_circle"-->
+    <!--android:gravity="center"-->
+    <!--android:text="点击跳过"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="14sp"-->
+    <!--android:visibility="invisible" />-->
 
-    <ImageView
-        android:id="@+id/app_logo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:scaleType="fitXY"
-        android:visibility="invisible" />
+    <!--<ImageView-->
+    <!--android:id="@+id/radio_app_logo"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="355sp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_alignParentStart="true"-->
+    <!--android:scaleType="fitXY"-->
+    <!--android:src="@mipmap/splash_logo"-->
+    <!--android:visibility="invisible" />-->
 
 </RelativeLayout>

@@ -4,16 +4,29 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import cn.yuntk.radio.R
+import cn.yuntk.radio.ibook.XApplication
+import cn.yuntk.radio.ibook.ads.ADConstants
+import cn.yuntk.radio.ibook.ads.AdController
+import cn.yuntk.radio.ibook.ads.LoadEvent
+import cn.yuntk.radio.ibook.fragment.LoadingFragment
 import cn.yuntk.radio.utils.jumpActivity
 import cn.yuntk.radio.utils.log
+import cn.yuntk.radio.utils.registerEventBus
 import cn.yuntk.radio.view.widget.AuthorityDialog
 import cn.yuntk.radio.view.widget.SetPermissionDialog
+import cn.yuntk.radio.viewmodel.MainViewModel
 import com.yanzhenjie.permission.AndPermission
 import com.yanzhenjie.permission.PermissionListener
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 /**
  * Author : Gupingping
@@ -26,11 +39,22 @@ class SplashActivity : AppCompatActivity() {
     private var isForResult: Boolean = false
     private val FORRESULT_CODE: Int = 400
     private val STORAGE_MESSAGE: String = "存储空间"
-
+    private lateinit var loadingFragment: LoadingFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        askPermissions()
+        registerEventBus()
+        val transaction = supportFragmentManager.beginTransaction()
+        loadingFragment = LoadingFragment()
+        transaction.add(R.id.splash_fragment_content, loadingFragment)
+        hideFragment(transaction)
+        transaction.show(loadingFragment)
+        transaction.commitAllowingStateLoss()
+    }
+
+
+    private fun hideFragment(transaction: FragmentTransaction) {
+        transaction.hide(loadingFragment)
     }
 
     private fun askPermissions() {
@@ -120,11 +144,20 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkIn() {
-        Handler(mainLooper).postDelayed({
-            jumpActivity(MainActivity::class.java, null)
-            finish()
-        }, 1000)
+    fun checkIn() {
+        jumpActivity(MainActivity::class.java, null)
+        finish()
+    }
+
+    fun jumpHome() {
+        askPermissions()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun finishActivity(event: LoadEvent) {
+        if (event.isFinish) {
+            jumpHome()
+        }
     }
 }
 

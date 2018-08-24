@@ -1,5 +1,12 @@
 package cn.yuntk.radio.api
 
+import cn.yuntk.radio.Constants.HOST
+import cn.yuntk.radio.Constants.YTK_HOST
+import cn.yuntk.radio.ibook.api.HeaderParams
+import cn.yuntk.radio.ibook.api.Logger
+import cn.yuntk.radio.ibook.api.LoggingInterceptor
+import com.google.gson.Gson
+import okhttp3.Interceptor
 import java.util.concurrent.TimeUnit
 
 import okhttp3.OkHttpClient
@@ -13,10 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Mail : gu12pp@163.com
  */
 object RetrofitFactory {
-    //    private var client: OkHttpClient? = null
-
-    private const val HOST = "http://fm.gerenhao.com/api/open/voice/union/select/"
-
+    //用于请求收音机频道信息的service
     val instance: Retrofit by lazy {
 
         Retrofit.Builder()
@@ -28,18 +32,28 @@ object RetrofitFactory {
                 .addConverterFactory(GsonConverterFactory.create())// 添加Gson转换器
                 .build()
     }
+    //用于请求收音机广告配置信息的service 区别就是添加了header，后台根据header中的project字段和version字段给广告配置
+    //log 过滤 http---- 可以查看请求信息
+    val service: Retrofit by lazy {
 
-
-//    init {
-//        client = OkHttpClient.Builder()
-//                .connectTimeout(9, TimeUnit.SECONDS)
-//                .build()
-//
-//        instance = Retrofit.Builder()
-//                .baseUrl(HOST)
-//                .client(client!!)
-//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // 添加Rx适配器
-//                .addConverterFactory(GsonConverterFactory.create())// 添加Gson转换器
-//                .build()
-//    }
+        Retrofit.Builder()
+                .baseUrl(YTK_HOST)
+                .client(okHttpClient)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // 添加Rx适配器
+                .addConverterFactory(GsonConverterFactory.create())// 添加Gson转换器
+                .build()
+    }
+    private val okHttpClient by lazy {
+        val logging = LoggingInterceptor(Logger())
+        logging.level = LoggingInterceptor.Level.BODY
+        val interceptor = Interceptor { chain ->
+            val request = chain.request().newBuilder().addHeader("X-Client-Info", Gson().toJson(HeaderParams())).build()
+            chain.proceed(request)
+        }
+        OkHttpClient().newBuilder()
+                .addInterceptor(interceptor)
+                .addInterceptor(logging)
+                .connectTimeout(9, TimeUnit.SECONDS)
+                .build()
+    }
 }

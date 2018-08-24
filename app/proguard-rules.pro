@@ -136,3 +136,6 @@
   -keep class com.google.gson.examples.android.model.** { *; }
   -keep class com.google.gson.** { *;}
 
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
+-keep class android.support.**{*;}

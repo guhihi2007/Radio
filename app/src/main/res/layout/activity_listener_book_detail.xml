@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="true"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/my_toolbar_layout"/>
+
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true">
+                <!--可滚出屏幕部分-->
+                <android.support.design.widget.CollapsingToolbarLayout
+                    android:id="@+id/toolbar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    app:layout_scrollFlags="scroll">
+
+                    <include layout="@layout/listener_content_book_detail"/>
+
+                </android.support.design.widget.CollapsingToolbarLayout>
+
+                <!--悬浮的部分-->
+                    <TextView
+                        android:layout_margin="10dip"
+                        android:textStyle="normal"
+                        android:paddingTop="5dip"
+                        android:paddingBottom="5dip"
+                        android:id="@+id/page_skip_tv"
+                        android:text="@string/book_detail_page_skip"
+                        android:gravity="center"
+                        android:background="@drawable/listener_shape_red"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+            </android.support.design.widget.AppBarLayout>
+            <!-- 第三部分:Your Scroll View-->
+            <cn.yuntk.radio.ibook.widget.EmptyRecyclerView
+                android:id="@+id/rv_subject"
+                android:paddingRight="10dip"
+                android:paddingLeft="10dip"
+                android:background="@android:color/white"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </cn.yuntk.radio.ibook.widget.EmptyRecyclerView>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="50dip"
+                app:elevation="6dp"
+                app:pressedTranslationZ="12dp"
+                app:backgroundTint="@color/color_d81e06"
+                android:layout_height="50dip"
+                android:tint="@color/white"
+                android:layout_marginRight="70dip"
+                android:src="@mipmap/listener_listener_icon_order"
+                app:layout_anchor="@id/app_bar"
+                android:layout_gravity="bottom"
+                app:layout_anchorGravity="bottom|end" />
+        </android.support.design.widget.CoordinatorLayout>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+</LinearLayout>

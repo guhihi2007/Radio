@@ -15,7 +15,8 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/iflytek_update_title"
+            android:id="@+id/beta_title"
+            android:tag="beta_title"
             android:layout_width="wrap_content"
             android:layout_height="56dp"
             android:layout_centerVertical="true"
@@ -24,9 +25,22 @@
             android:textAppearance="?android:attr/textAppearanceMediumInverse"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp" />
-
         <TextView
-            android:id="@+id/iflytek_update_content"
+            android:id="@+id/beta_upgrade_feature"
+            android:layout_width="match_parent"
+            android:tag="beta_upgrade_feature"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:lineSpacingExtra="6dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/text_default_color"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/beta_upgrade_info"
+            android:tag="beta_upgrade_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -34,6 +48,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
             android:lineSpacingExtra="6dp"
+            android:visibility="gone"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/text_default_color"
             android:textSize="14sp" />
@@ -50,7 +65,7 @@
                 android:layout_marginRight="15dp">
 
                 <RelativeLayout
-                    android:id="@+id/ifltek_sure"
+                    android:id="@+id/beta_confirm_button"
                     android:layout_width="64dp"
                     android:layout_height="match_parent">
 
@@ -58,6 +73,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
+                        android:tag="beta_confirm_button"
                         android:text="确定"
                         android:textAppearance="?android:attr/textAppearanceMediumInverse"
                         android:textColor="@color/leading_title"
@@ -65,7 +81,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/ifltek_cancel"
+                    android:id="@+id/beta_cancel_button"
                     android:layout_width="64dp"
                     android:layout_height="wrap_content">
 
@@ -74,6 +90,7 @@
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:gravity="center"
+                        android:tag="beta_cancel_button"
                         android:text="取消"
                         android:textAppearance="?android:attr/textAppearanceMediumInverse"
                         android:textColor="@color/leading_title"

@@ -9,8 +9,11 @@ import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import cn.yuntk.radio.Constants;
 import cn.yuntk.radio.base.Presenter;
 import cn.yuntk.radio.bean.FMBean;
+import cn.yuntk.radio.manager.PlayServiceManager;
+import cn.yuntk.radio.utils.SPUtil;
 
 /**
  * Author : Gupingping
@@ -52,20 +55,25 @@ public class FloatViewManager {
         });
     }
 
-    private void ensureMiniPlayer(Context context) {
+    private void ensureMiniPlayer(Activity context) {
         synchronized (this) {
             if (floatView != null) {
                 return;
             }
-            floatView = new FloatView(context.getApplicationContext());
+            floatView = new FloatView(context);
 //            floatView.setLayoutParams(getParams());
             addViewToWindow(floatView);
         }
     }
 
-    public void add(Context context, Presenter presenter,FMBean fmBean) {
+    public void add(Activity context, Presenter presenter, FMBean fmBean) {
         ensureMiniPlayer(context);
         floatView.setPresenter(presenter);
+        floatView.setFMBean(fmBean);
+    }
+
+    public void add(Activity context, FMBean fmBean) {
+        ensureMiniPlayer(context);
         floatView.setFMBean(fmBean);
     }
 
@@ -132,4 +140,18 @@ public class FloatViewManager {
         }
         return null;
     }
+
+
+    //activity onStart() 调用显示悬浮窗
+    public static void show(Activity activity) {
+
+        FloatViewManager.getInstance().attach(activity);
+
+        FMBean fmBean = PlayServiceManager.getListenerFMBean();
+        if (fmBean != null) {
+            FloatViewManager.getInstance().add(activity, fmBean);
+            FloatViewManager.getInstance().floatView.getFloat_play().setSelected(PlayServiceManager.isListenerFMBean());
+        }
+    }
+
 }

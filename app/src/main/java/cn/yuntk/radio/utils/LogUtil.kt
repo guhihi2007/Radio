@@ -1,14 +1,8 @@
 package cn.yuntk.radio.utils
 
-/**
- * Created by Jone on 2018/3/27.
- */
 import android.content.Context
 import android.util.Log
 
-/**
- * Created by luojun on 2017/12/2.
- */
 object LogUtils
 {
     private var isLog = true

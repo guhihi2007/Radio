@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:background="@color/color_d81e06"
+        android:paddingRight="@dimen/common_title__padding_15"
+        android:paddingLeft="@dimen/common_title__padding_15"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_title_height">
+
+        <TextView
+            android:id="@+id/search_tv"
+            android:textSize="15sp"
+            android:textColor="@android:color/white"
+            android:gravity="center_vertical"
+            android:text="@string/string_search"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        <LinearLayout
+            android:id="@+id/comm_back_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/action_bar_height"
+                android:src="@drawable/ab_back"
+                android:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="返回"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/listener_title_tv"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:text="title"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/game_tv"
+            android:textSize="15sp"
+            android:textColor="@android:color/white"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:text="@string/string_game"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

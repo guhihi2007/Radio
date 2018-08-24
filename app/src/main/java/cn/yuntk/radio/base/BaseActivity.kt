@@ -3,6 +3,7 @@ package cn.yuntk.radio.base
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Bundle
@@ -14,7 +15,15 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import cn.yuntk.radio.bean.FMBean
+import cn.yuntk.radio.ibook.XApplication
+import cn.yuntk.radio.ibook.activity.SplashADActivity
+import cn.yuntk.radio.ibook.ads.ADConstants
+import cn.yuntk.radio.ibook.ads.ADConstants.AD_APP_BACKGROUND_TIME
+import cn.yuntk.radio.ibook.util.LogUtils
+import cn.yuntk.radio.ibook.util.NetworkUtils
+import cn.yuntk.radio.ibook.util.SharedPreferencesUtil
 import cn.yuntk.radio.manager.PlayServiceManager
+import cn.yuntk.radio.utils.log
 import cn.yuntk.radio.view.loading.LoadingDialog
 import cn.yuntk.radio.viewmodel.CollectionViewModel
 import cn.yuntk.radio.viewmodel.Injection
@@ -62,6 +71,21 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
 
     override fun onStart() {
         super.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (XApplication.sInstance.isBackGroud) {
+            XApplication.sInstance.isBackGroud = false
+            log("BaseActivity 后台返回")
+            if (SharedPreferencesUtil.getInstance().getBoolean(ADConstants.AD_SPLASH_STATUS) && needSplashAD()) {
+                val intent = Intent(this, SplashADActivity::class.java)
+                startActivity(intent)
+            } else {
+                log("BaseActivity 后台返回 广告开关==" + SharedPreferencesUtil.getInstance().getBoolean(ADConstants.AD_SPLASH_STATUS) + "" +
+                        ",时间到了没有==" + needSplashAD())
+            }
+        }
     }
 
     override fun onStop() {
@@ -113,12 +137,27 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
     }
 
-    protected fun dismissDialog(){
+    protected fun dismissDialog() {
         loadingDialog.dismiss()
     }
 
-    protected fun showLoading(){
+    protected fun showLoading() {
         loadingDialog.show()
+    }
+
+
+    /**
+     * 进入后台，再次进入app是否展示开屏广告
+     * 时间超过间隔，并且有网络才展示
+     *
+     * @return
+     */
+    fun needSplashAD(): Boolean {
+        val current = System.currentTimeMillis()
+        val background = SharedPreferencesUtil.getInstance().getLong(AD_APP_BACKGROUND_TIME, 0)
+        val gapTime = (current - background) / 1000
+        val serverTime = SharedPreferencesUtil.getInstance().getLong(ADConstants.AD_SPREAD_PERIOD, 5)
+        return gapTime >= serverTime && serverTime != 0L && NetworkUtils.isConnected(XApplication.getsInstance())
     }
 
 }

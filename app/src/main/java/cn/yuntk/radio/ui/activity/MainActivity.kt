@@ -1,15 +1,11 @@
 package cn.yuntk.radio.ui.activity
 
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.databinding.ObservableField
-import android.databinding.ViewDataBinding
-import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.*
 import cn.yuntk.radio.BuildConfig
 import cn.yuntk.radio.Constants
@@ -20,6 +16,7 @@ import cn.yuntk.radio.Constants.FOREIGN_CODE
 import cn.yuntk.radio.Constants.HISTORY
 import cn.yuntk.radio.Constants.NATION_CODE
 import cn.yuntk.radio.Constants.NET_CODE
+import cn.yuntk.radio.Constants.NOVEL
 import cn.yuntk.radio.Constants.PROVINCE_CODE
 import cn.yuntk.radio.Constants.TIMIMG
 import cn.yuntk.radio.Constants.UPDATE
@@ -33,20 +30,24 @@ import cn.yuntk.radio.bean.ChannelBean
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.databinding.ActivityMainBinding
+import cn.yuntk.radio.ibook.MainActivity
+import cn.yuntk.radio.ibook.ads.ADConstants
+import cn.yuntk.radio.ibook.ads.AdController
+import cn.yuntk.radio.ibook.service.Actions
+import cn.yuntk.radio.ibook.service.AudioPlayer
+import cn.yuntk.radio.ibook.service.FloatViewService
 import cn.yuntk.radio.view.FloatViewManager
 import cn.yuntk.radio.manager.PlayServiceManager
-import cn.yuntk.radio.manager.UpdateManager
 import cn.yuntk.radio.play.QuitTimer
 import cn.yuntk.radio.service.LockService
 import cn.yuntk.radio.ui.fragment.FragmentByChannelCode
 import cn.yuntk.radio.utils.*
 import cn.yuntk.radio.view.TimingDialog
 import cn.yuntk.radio.view.widget.ExitDialog
-import cn.yuntk.radio.viewmodel.Injection
 import cn.yuntk.radio.viewmodel.MainViewModel
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI
 import com.alibaba.sdk.android.feedback.util.IUnreadCountCallback
-import com.tencent.bugly.crashreport.CrashReport
+import com.tencent.bugly.beta.Beta
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import io.vov.vitamio.Vitamio
@@ -60,6 +61,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
     private var dialog: TimingDialog? = null
     private var field = ObservableField<FMBean>()
     private var mainViewModel: MainViewModel = MainViewModel()
+    private lateinit var builder: AdController
+    //是否退出app
     override fun initView() {
         /**--------应用必要初始化--------*/
         SPUtil.init(this)
@@ -69,11 +72,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         }
         startService(Intent(this, LockService::class.java))
         FeedbackAPI.init(application, Constants.FEED_BACK_KEY, Constants.FEED_BACK_SECRET)
-        if (!BuildConfig.DEBUG) {
-            log("CrashReport/UMConfigure init ")
-            CrashReport.initCrashReport(application, Constants.BUGLY_KEY, false)
-            UMConfigure.init(application, Constants.UMENG_KEY, BuildConfig.FLAVOR, UMConfigure.DEVICE_TYPE_PHONE, null)
-        }
+        log("CrashReport/UMConfigure init ")
+        UMConfigure.init(application, Constants.UMENG_KEY, BuildConfig.FLAVOR, UMConfigure.DEVICE_TYPE_PHONE, null)
         /**--------应用初必要始化--------*/
 
         /**--------布局初始化--------*/
@@ -93,7 +93,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
             nvMenuRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
             nvMenuRecyclerView.adapter = BaseDataBindingAdapter<ChannelBean>(this@MainActivity,
                     R.layout.item_navigation, this@MainActivity, mainViewModel.channelBean)
-
 //            navView.apply {
 //                setNavigationItemSelectedListener(this@MainActivity)
 //                itemIconTintList = null//设置可以使抽屉显示icon自己的颜色
@@ -103,31 +102,53 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
 
         registerEventBus()
 
+
         /**--------获取反馈回复--------*/
+
         getFeedbackUnreadCounts()
     }
 
 
     override fun loadData() {
         changeFragment(FragmentByChannelCode.newInstance(channelList[0].name, channelList[0].chanelCode), channelList[0].name)
-        UpdateManager.check(this, true)
+        //请求最新版本
+        Beta.checkUpgrade(false, true)
+
+        mainViewModel.loadAdConfig()
+        builder = AdController.Builder(this@MainActivity)
+                .setContainer(mBinding.llAd)
+                .setPage(ADConstants.HOME_PAGE_NEW)
+                .create()
     }
 
 
     override fun onStart() {
         super.onStart()
+        //如果在收听广播就显示广播悬浮窗
+        if (PlayServiceManager.isListenerFMBean()) {
+            //悬浮框内数据
+            field.set(SPUtil.getInstance().getObject(Constants.LAST_PLAY, FMBean::class.java))
+//            if (field.get() != null) {
+//                FloatViewManager.getInstance().attach(this)
+//                FloatViewManager.getInstance().add(this, this, field.get())
+//            }
+            FloatViewManager.show(this)
 
-        //悬浮框内数据
-        field.set(SPUtil.getInstance().getObject(Constants.LAST_PLAY, FMBean::class.java))
-        if (field.get() != null)
-            FloatViewManager.getInstance().attach(this)
-        FloatViewManager.getInstance().add(this, this, field.get())
+        } else if (AudioPlayer.get().isPlaying) {
+            FloatViewService.startCommand(this, Actions.SERVICE_VISABLE_WINDOW)
+        } else {
+            FloatViewService.startCommand(this, Actions.SERVICE_GONE_WINDOW)
+
+        }
     }
 
     override fun onResume() {
         super.onResume()
         //友盟统计
         MobclickAgent.onResume(this)
+        //广告展示
+
+        builder.show()
     }
 
     override fun onPause() {
@@ -139,7 +160,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
     override fun onStop() {
         super.onStop()
         FloatViewManager.getInstance().detach(this)
-
     }
 
     override fun onItemClick(view: View?, item: ChannelBean) {
@@ -178,7 +198,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
                 FeedbackAPI.openFeedbackActivity()
             }
             UPDATE -> {
-                UpdateManager.check(this, false)
+                Beta.checkUpgrade()
+            }
+            NOVEL -> {
+                jumpActivity(MainActivity::class.java, null)
             }
         }
     }
@@ -212,12 +235,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
     fun isListening(event: ListenEvent) {
         log("MainActivity 接受广播，更新悬浮窗按钮状态==$event")
         FloatViewManager.getInstance().apply {
-            if (event.fmBean != null)
+            if (event.fmBean != null && floatingView != null) {
                 floatingView.setFMBean(event.fmBean)
-            floatingView.float_play.isSelected = event.status == Constants.STATE_PLAYING
+                floatingView.float_play.isSelected = event.status == Constants.STATE_PLAYING
+            }
         }
     }
-
 //    override fun onNavigationItemSelected(item: MenuItem): Boolean {
 //        when (item.itemId) {
 //            R.id.nav_nation_code -> replaceFragment(item.title.toString(), NATION_CODE)
@@ -293,6 +316,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
 
     override fun onDestroy() {
         super.onDestroy()
+        LockService.status = "stop"//改写soup服务状态
+        builder.destroy()
         PlayServiceManager.unbind(this)
         unRegisterEventBus()
     }

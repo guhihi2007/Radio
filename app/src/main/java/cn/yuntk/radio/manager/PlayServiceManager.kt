@@ -7,6 +7,10 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import cn.yuntk.radio.bean.FMBean
+import cn.yuntk.radio.ibook.base.ActivityManager
+import cn.yuntk.radio.ibook.service.Actions
+import cn.yuntk.radio.ibook.service.AudioPlayer
+import cn.yuntk.radio.ibook.service.FloatViewService
 import cn.yuntk.radio.service.MyPlayServiceBinder
 import cn.yuntk.radio.service.PlayService
 import cn.yuntk.radio.utils.LT
@@ -51,24 +55,49 @@ object PlayServiceManager {
         "bind isBind=$isBind".logE(LT.RadioNet)
     }
 
+    @JvmStatic
+
     fun play(fmBean: FMBean, context: Activity) {
+        //收听频道前，如果小说不是空闲状态就停止
+        if (!AudioPlayer.get().isIdle) {
+            AudioPlayer.get().stopPlayer()
+        }
+        if (FloatViewService.isAddToWindow())
+            FloatViewService.startCommand(context, Actions.SERVICE_GONE_WINDOW)
         playService?.play(fmBean, context)
     }
 
+    fun stop() {
+        playService?.stop()
+    }
+
+    @JvmStatic
+
     fun pauseContinue() {
+        //收听频道前，如果小说不是空闲状态就停止
+        if (!AudioPlayer.get().isIdle) {
+            AudioPlayer.get().stopPlayer()
+        }
         playService?.playPause()
     }
 
+    @JvmStatic
     fun getListenerFMBean(): FMBean? {
         return playService?.getCurrentFMBean()
     }
 
+    @JvmStatic
     fun getListenerState(): Int {
         return playService?.getListenerState() ?: 0
     }
 
+    @JvmStatic
     fun isListenerFMBean(): Boolean {
         return playService?.isPlaying() ?: false
+    }
+
+    fun isListenerIdle(): Boolean {
+        return playService?.isIdle() ?: false
     }
 
     fun getPageList(): List<FMBean> {

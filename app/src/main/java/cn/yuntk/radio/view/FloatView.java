@@ -1,5 +1,6 @@
 package cn.yuntk.radio.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -11,11 +12,16 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import cn.yuntk.radio.Constants;
 import cn.yuntk.radio.R;
 import cn.yuntk.radio.base.Presenter;
 import cn.yuntk.radio.bean.FMBean;
+import cn.yuntk.radio.manager.PlayServiceManager;
+import cn.yuntk.radio.ui.activity.ListenerFMBeanActivity;
+import cn.yuntk.radio.utils.SPUtil;
 import cn.yuntk.radio.utils.SystemUtils;
-import cn.yuntk.radio.utils.Lg;
+
+import static cn.yuntk.radio.utils.BaseActivityExtendKt.jumpActivity;
 
 /**
  * Author : Gupingping
@@ -39,9 +45,11 @@ public class FloatView extends FrameLayout implements View.OnClickListener, View
     private ImageView float_play;
     private TextView float_fm, float_text;
     private Presenter presenter;
+    private Activity mContext;
 
-    public FloatView(Context context) {
+    public FloatView(Activity context) {
         this(context, null);
+        mContext = context;
         view = inflate(context, R.layout.float_window, this);
         ll_out = view.findViewById(R.id.ll_out);
         float_play = view.findViewById(R.id.float_play);
@@ -104,6 +112,22 @@ public class FloatView extends FrameLayout implements View.OnClickListener, View
         //回调给外层
         if (presenter != null) {
             presenter.onClick(v);
+            return;
+        }
+        FMBean fmBean = SPUtil.getInstance().getObject(Constants.LAST_PLAY, FMBean.class);
+        switch (v.getId()) {
+            case R.id.ll_out:
+                jumpActivity(mContext, ListenerFMBeanActivity.class, fmBean);
+                break;
+            case R.id.float_play:
+                v.setSelected(!v.isSelected());
+                int state = PlayServiceManager.getListenerState();
+                if (state == Constants.STATE_IDLE || state == Constants.STATE_PAUSE) {
+                    PlayServiceManager.play(fmBean, mContext);
+                } else {
+                    PlayServiceManager.pauseContinue();
+                }
+                break;
         }
     }
 
@@ -153,8 +177,8 @@ public class FloatView extends FrameLayout implements View.OnClickListener, View
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.TOP | Gravity.END;
-        params.topMargin=mScreenHeight/2;
-        params.rightMargin=200;
+        params.topMargin = mScreenHeight / 2;
+        params.rightMargin = 200;
 //        params.setMargins(13, params.topMargin, params.rightMargin, 56);
         return params;
     }

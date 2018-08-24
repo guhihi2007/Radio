@@ -9,32 +9,44 @@ import java.io.File
  * Author : Gupingping
  * Date : 2018/7/15
  * Mail : gu12pp@163.com
+ * 项目说明:一开始收音机是一个独立的应用，用的是MVVM框架，
+ * 后来要集成懒人听小说，就直接把项目拷贝过来，懒人听小说
+ * 代码在一个独立的文件夹 ibook 内，懒人听小说作者刘学平
  */
 object Constants {
+    /**
+     * 收音机频道地址
+     */
+    const val HOST = "http://fm.gerenhao.com/api/open/voice/union/select/"
+    /**
+     * 云天空配置地址
+     */
+    const val YTK_HOST = "http://114.215.47.46:8080/"
 
     const val CHANNEL_CODE = "channel_code" //fragment 跳转时Bundle KEY
     const val CHANNEL_NAME = "channel_name" //fragment 跳转时Bundle KEY
-    val TEMP_DIR = Environment.getExternalStorageDirectory().absolutePath + File.separator + "11gppTemp"
-    val SAVE_DIR = Environment.getExternalStorageDirectory().absolutePath + File.separator + "11gppRadio"
-    val PREPARING_FMBEAN = "preparing_fmbean"
+
+    const val KEY_SERIALIZABLE = "key_serializable"//activity 跳转时Intent serializable KEY
+
+    //首页抽屉列表对应字段
     const val NATION_CODE = "73" //全国频道
     const val PROVINCE_CODE = "87"//省市频道
     const val FOREIGN_CODE = "624"//国外频道
     const val NET_CODE = "698"//网络频道
-    const val KEY_SERIALIZABLE = "key_serializable"//activity 跳转时Intent serializable KEY
-
     const val TIMIMG = "timimg"
     const val COLLECTION = "collection"
     const val HISTORY = "history"
     const val FEEDBACK = "feedback"
     const val UPDATE = "update"
     const val ABOUTUS = "about_us"
-
+    const val NOVEL = "novel"
+    //首页抽屉列表
     var channelList = ObservableArrayList<ChannelBean>().apply {
         add(ChannelBean("国家电台", NATION_CODE, R.mipmap.icon_nation))
         add(ChannelBean("省市电台", PROVINCE_CODE, R.mipmap.icon_province))
         add(ChannelBean("国外电台", FOREIGN_CODE, R.mipmap.icon_foreign))
         add(ChannelBean("网络电台", NET_CODE, R.mipmap.icon_net))
+        add(ChannelBean("小说大全", NOVEL, R.mipmap.ic_launcher))
         add(ChannelBean("设置", "-1", -1))
         add(ChannelBean("定时关闭", TIMIMG, R.mipmap.icon_timingclose))
         add(ChannelBean("收藏管理", COLLECTION, R.mipmap.icon_favorite))
@@ -58,6 +70,6 @@ object Constants {
     const val FEED_BACK_SECRET = "1c83a8f067e09ff796c23751a547b74a"
     const val BUGLY_KEY = "cfa043fff6"
     const val UMENG_KEY = "5b6a5dc0b27b0a590b000106"
-
+    //startActivityForResult 返回码
     const val SET_NET_CODE = 1111
 }
