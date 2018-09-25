@@ -25,6 +25,7 @@ import cn.yuntk.radio.view.widget.SetPermissionDialog
 import cn.yuntk.radio.viewmodel.MainViewModel
 import com.yanzhenjie.permission.AndPermission
 import com.yanzhenjie.permission.PermissionListener
+import io.vov.vitamio.Vitamio
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -74,7 +75,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun sendRequest() {
         AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
-//                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .callback(permissionListener).start()
     }
@@ -145,6 +146,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     fun checkIn() {
+        Vitamio.isInitialized(this)
         jumpActivity(MainActivity::class.java, null)
         finish()
     }

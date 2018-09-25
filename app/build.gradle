@@ -79,40 +79,205 @@ android {
 
 
     productFlavors {
-//        _yuntk {}
-//        _baidu {}
-//        _360 {}
-//        _xiaomi {}
-//        _yingyongbao {}
-//        _oppo {}
-//        _huawei {}
-//        _lenovo {}
-//        _ziyong {}
-//        _vivo {}
-//        _meizu {}
-//        _anzhi {}
-//        productFlavors.all {
-//            flavor -> flavor.manifestPlaceholders = [RADIO_CHANNEL_VALUE: name]
-//        }
+        Raido_anzhi{
+            //渠道
+            buildConfigField "String", "APP_CHANNEL", '"_anzhi"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
+            //广告
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
+
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
+            buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
+
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+        }
+        Raido_lenovo{
+            //渠道
+            buildConfigField "String", "APP_CHANNEL", '"_lenovo"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
+            //广告
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
+
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
+            buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
+
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+        }
+        Raido_oppo{
+            //渠道
+            buildConfigField "String", "APP_CHANNEL", '"_oppo"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
+            //广告
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
+
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
+            buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
+
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+        }
+        Raido_vivo{
+            //渠道
+            buildConfigField "String", "APP_CHANNEL", '"_vivo"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
+            //广告
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
+
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
+            buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
+
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+        }
         Raido_360{
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_360"'
-            buildConfigField "String", "umengKey", '"5b03e985a40fa34fb2000074"'
-            buildConfigField "String", "buglyKey", '"65f523d8c4"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
             //广告
-            buildConfigField "String", "GDT_APP_KEY", '"1106846041"'
-            buildConfigField "String", "GDT_INSERT_ID", '"6020432461457403"'
-            buildConfigField "String", "GDT_SPLASH_ID", '"6060933411456482"'
-            buildConfigField "String", "GDT_BANNER_ID", '"9000235441352411"'
-            buildConfigField "String", "GDT_NATIVE_AD", '"1010230471553430"'
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
 
-            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~2438648667"'
-            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/5930460677"'
-            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/6240068977"'
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
-            applicationId 'cn.yuntk.novel.reader'
-            manifestPlaceholders = [app_name_channel    : "reader收音机"]
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "收音机有声电台"]
+        }
+        Raido_xiaomi{
+            //渠道
+            buildConfigField "String", "APP_CHANNEL", '"_xiaomi"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
+            //广告
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
+
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
+            buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
+
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "收音机-有声电台"]
+        }
+        Raido_yingyongbao{
+            //渠道
+            buildConfigField "String", "APP_CHANNEL", '"_yingyongbao"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
+            //广告
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
+
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
+            buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
+
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+        }
+        Raido_baidu{
+            //渠道
+            buildConfigField "String", "APP_CHANNEL", '"_baidu"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
+            //广告
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
+
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
+            buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
+
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+        }
+        Raido_huawei{
+            //渠道
+            buildConfigField "String", "APP_CHANNEL", '"_huawei"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
+            //广告
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
+
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
+            buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
+
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+        }
+        Raido_meizu{
+            //渠道
+            buildConfigField "String", "APP_CHANNEL", '"_meizu"'
+            buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
+            buildConfigField "String", "buglyKey", '"cfa043fff6"'
+            //广告
+            buildConfigField "String", "GDT_APP_KEY", '"1107514091"'
+            buildConfigField "String", "GDT_INSERT_ID", '"6030233727068589"'
+            buildConfigField "String", "GDT_SPLASH_ID", '"7080634777460578"'
+            buildConfigField "String", "GDT_BANNER_ID", '"3000335737867567"'
+            buildConfigField "String", "GDT_NATIVE_AD", '"2030839797162516"'
+
+            buildConfigField "String", "AD_GOOGLE_APPID ", '"ca-app-pub-2144172051563531~4754476693"'
+            buildConfigField "String", "AD_GOOGLE_BANNER", '"ca-app-pub-2144172051563531/7705015613"'
+            buildConfigField "String", "AD_GOOGLE_INSERT", '"ca-app-pub-2144172051563531/1877973860"'
+            buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
+
+            applicationId 'cn.yuntk.radio'
+            manifestPlaceholders = [app_name_channel    : "收音机-广播电台"]
         }
         greendao {
             schemaVersion 1

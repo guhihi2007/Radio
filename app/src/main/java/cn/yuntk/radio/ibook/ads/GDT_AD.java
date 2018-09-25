@@ -22,6 +22,7 @@ import com.qq.e.ads.splash.SplashADListener;
 import com.qq.e.comm.constants.AdPatternType;
 import com.qq.e.comm.pi.AdData;
 import com.qq.e.comm.util.AdError;
+
 import cn.yuntk.radio.ibook.XApplication;
 import cn.yuntk.radio.ui.activity.SplashActivity;
 import cn.yuntk.radio.ibook.util.LogUtils;
@@ -48,6 +49,7 @@ public class GDT_AD extends AbsADParent {
     private NativeAD nativeAD;
     private NativeExpressAD nativeExpressAD;
     private NativeExpressADView nativeExpressADView;
+    private boolean isShown;//是否显示开屏广告
 
     @Override
     protected void showAdView(final AD.AdType type) {
@@ -97,7 +99,7 @@ public class GDT_AD extends AbsADParent {
 
     /**
      * 闪屏广告
-     * */
+     */
     private void showSplashView() {
 
         splashAD = new SplashAD(mActivity, mContainer, mSkipVew, GDT_APP_KEY, ADConstants.GDT_SPLASH_ID, new SplashADListener() {
@@ -120,6 +122,9 @@ public class GDT_AD extends AbsADParent {
             @Override
             public void onNoAD(AdError adError) {
                 XApplication.isHandle = true;
+                if (isShown) {
+                    return;
+                }
                 if (null != mActivity) {
                     if (mLogo != null) {
                         mLogo.setVisibility(View.GONE);
@@ -139,7 +144,7 @@ public class GDT_AD extends AbsADParent {
             @Override
             public void onADPresent() {
                 XApplication.isHandle = true;
-
+                isShown = true;
                 if (null != mActivity) {
                     mSkipVew.setVisibility(View.VISIBLE);
                     if (mLogo != null) {
@@ -354,108 +359,104 @@ public class GDT_AD extends AbsADParent {
 
     /**
      * 原生广告(初始化)NativeExpressAD
-     * */
+     */
     private void refreshAd() {
 
-            /**
-             *  如果选择支持视频的模版样式，请使用{@link Constants#NativeExpressSupportVideoPosID}
-             */
-            nativeExpressAD = new NativeExpressAD(mActivity,
-                    new com.qq.e.ads.nativ.ADSize(com.qq.e.ads.nativ.ADSize.AUTO_HEIGHT, com.qq.e.ads.nativ.ADSize.FULL_WIDTH),
-                    ADConstants.GDT_APP_KEY,
-                    ADConstants.GDT_NATIVE_ID,
-                    new NativeExpressAD.NativeExpressADListener() {
-                @Override
-                public void onNoAD(AdError adError) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onNoAD"+adError.getErrorMsg());
-                }
-
-                @Override
-                public void onADLoaded(List<NativeExpressADView> list) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onADLoaded");
-                    // 释放前一个展示的NativeExpressADView的资源
-                    if (nativeExpressADView != null) {
-                        nativeExpressADView.destroy();
+        /**
+         *  如果选择支持视频的模版样式，请使用{@link Constants#NativeExpressSupportVideoPosID}
+         */
+        nativeExpressAD = new NativeExpressAD(mActivity,
+                new com.qq.e.ads.nativ.ADSize(com.qq.e.ads.nativ.ADSize.AUTO_HEIGHT, com.qq.e.ads.nativ.ADSize.FULL_WIDTH),
+                ADConstants.GDT_APP_KEY,
+                ADConstants.GDT_NATIVE_ID,
+                new NativeExpressAD.NativeExpressADListener() {
+                    @Override
+                    public void onNoAD(AdError adError) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onNoAD" + adError.getErrorMsg());
                     }
 
-                    if (mContainer.getVisibility() != View.VISIBLE) {
-                        mContainer.setVisibility(View.VISIBLE);
+                    @Override
+                    public void onADLoaded(List<NativeExpressADView> list) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onADLoaded");
+                        // 释放前一个展示的NativeExpressADView的资源
+                        if (nativeExpressADView != null) {
+                            nativeExpressADView.destroy();
+                        }
+
+                        if (mContainer.getVisibility() != View.VISIBLE) {
+                            mContainer.setVisibility(View.VISIBLE);
+                        }
+
+                        if (mContainer.getChildCount() > 0) {
+                            mContainer.removeAllViews();
+                        }
+
+                        nativeExpressADView = list.get(0);
+                        LogUtils.showLog(TAG + "onADLoaded, video info: " + getAdInfo(nativeExpressADView));
+                        if (nativeExpressADView.getBoundData().getAdPatternType() == AdPatternType.NATIVE_VIDEO) {
+                            nativeExpressADView.setMediaListener(mediaListener);
+                        }
+                        // 广告可见才会产生曝光，否则将无法产生收益。
+                        mContainer.addView(nativeExpressADView);
+                        nativeExpressADView.render();
                     }
 
-                    if (mContainer.getChildCount() > 0) {
-                        mContainer.removeAllViews();
+                    @Override
+                    public void onRenderFail(NativeExpressADView nativeExpressADView) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onRenderFail");
                     }
 
-                    nativeExpressADView = list.get(0);
-                    LogUtils.showLog(TAG+"onADLoaded, video info: " + getAdInfo(nativeExpressADView));
-                    if (nativeExpressADView.getBoundData().getAdPatternType() == AdPatternType.NATIVE_VIDEO) {
-                        nativeExpressADView.setMediaListener(mediaListener);
+                    @Override
+                    public void onRenderSuccess(NativeExpressADView nativeExpressADView) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onRenderSuccess");
+
                     }
-                    // 广告可见才会产生曝光，否则将无法产生收益。
-                    mContainer.addView(nativeExpressADView);
-                    nativeExpressADView.render();
-                }
 
-                @Override
-                public void onRenderFail(NativeExpressADView nativeExpressADView) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onRenderFail");
-                }
+                    @Override
+                    public void onADExposure(NativeExpressADView nativeExpressADView) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onADExposure");
 
-                @Override
-                public void onRenderSuccess(NativeExpressADView nativeExpressADView) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onRenderSuccess");
+                    }
 
-                }
+                    @Override
+                    public void onADClicked(NativeExpressADView nativeExpressADView) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onADClicked");
 
-                @Override
-                public void onADExposure(NativeExpressADView nativeExpressADView) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onADExposure");
+                    }
 
-                }
+                    @Override
+                    public void onADClosed(NativeExpressADView nativeExpressADView) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onADClosed");
 
-                @Override
-                public void onADClicked(NativeExpressADView nativeExpressADView) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onADClicked");
+                    }
 
-                }
+                    @Override
+                    public void onADLeftApplication(NativeExpressADView nativeExpressADView) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onADLeftApplication");
 
-                @Override
-                public void onADClosed(NativeExpressADView nativeExpressADView) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onADClosed");
+                    }
 
-                }
+                    @Override
+                    public void onADOpenOverlay(NativeExpressADView nativeExpressADView) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onADOpenOverlay");
 
-                @Override
-                public void onADLeftApplication(NativeExpressADView nativeExpressADView) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onADLeftApplication");
+                    }
 
-                }
+                    @Override
+                    public void onADCloseOverlay(NativeExpressADView nativeExpressADView) {
+                        LogUtils.i(TAG, "initGDT_NativeExpressAD_onADCloseOverlay");
 
-                @Override
-                public void onADOpenOverlay(NativeExpressADView nativeExpressADView) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onADOpenOverlay");
-
-                }
-
-                @Override
-                public void onADCloseOverlay(NativeExpressADView nativeExpressADView) {
-                    LogUtils.i(TAG, "initGDT_NativeExpressAD_onADCloseOverlay");
-
-                }
-            }); // 这里的Context必须为Activity
-//            nativeExpressAD.setVideoOption(new VideoOption.Builder()
-//                    .setAutoPlayPolicy(VideoOption.AutoPlayPolicy.WIFI) // 设置什么网络环境下可以自动播放视频
-//                    .setAutoPlayMuted(true) // 设置自动播放视频时，是否静音
-//                    .build()); // setVideoOption是可选的，开发者可根据需要选择是否配置
-
-            nativeExpressAD.loadAD(1);
-            nativeExpressAD.setBrowserType(BrowserType.Default);
-            nativeExpressAD.setDownAPPConfirmPolicy(DownAPPConfirmPolicy.Default);
+                    }
+                }); // 这里的Context必须为Activity
+        nativeExpressAD.loadAD(1);
+        nativeExpressAD.setBrowserType(BrowserType.Default);
+        nativeExpressAD.setDownAPPConfirmPolicy(DownAPPConfirmPolicy.Default);
 
     }
 
     /**
      * 获取广告数据
+     *
      * @param nativeExpressADView
      * @return
      */
@@ -476,7 +477,7 @@ public class GDT_AD extends AbsADParent {
 
     /**
      * 获取播放器实例
-     *
+     * <p>
      * 仅当视频回调{@link NativeExpressMediaListener#onVideoInit(NativeExpressADView)}调用后才会有返回值
      *
      * @param videoPlayer

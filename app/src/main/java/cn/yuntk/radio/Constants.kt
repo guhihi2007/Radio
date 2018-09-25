@@ -46,7 +46,7 @@ object Constants {
         add(ChannelBean("省市电台", PROVINCE_CODE, R.mipmap.icon_province))
         add(ChannelBean("国外电台", FOREIGN_CODE, R.mipmap.icon_foreign))
         add(ChannelBean("网络电台", NET_CODE, R.mipmap.icon_net))
-        add(ChannelBean("小说大全", NOVEL, R.mipmap.ic_launcher))
+        add(ChannelBean("小说大全", NOVEL, R.mipmap.icon_reader))
         add(ChannelBean("设置", "-1", -1))
         add(ChannelBean("定时关闭", TIMIMG, R.mipmap.icon_timingclose))
         add(ChannelBean("收藏管理", COLLECTION, R.mipmap.icon_favorite))

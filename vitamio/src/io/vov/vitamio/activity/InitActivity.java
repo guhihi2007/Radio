@@ -26,8 +26,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.WindowManager;
 
-import io.vov.vitamio.Vitamio;
-
 import java.lang.ref.WeakReference;
 
 public class InitActivity extends Activity {

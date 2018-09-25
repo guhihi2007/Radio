@@ -22,13 +22,11 @@ import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.BuglyStrategy;
 import com.tencent.bugly.beta.Beta;
-import com.umeng.commonsdk.UMConfigure;
 
 import cn.yuntk.radio.BuildConfig;
 import cn.yuntk.radio.R;
 import cn.yuntk.radio.ReadActivityLifecycleCallbacks;
 import cn.yuntk.radio.ibook.ads.ADConstants;
-import cn.yuntk.radio.ibook.base.ForegroundObserver;
 import cn.yuntk.radio.ibook.common.Constants;
 import cn.yuntk.radio.ibook.component.AppComponent;
 import cn.yuntk.radio.ibook.component.DaggerAppComponent;
@@ -39,6 +37,7 @@ import cn.yuntk.radio.ibook.module.BookApiModule;
 import cn.yuntk.radio.ibook.util.GlobalApp;
 import cn.yuntk.radio.ibook.util.NetworkUtils;
 import cn.yuntk.radio.ibook.util.SharedPreferencesUtil;
+import io.vov.vitamio.Vitamio;
 
 import java.io.File;
 
@@ -74,28 +73,10 @@ public class XApplication extends Application {
         setCacheFile();
         initPrefs();
         mMainThreadHandler = new Handler();
-
-        //初始化Google广告
-        MobileAds.initialize(this, ADConstants.AD_GOOGLE_APPID);
         //注册生命周期回调，用于后台返回展示广告
         registerActivityLifecycleCallbacks(new ReadActivityLifecycleCallbacks());
-        //bugly版本升级配置和初始化
-        BuglyStrategy strategy = configUpgradeInfo();
-        Bugly.init(this, BUGLY_KEY, BuildConfig.DEBUG, strategy);
 
-    }
 
-    @NonNull
-    private BuglyStrategy configUpgradeInfo() {
-        Beta.autoInit = true;
-        Beta.autoCheckUpgrade = true;
-        Beta.showInterruptedStrategy = true;
-        Beta.autoDownloadOnWifi = true;
-        Beta.enableNotification = true;
-        Beta.upgradeDialogLayoutId = R.layout.autoupdate_dialog_layout;
-        BuglyStrategy strategy = new BuglyStrategy();
-        strategy.setAppChannel(BuildConfig.FLAVOR);
-        return strategy;
     }
 
     static {

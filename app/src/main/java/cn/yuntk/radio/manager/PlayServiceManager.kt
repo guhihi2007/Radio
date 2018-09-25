@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import cn.yuntk.radio.bean.FMBean
-import cn.yuntk.radio.ibook.base.ActivityManager
 import cn.yuntk.radio.ibook.service.Actions
 import cn.yuntk.radio.ibook.service.AudioPlayer
 import cn.yuntk.radio.ibook.service.FloatViewService
@@ -72,7 +71,6 @@ object PlayServiceManager {
     }
 
     @JvmStatic
-
     fun pauseContinue() {
         //收听频道前，如果小说不是空闲状态就停止
         if (!AudioPlayer.get().isIdle) {

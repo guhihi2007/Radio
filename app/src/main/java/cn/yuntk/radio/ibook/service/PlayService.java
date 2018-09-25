@@ -4,7 +4,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -30,7 +32,7 @@ public class PlayService extends Service {
         Log.i(TAG, "onCreate: " + getClass().getSimpleName());
         AudioPlayer.get().init(this);
         MediaSessionManager.get().init(this);
-        Notifier.get().init(this);
+//        Notifier.get().init(this);
         QuitTimer.get().init(this);
     }
 
@@ -62,6 +64,7 @@ public class PlayService extends Service {
     private void stop() {
         AudioPlayer.get().stopPlayer();
         QuitTimer.get().stop();
-        Notifier.get().cancelAll();
+//        Notifier.get().cancelAll();
+
     }
 }

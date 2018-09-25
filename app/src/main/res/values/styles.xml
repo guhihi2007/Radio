@@ -29,11 +29,14 @@
         <item name="android:windowExitAnimation">@anim/dialog_out</item>
     </style>
     <!--Splash界面配置主题-->
+    <!--windowDisablePreview 适配8.0启动activity不崩溃，
+    因为当前SDK=27，activity设置了竖屏展示且theme需要透明，
+    8.0后只有全屏不透明的activity才能设置方向锁定，所以，主题要透明且要设置竖直方向用这个theme-->
     <style name="AppTheme.NoActionBar.FullScreen" parent="AppTheme.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@color/transparent</item>
     </style>

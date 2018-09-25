@@ -10,6 +10,7 @@ import android.view.*
 import cn.yuntk.radio.BuildConfig
 import cn.yuntk.radio.Constants
 import cn.yuntk.radio.Constants.ABOUTUS
+import cn.yuntk.radio.Constants.BUGLY_KEY
 import cn.yuntk.radio.Constants.COLLECTION
 import cn.yuntk.radio.Constants.FEEDBACK
 import cn.yuntk.radio.Constants.FOREIGN_CODE
@@ -47,6 +48,9 @@ import cn.yuntk.radio.view.widget.ExitDialog
 import cn.yuntk.radio.viewmodel.MainViewModel
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI
 import com.alibaba.sdk.android.feedback.util.IUnreadCountCallback
+import com.google.android.gms.ads.MobileAds
+import com.tencent.bugly.Bugly
+import com.tencent.bugly.BuglyStrategy
 import com.tencent.bugly.beta.Beta
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
@@ -73,8 +77,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         startService(Intent(this, LockService::class.java))
         FeedbackAPI.init(application, Constants.FEED_BACK_KEY, Constants.FEED_BACK_SECRET)
         log("CrashReport/UMConfigure init ")
-        UMConfigure.init(application, Constants.UMENG_KEY, BuildConfig.FLAVOR, UMConfigure.DEVICE_TYPE_PHONE, null)
+        UMConfigure.init(application, Constants.UMENG_KEY, BuildConfig.FLAVOR.substring(BuildConfig.FLAVOR.indexOf("_"), BuildConfig.FLAVOR.length), UMConfigure.DEVICE_TYPE_PHONE, null)
         /**--------应用初必要始化--------*/
+
+        //bugly版本升级配置和初始化
+        val strategy = configUpgradeInfo()
+        Bugly.init(this, BUGLY_KEY, BuildConfig.DEBUG, strategy)
+        //初始化Google广告
+        MobileAds.initialize(this, ADConstants.AD_GOOGLE_APPID)
 
         /**--------布局初始化--------*/
         val toolbar = mBinding.toolbar
@@ -147,7 +157,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         //友盟统计
         MobclickAgent.onResume(this)
         //广告展示
-
         builder.show()
     }
 
@@ -357,4 +366,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         } else
             super.onKeyDown(keyCode, event)
     }
+
+    private fun configUpgradeInfo(): BuglyStrategy {
+        Beta.autoInit = true
+        Beta.autoCheckUpgrade = true
+        Beta.showInterruptedStrategy = true
+        Beta.autoDownloadOnWifi = true
+        Beta.enableNotification = true
+        Beta.upgradeDialogLayoutId = R.layout.autoupdate_dialog_layout
+        val strategy = BuglyStrategy()
+        strategy.appChannel = BuildConfig.FLAVOR.substring(BuildConfig.FLAVOR.indexOf("_"), BuildConfig.FLAVOR.length)
+        strategy.appVersion = BuildConfig.VERSION_NAME
+        strategy.appPackageName = BuildConfig.APPLICATION_ID
+        return strategy
+    }
+
 }

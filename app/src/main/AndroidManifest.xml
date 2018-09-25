@@ -35,6 +35,8 @@
     <!-- 状态栏操作，锁屏界面禁止展开 -->
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.MANAGE_LOCATION_POLICY" />
+
     <!-- 写SD卡权限 -->
     <!-- 电源锁 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -132,14 +134,14 @@
         <activity
             android:name=".ibook.MainActivity"
             android:resizeableActivity="false"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
 
-        <!--开屏广告-->
+        <!--前后台切换开屏广告-->
         <activity
             android:name=".ibook.activity.SplashADActivity"
             android:resizeableActivity="false"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
         <!-- 接入广点通权限 start -->
         <service
             android:name="com.qq.e.comm.DownloadService"
@@ -203,10 +205,7 @@
             android:resizeableActivity="false"
             android:screenOrientation="portrait" />
         <activity android:name=".ibook.activity.ScreenOffAcivity" />
-        <activity
-            android:name=".ibook.activity.SplashActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
+
     </application>
 
 </manifest>

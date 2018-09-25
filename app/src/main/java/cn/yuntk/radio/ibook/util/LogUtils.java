@@ -279,7 +279,7 @@ public class LogUtils {
     }
 
     public static void showLog(String message) {
-//        message = StringUtils.getString(message);
-//        Log.i("LogUtils:", message);
+        message = StringUtils.getString(message);
+        Log.i("LogUtils:", message);
     }
 }

@@ -15,9 +15,7 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
-import cn.yuntk.radio.Constants;
 import cn.yuntk.radio.R;
-import cn.yuntk.radio.bean.FMBean;
 import cn.yuntk.radio.ibook.base.ActivityManager;
 import cn.yuntk.radio.ibook.base.BaseTitleActivity;
 import cn.yuntk.radio.ibook.base.ForegroundObserver;
@@ -121,7 +119,9 @@ public class MainActivity extends BaseTitleActivity {
     protected void bindEvent() {
         if (android.os.Build.VERSION.SDK_INT < 21) {
             LogUtils.showLog("android.os.Build.VERSION.SDK_INT < 21");
-            ((AudioManager) getSystemService(AUDIO_SERVICE)).registerMediaButtonEventReceiver(new ComponentName(this, MediaButtonReceiver.class));
+            AudioManager manager = (AudioManager) getSystemService(AUDIO_SERVICE);
+            if (manager != null)
+                manager.registerMediaButtonEventReceiver(new ComponentName(this, MediaButtonReceiver.class));
         }
     }
 

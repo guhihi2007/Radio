@@ -57,7 +57,7 @@ class MainViewModel : ViewModel() {
     //请求广告配置信息
     fun loadAdConfig() {
         val service = RetrofitFactory.service.create(YtkService::class.java)
-        service.getAppConfig(BuildConfig.APPLICATION_ID, BuildConfig.FLAVOR, BuildConfig.VERSION_NAME)
+        service.getAppConfig(BuildConfig.APPLICATION_ID, BuildConfig.FLAVOR.substring(BuildConfig.FLAVOR.indexOf("_"), BuildConfig.FLAVOR.length), BuildConfig.VERSION_NAME)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

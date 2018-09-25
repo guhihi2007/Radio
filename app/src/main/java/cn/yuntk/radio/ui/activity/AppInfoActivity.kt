@@ -59,7 +59,7 @@ class AppInfoActivity : BaseActivity<ActivityAppInfoBinding>(), ItemClickPresent
     private fun addData(): ObservableArrayList<AppInfoBean> {
         list.add(AppInfoBean("版本号", BuildConfig.VERSION_NAME))
         list.add(AppInfoBean("版本代号", BuildConfig.VERSION_CODE.toString()))
-        list.add(AppInfoBean("版本渠道", BuildConfig.FLAVOR))
+        list.add(AppInfoBean("版本渠道", BuildConfig.FLAVOR.substring(BuildConfig.FLAVOR.indexOf("_"), BuildConfig.FLAVOR.length)))
         list.add(AppInfoBean("Build_time", getString(R.string.build_time)))
         list.add(AppInfoBean("OpenLog", ""))
         list.add(AppInfoBean("CloseLog", ""))

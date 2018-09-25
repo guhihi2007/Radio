@@ -29,7 +29,7 @@ public class CoverLoader {
     private static final String KEY_NULL = "null";
 
     private Context context;
-    private Map<Type, LruCache<String, Bitmap>> cacheMap;
+    private Map<Type, LruCache<String, Bitmap>> cacheMap = new HashMap<>();
     private int roundLength = DisplayUtil.getScreenWidth() / 2;
 
     private enum Type {
@@ -142,7 +142,7 @@ public class CoverLoader {
         switch (type) {
             case ROUND:
                 //play_page_disc1 R.drawable.play_page_default_cover_music
-                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.play_page_disc1);
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_page_disc1);
                 bitmap = ImageUtils.resizeImage(bitmap, roundLength, roundLength);
                 return ImageUtils.createCircleImage(bitmap);
             case BLUR:

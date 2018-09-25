@@ -36,7 +36,7 @@ public class ForegroundObserver implements Application.ActivityLifecycleCallback
 
     private List<Observer> observerList;
     private Handler handler;
-    private boolean isForeground;
+    public static boolean isForeground;
     private int resumeActivityCount;
     private AdController builder;
 
@@ -118,9 +118,10 @@ public class ForegroundObserver implements Application.ActivityLifecycleCallback
             notify(activity, true);
             if (AudioPlayer.get().isPlaying())
                 FloatViewService.startCommand(activity, Actions.SERVICE_VISABLE_WINDOW);
-            XApplication.getsInstance().isBackGroud = true;
+            if (!XApplication.getsInstance().isBackGroud) return;
             if (!(activity instanceof SplashActivity)) {
                 gotoSplashADActivity(activity);
+                XApplication.getsInstance().isBackGroud=false;
             }
         }
     }
@@ -136,10 +137,11 @@ public class ForegroundObserver implements Application.ActivityLifecycleCallback
                 isForeground = false;
                 // 从前台进入后台
                 Log.i(TAG, "app in background");
+
                 ForegroundObserver.this.notify(activity, false);
                 if (AudioPlayer.get().isPlaying())
                     FloatViewService.startCommand(activity, Actions.SERVICE_STOP);
-                XApplication.getsInstance().isBackGroud = false;
+                XApplication.getsInstance().isBackGroud = true;
                 SharedPreferencesUtil.getInstance().putLong(AD_APP_BACKGROUND_TIME, System.currentTimeMillis());//记录退到后台时间
                 LogUtils.showLog("ForegroundObserver：退到后台记录时间：" + System.currentTimeMillis());
             }

@@ -7,8 +7,6 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 
 import cn.yuntk.radio.R;
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.activity.SplashActivity;
 import cn.yuntk.radio.ibook.ads.ADConstants;
 import cn.yuntk.radio.ibook.ads.AdController;
 import cn.yuntk.radio.ibook.ads.LoadEvent;
@@ -19,7 +17,7 @@ import cn.yuntk.radio.ibook.util.LogUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.yuntk.radio.ibook.util.NetworkUtils;
+import cn.yuntk.radio.ui.activity.SplashActivity;
 
 /**
  * @author
@@ -86,7 +84,7 @@ public class LoadingFragment extends BaseFragment {
     public void jumpToHome() {
         LogUtils.d("leading", "点击跳过");
         if (null != getActivity()) {
-            ((SplashActivity) getActivity()).goHome();
+            ((SplashActivity) getActivity()).jumpHome();
         } else {
             EventBus.getDefault().post(new LoadEvent(true));
         }

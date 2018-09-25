@@ -46,7 +46,7 @@ public class AudioPlayer {
     private AudioFocusManager audioFocusManager;
     private MediaPlayer mediaPlayer;
     private Handler handler;
-    private NoisyAudioStreamReceiver noisyReceiver;
+//    private NoisyAudioStreamReceiver noisyReceiver;
     private IntentFilter noisyFilter;
     private List<Music> musicList;
     private final List<OnPlayerEventListener> listeners = new ArrayList<>();
@@ -75,7 +75,7 @@ public class AudioPlayer {
         mediaPlayer = new MediaPlayer();
         handler = new Handler(Looper.getMainLooper());
 
-        noisyReceiver = new NoisyAudioStreamReceiver();
+//        noisyReceiver = new NoisyAudioStreamReceiver();
         noisyFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
 //        当前播放结束监听
         mediaPlayer.setOnCompletionListener(mp -> {
@@ -242,7 +242,7 @@ public class AudioPlayer {
         SharedPreferencesUtil.getInstance().putString(Constants.PLAY_PAGE_BOOK_ID, music.getSongId() + "");
         SharedPreferencesUtil.getInstance().putString(Constants.PLAY_PAGE_CON, music.getBook_con());
 
-        Notifier.get().showPlay(music);
+//        Notifier.get().showPlay(music);
         MediaSessionManager.get().updateMetaData(music);
         MediaSessionManager.get().updatePlaybackState();
     }
@@ -290,9 +290,9 @@ public class AudioPlayer {
             mediaPlayer.start();
             state = STATE_PLAYING;
             handler.post(mPublishRunnable);
-            Notifier.get().showPlay(getPlayMusic());
+//            Notifier.get().showPlay(getPlayMusic());
             MediaSessionManager.get().updatePlaybackState();
-            context.registerReceiver(noisyReceiver, noisyFilter);
+//            context.registerReceiver(noisyReceiver, noisyFilter);
 
             for (OnPlayerEventListener listener : listeners) {
                 listener.onPlayerStart();
@@ -317,9 +317,10 @@ public class AudioPlayer {
         mediaPlayer.pause();
         state = STATE_PAUSE;
         handler.removeCallbacks(mPublishRunnable);
-        Notifier.get().showPause(getPlayMusic());
+//        Notifier.get().showPause(getPlayMusic());
         MediaSessionManager.get().updatePlaybackState();
-        context.unregisterReceiver(noisyReceiver);
+
+//        context.unregisterReceiver(noisyReceiver);
 
         if (abandonAudioFocus) {
             audioFocusManager.abandonAudioFocus();

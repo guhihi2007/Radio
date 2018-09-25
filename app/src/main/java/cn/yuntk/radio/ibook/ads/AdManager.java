@@ -293,7 +293,6 @@ public class AdManager implements OnInsertADListener, AdReportListener {
 
             return next <= sec.getPrecent() ? sec.getOrigin() : first.getOrigin();
         }
-//        return sec.getOrigin();
     }
 
     //根据广告广告源显示相应的广告类型

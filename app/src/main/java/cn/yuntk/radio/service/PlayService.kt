@@ -1,5 +1,6 @@
 package cn.yuntk.radio.service
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Service
 import android.arch.lifecycle.ViewModelProvider
@@ -12,6 +13,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Message
 import android.util.Log
 import cn.yuntk.radio.Constants
 import cn.yuntk.radio.bean.FMBean
@@ -25,6 +27,7 @@ import cn.yuntk.radio.Constants.STATE_IDLE
 import cn.yuntk.radio.Constants.STATE_PREPARING
 import cn.yuntk.radio.Constants.STATE_PLAYING
 import cn.yuntk.radio.Constants.STATE_PAUSE
+import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.viewmodel.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -39,6 +42,7 @@ class PlayService : Service() {
 
     private val TAG = "Service"
     private val TIME_UPDATE = 300L
+    private val RETRY = 999 //播放完成重试
 
     private val mNoisyReceiver = NoisyAudioStreamReceiver()
     private val mNoisyFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
@@ -100,24 +104,11 @@ class PlayService : Service() {
     companion object {
         @JvmStatic
         fun startCommand(context: Context, action: String) {
-            val intent = Intent(context, PlayService::class.java)
-            intent.action = action
-            context.startService(intent)
+            if (action == Actions.ACTION_MEDIA_PLAY_PAUSE) {
+                PlayServiceManager.pauseContinue()
+            }
         }
     }
-
-    private fun sendNotification(intent: Intent) {
-//        var notification: PushNotification? = null
-//        val bundle = intent.extras
-//        val bean = bundle!!.getSerializable(PUSH_DATA) as PushBean
-//        if (bean != null) {
-//            notification = PushNotification(this, bean)
-//            notification!!.setJumpActivity(MusicSearchActivity::class.java)
-//            //            notification.setHangActivity(MusicSearchActivity.class);
-//            //            pushManager.sendNotification(notification);
-//        }
-    }
-
 
     private var currentFMBean: FMBean? = null
 
@@ -127,6 +118,17 @@ class PlayService : Service() {
             application.toast("网络异常")
             return
         }
+        //自动结束了 延迟播放handler
+        val handler = @SuppressLint("HandlerLeak")
+        object : Handler() {
+            override fun handleMessage(msg: Message?) {
+                super.handleMessage(msg)
+                if (msg?.what == RETRY) {
+                    play(fmBean, context)
+                }
+            }
+        }
+
         currentFMBean = fmBean
         SPUtil.getInstance().putObject(Constants.LAST_PLAY, fmBean)//记录上次播放
         //保存所有收听记录
@@ -141,11 +143,17 @@ class PlayService : Service() {
         mPlayState = STATE_PREPARING
         mPlayer.setOnBufferingUpdateListener { mp, percent ->
             //            log("setOnBufferingUpdateListener percent=$percent")
-
         }
         mPlayer.setOnCompletionListener {
             log("setOnCompletionListener")
             postEvent(ListenEvent(STATE_IDLE))
+            //自动结束了要重新播放
+            handler.postDelayed(
+                    {
+                        handler.sendEmptyMessage(RETRY)
+                        log("OnCompletion postDelayed 延迟播放")
+                    }, 2 * 1000
+            )
         }
         mPlayer.setOnPreparedListener {
             log("setOnPreparedListener")
@@ -153,9 +161,12 @@ class PlayService : Service() {
             mPlayState = STATE_PLAYING
             postEvent(ListenEvent(STATE_PLAYING, fmBean))
         }
-        MediaSessionManager.get().updateMetaData(fmBean)
-        MediaSessionManager.get().updatePlaybackState(mPlayState)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            MediaSessionManager.get().updateMetaData(fmBean)
+            MediaSessionManager.get().updatePlaybackState(mPlayState)
+        }
         currentIndex = list.indexOf(fmBean)
+
     }
 
     fun play(position: Int, context: Activity?): FMBean? {
@@ -207,7 +218,9 @@ class PlayService : Service() {
         if (mAudioFocusManager?.requestAudioFocus() == true) {
             mPlayer.start()
             mPlayState = STATE_PLAYING
-            MediaSessionManager.get().updatePlaybackState(mPlayState)
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+                MediaSessionManager.get().updatePlaybackState(mPlayState)
+            }
             postEvent(ListenEvent(STATE_PLAYING))
         }
 
@@ -220,7 +233,9 @@ class PlayService : Service() {
         }
         mPlayer.pause()
         mPlayState = STATE_PAUSE
-        MediaSessionManager.get().updatePlaybackState(mPlayState)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            MediaSessionManager.get().updatePlaybackState(mPlayState)
+        }
         postEvent(ListenEvent(STATE_PAUSE))
 
     }
