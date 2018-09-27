@@ -76,7 +76,14 @@ android {
 //            zipAlignEnabled true //是否启用zipAlign压缩
         }
     }
-
+    // 只在打包提测时改apk文件名，开发时记得注释掉
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "${variant.productFlavors[0].manifestPlaceholders.get("app_name_channel")}" +
+                    "_${variant.productFlavors[0].name}" +
+                    "_${variant.versionName}.apk"
+        }
+    }
 
     productFlavors {
         Raido_anzhi{
@@ -197,7 +204,7 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "收音机-有声电台"]
+            manifestPlaceholders = [app_name_channel    : "收音机电台"]
         }
         Raido_yingyongbao{
             //渠道
@@ -277,7 +284,7 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "收音机-广播电台"]
+            manifestPlaceholders = [app_name_channel    : "收音机电台"]
         }
         greendao {
             schemaVersion 1
@@ -297,7 +304,7 @@ android {
     }
 }
 
-def buildTime() {
+static def buildTime() {
     return new Date().format("yyyy-MM-dd HH:mm", TimeZone.getTimeZone(TimeZone.getDefault().getID()))
 }
 
@@ -404,11 +411,11 @@ kotlin {
     }
 }
 //walle多渠道打包 配置步骤四 项目跟目录下必须有文件:channel ,文件内写渠道名称
-walle {
-    //指定渠道包的输出路径
-    apkOutputFolder = new File("${project.buildDir}/outputs/channels")
-    //定制渠道包的APK的文件名称 例如app-xiaomi.apk
-    apkFileNameFormat = '{app_name_channel}-${channel}.apk'
-    //渠道配置文件
-    channelFile = new File("${project.getProjectDir()}/channel")
-}
+//walle {
+//    //指定渠道包的输出路径
+//    apkOutputFolder = new File("${project.buildDir}/outputs/channels")
+//    //定制渠道包的APK的文件名称 例如app-xiaomi.apk
+//    apkFileNameFormat = '{app_name_channel}-${channel}.apk'
+//    //渠道配置文件
+//    channelFile = new File("${project.getProjectDir()}/channel")
+//}
