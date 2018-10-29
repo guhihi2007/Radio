@@ -114,7 +114,7 @@ class CityChannelActivity : BaseActivity<ActivityCityChannelBinding>(), ItemClic
     }
 
     override fun loadData() {
-        mainViewModel.loadFMBeanByChannel(cityFMBean?.radioId.toString(), "4")
+        mainViewModel.loadFMBeanByChannel(pageViewModel,cityFMBean?.radioId.toString(), "4")
     }
 
     override fun onClick(view: View?) {
@@ -137,7 +137,7 @@ class CityChannelActivity : BaseActivity<ActivityCityChannelBinding>(), ItemClic
         showLoading()
         mBinding.run {
             mainViewModel.fmBeanList.clear()
-            mainViewModel.loadFMBeanByChannel(cityFMBean?.radioId.toString(), "4")
+            mainViewModel.loadFMBeanByChannel(pageViewModel,cityFMBean?.radioId.toString(), "4")
             executePendingBindings()
         }
     }

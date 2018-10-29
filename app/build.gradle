@@ -204,7 +204,7 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "收音机电台"]
+            manifestPlaceholders = [app_name_channel    : "有声电台-FM收音机"]
         }
         Raido_yingyongbao{
             //渠道
@@ -264,7 +264,7 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+            manifestPlaceholders = [app_name_channel    : "收音机"]
         }
         Raido_meizu{
             //渠道

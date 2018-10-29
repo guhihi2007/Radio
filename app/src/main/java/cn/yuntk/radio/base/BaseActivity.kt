@@ -25,9 +25,7 @@ import cn.yuntk.radio.ibook.util.SharedPreferencesUtil
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.utils.log
 import cn.yuntk.radio.view.loading.LoadingDialog
-import cn.yuntk.radio.viewmodel.CollectionViewModel
-import cn.yuntk.radio.viewmodel.Injection
-import cn.yuntk.radio.viewmodel.CollectionViewModelFactory
+import cn.yuntk.radio.viewmodel.*
 import io.reactivex.disposables.CompositeDisposable
 
 
@@ -44,6 +42,8 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
     protected val disposable = CompositeDisposable()
     private lateinit var viewModelFactory: CollectionViewModelFactory
     protected lateinit var viewModel: CollectionViewModel
+
+
     protected lateinit var handler: Handler
     protected lateinit var loadingDialog: LoadingDialog
     override fun onCreate(savedInstanceState: Bundle?) {
