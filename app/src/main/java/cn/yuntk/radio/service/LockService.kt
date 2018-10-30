@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.IBinder
 import cn.yuntk.radio.ibook.XApplication
 import cn.yuntk.radio.ibook.activity.ScreenOffAcivity
@@ -34,21 +35,24 @@ class LockService : Service() {
                 if (!getHasJump()) {
                     if (intent?.action == Intent.ACTION_SCREEN_OFF) {
 
-                        XApplication.sInstance.isBackGroud=true
+                        XApplication.sInstance.isBackGroud = true
 
                         if (PlayServiceManager.isListenerFMBean()) {
                             log(" jumpActivity LockScreenActivity")
-                            hasJump = true
-                            jumpActivity(LockScreenActivity::class.java)
-                            return
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                                hasJump = true
+                                jumpActivity(LockScreenActivity::class.java)
+                                return
+                            }
                         }
                         if (status == "stop") {
                             stopSelf()
                             return
                         }
-                        if (AudioPlayer.get().isPlaying || AudioPlayer.get().isPreparing){
-                            jumpActivity(ScreenOffAcivity::class.java)
-
+                        if (AudioPlayer.get().isPlaying || AudioPlayer.get().isPreparing) {
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                                jumpActivity(ScreenOffAcivity::class.java)
+                            }
                         }
 
                     }

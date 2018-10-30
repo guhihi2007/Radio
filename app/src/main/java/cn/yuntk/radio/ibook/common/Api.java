@@ -20,4 +20,5 @@ public class Api {
     public static final String BOOK_SEARCH = "so.asp";
 
     public static final String YTK_ADCONFIG="http://xiaoxianniao.com/ytkapplicaton/anListenAppConfig";
+    public static final String YTK_UACONFIG="http://114.215.47.46:8080/ytkapplicaton/appConfig";
 }

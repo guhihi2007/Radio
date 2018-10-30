@@ -123,7 +123,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         changeFragment(FragmentByChannelCode.newInstance(channelList[0].name, channelList[0].chanelCode), channelList[0].name)
         //请求最新版本
         Beta.checkUpgrade(false, true)
-
+        //请求广告配置信息
         mainViewModel.loadAdConfig()
         builder = AdController.Builder(this@MainActivity)
                 .setContainer(mBinding.llAd)

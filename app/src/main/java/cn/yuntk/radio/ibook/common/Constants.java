@@ -60,4 +60,7 @@ public class Constants {
     //    音频前缀
     public static final String YTK_PREFIX_STR="ytk_prefix_str";
 
+    //  User-Agen
+    public static final String UAConfig = "wotingpingshu/1.1.8";
+    public static final String UAConfig_ = "uaconfig_";
 }

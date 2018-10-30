@@ -14,6 +14,7 @@ import cn.yuntk.radio.api.YtkService
 import cn.yuntk.radio.bean.ChannelBean
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.ibook.ads.ADConstants
+import cn.yuntk.radio.ibook.ads.AdsManager
 import cn.yuntk.radio.ibook.util.LogUtils
 import cn.yuntk.radio.ibook.util.SharedPreferencesUtil
 import cn.yuntk.radio.utils.logE
@@ -102,7 +103,7 @@ class MainViewModel : ViewModel() {
                 }, {
                     "loadAdConfig Throwable==${it.message}".logE("MainViewModel")
                 })
-
+        AdsManager().getUAConfig()
     }
 
     //保存广告配置

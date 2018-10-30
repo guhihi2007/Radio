@@ -140,7 +140,6 @@
         <activity
             android:name=".ibook.activity.SplashADActivity"
             android:resizeableActivity="false"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
         <!-- 接入广点通权限 start -->
         <service

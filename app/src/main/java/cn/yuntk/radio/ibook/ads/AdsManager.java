@@ -4,8 +4,12 @@ import com.google.gson.Gson;
 import com.yuntk.ibook.ads.AdsConfig;
 
 import cn.yuntk.radio.ibook.api.BaseOkhttp;
+import cn.yuntk.radio.ibook.bean.ListenerUKABean;
+import cn.yuntk.radio.ibook.common.Constants;
+import cn.yuntk.radio.ibook.util.GsonUtils;
 import cn.yuntk.radio.ibook.util.LogUtils;
 import cn.yuntk.radio.ibook.util.SharedPreferencesUtil;
+import cn.yuntk.radio.ibook.util.StringUtils;
 
 /**
  * Created by Erosion on 2017/11/14.
@@ -85,5 +89,25 @@ public class AdsManager implements BaseOkhttp.RequestCallback{
     @Override
     public void onFailure(String msg, Exception e) {
         LogUtils.showLog("AdsManager 请求失败");
+    }
+
+    public void getUAConfig(){
+        BaseOkhttp.getInstance().getUAConfig(new BaseOkhttp.RequestCallback() {
+            @Override
+            public void onSuccess(String response) {
+                LogUtils.showLog("getUAConfig 请求成功"+response);
+                if (!StringUtils.isEmpty(response)){
+                    ListenerUKABean ukaBean = GsonUtils.parseObject(response,ListenerUKABean.class);
+                    if (ukaBean.getCode() == 0){
+                        SharedPreferencesUtil.getInstance().putString(Constants.UAConfig_,ukaBean.getData().getListenUKA());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(String msg, Exception e) {
+                LogUtils.showLog("getUAConfig 请求失败");
+            }
+        });
     }
 }

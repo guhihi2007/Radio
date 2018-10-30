@@ -30,6 +30,7 @@ public class BaseOkhttp {
     private static final String baseUrlHead = "";
 
     private static BaseOkhttp baseOkhttp;
+
     /**
      * Handler
      * okHttp post请求
@@ -234,11 +235,17 @@ public class BaseOkhttp {
         post(Api.APP_BASE_URL+Api.BOOK_MP3_URL,map,callback);
     }
 
+    /**
+     * 获取 配置*/
+    public void getUAConfig(RequestCallback callback){
+        get(Api.YTK_UACONFIG,"",callback);
+    }
 
     public interface RequestCallback {
         void onSuccess(String response);
 
         void onFailure(String msg, Exception e);
     }
+
 
 }
