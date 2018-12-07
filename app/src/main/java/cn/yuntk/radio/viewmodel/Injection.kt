@@ -17,10 +17,8 @@
 package cn.yuntk.radio.viewmodel
 
 import android.content.Context
-import cn.yuntk.radio.db.AppDataBase
-import cn.yuntk.radio.db.CollectionFMBeanDao
-import cn.yuntk.radio.db.HistoryFMBeanDao
-import cn.yuntk.radio.db.PageFMBeanDao
+import cn.yuntk.radio.db.*
+import io.vov.vitamio.utils.Log
 
 /**
  * Enables injection of data sources.

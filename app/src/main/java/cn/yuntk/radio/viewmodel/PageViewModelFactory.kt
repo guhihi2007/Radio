@@ -17,6 +17,6 @@ class PageViewModelFactory(private val dao: PageFMBeanDao) : ViewModelProvider.F
         if (modelClass.isAssignableFrom(PageViewModel::class.java)) {
             return PageViewModel(dao) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException("不知道是什么 ViewModel")
     }
 }

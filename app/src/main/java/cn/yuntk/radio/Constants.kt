@@ -43,6 +43,8 @@ object Constants {
     const val FM_ACTIVITY = "fm"
     //地区电台集合，包括全国频道
     val placeCodeList:ArrayList<String> = arrayListOf(NATION_CODE,PROVINCE_CODE)
+    const val EXTRA_NOTIFICATION = "radio_notification"
+
     //首页抽屉列表
     var channelList = ObservableArrayList<ChannelBean>().apply {
         add(ChannelBean("国家电台", NATION_CODE, R.mipmap.icon_nation))
@@ -78,4 +80,12 @@ object Constants {
 
     //当前省份
     const val PROVINCE = "province"
+
+    //状态栏点击的key
+    const val ACTION_MEDIA_STOP = "fairy.ACTION_MEDIA_STOP"
+    const val ACTION_MEDIA_PLAY_PAUSE = "radio.ACTION_MEDIA_PLAY_PAUSE"
+    const val ACTION_MEDIA_NEXT = "radio.ACTION_MEDIA_NEXT"
+    const val ACTION_MEDIA_PRE = "radio.ACTION_MEDIA_PREVIOUS"
+    const val ACTION_PLAY_NEXT = "radio.PLAY_NEXT"
+    const val ACTION_PLAY_START = "radio.PLAY_START"
 }

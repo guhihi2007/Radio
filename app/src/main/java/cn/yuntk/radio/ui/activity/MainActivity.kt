@@ -1,6 +1,7 @@
 package cn.yuntk.radio.ui.activity
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.databinding.ObservableField
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
@@ -40,6 +41,7 @@ import cn.yuntk.radio.ibook.service.FloatViewService
 import cn.yuntk.radio.view.FloatViewManager
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.play.QuitTimer
+import cn.yuntk.radio.receiver.StatusBarReceiver
 import cn.yuntk.radio.service.LockService
 import cn.yuntk.radio.ui.fragment.FragmentByChannelCode
 import cn.yuntk.radio.utils.*
@@ -111,8 +113,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         /**--------布局初始化--------*/
 
         registerEventBus()
-
-
         /**--------获取反馈回复--------*/
 
         getFeedbackUnreadCounts()
@@ -123,7 +123,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         changeFragment(FragmentByChannelCode.newInstance(channelList[0].name, channelList[0].chanelCode), channelList[0].name)
         //请求最新版本
         Beta.checkUpgrade(false, true)
-
+        //请求广告配置信息
         mainViewModel.loadAdConfig()
         builder = AdController.Builder(this@MainActivity)
                 .setContainer(mBinding.llAd)
@@ -336,7 +336,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         super.onDestroy()
         LockService.status = "stop"//改写soup服务状态
         builder.destroy()
-        PlayServiceManager.unbind(this)
         unRegisterEventBus()
     }
 

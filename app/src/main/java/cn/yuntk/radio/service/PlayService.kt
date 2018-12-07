@@ -29,6 +29,8 @@ import cn.yuntk.radio.Constants.STATE_PLAYING
 import cn.yuntk.radio.Constants.STATE_PAUSE
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.ui.activity.FMActivity
+import cn.yuntk.radio.notification.Notifier
+import cn.yuntk.radio.receiver.StatusBarReceiver
 import cn.yuntk.radio.viewmodel.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -43,7 +45,7 @@ class PlayService : Service() {
 
     private val TAG = "Service"
     private val TIME_UPDATE = 300L
-    val RETRY = 999 //播放完成重试
+    private val RETRY = 999 //播放完成重试
 
     private val mNoisyReceiver = NoisyAudioStreamReceiver()
     private val mNoisyFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
@@ -53,10 +55,13 @@ class PlayService : Service() {
     private val mListenerList = CopyOnWriteArrayList<OnPlayerEventListener>()
     private var mPlayState = STATE_IDLE
     private lateinit var myBinder: MyPlayServiceBinder
+    private lateinit var receiver: StatusBarReceiver
+
     private val disposable = CompositeDisposable()
     private var list = ObservableArrayList<FMBean>()
     private var currentIndex = -1
     private var lastPage = ""
+
     override fun onCreate() {
         super.onCreate()
         "PlayService onCreate=${javaClass.simpleName}".logE(LT.RadioNet)
@@ -69,7 +74,13 @@ class PlayService : Service() {
         }
         mPlayer = io.vov.vitamio.MediaPlayer(this, true)
         registerReceiver(mNoisyReceiver, mNoisyFilter)
-//        MusicNotification.init(this)
+        //注册状态栏监听
+        receiver = StatusBarReceiver()
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(StatusBarReceiver.ACTION_STATUS_BAR)
+        registerReceiver(receiver, intentFilter)
+
+        Notifier.get().init(this)
         QuitTimer.init(this, mHandler, object : EventCallback<Long> {
             override fun onEvent(t: Long) {
                 for (mListener in mListenerList) {
@@ -106,8 +117,11 @@ class PlayService : Service() {
     companion object {
         @JvmStatic
         fun startCommand(context: Context, action: String) {
-            if (action == Actions.ACTION_MEDIA_PLAY_PAUSE) {
+            if (action == Constants.ACTION_MEDIA_PLAY_PAUSE) {
                 PlayServiceManager.pauseContinue()
+            } else if (action == Constants.ACTION_MEDIA_STOP) {
+                PlayServiceManager.stop()
+                System.exit(0)
             }
         }
     }
@@ -164,6 +178,8 @@ class PlayService : Service() {
             postEvent(ListenEvent(STATE_PLAYING, fmBean))
         }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            //改变通知栏按钮状态
+            Notifier.get().showPlay(currentFMBean)
             MediaSessionManager.get().updateMetaData(fmBean)
             MediaSessionManager.get().updatePlaybackState(mPlayState)
         }
@@ -219,6 +235,8 @@ class PlayService : Service() {
         }
         if (mAudioFocusManager?.requestAudioFocus() == true) {
             mPlayer.start()
+            //改变通知栏按钮状态
+            Notifier.get().showPlay(currentFMBean)
             mPlayState = STATE_PLAYING
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
                 MediaSessionManager.get().updatePlaybackState(mPlayState)
@@ -235,6 +253,8 @@ class PlayService : Service() {
         }
         mPlayer.pause()
         mPlayState = STATE_PAUSE
+        //改变通知栏按钮状态
+        Notifier.get().showPause(currentFMBean)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
             MediaSessionManager.get().updatePlaybackState(mPlayState)
         }
@@ -294,11 +314,9 @@ class PlayService : Service() {
         if (mAudioFocusManager != null) {
             mAudioFocusManager!!.abandonAudioFocus()
         }
-
+        unregisterReceiver(receiver)
         unregisterReceiver(mNoisyReceiver)
         disposable.clear()
-        //        unregisterReceiver(mNotificationReceiver);
-//        MusicNotification.cancelAll()
         super.onDestroy()
         Log.i(TAG, "PlayService: " + javaClass.simpleName)
     }
@@ -328,9 +346,9 @@ class PlayService : Service() {
     inner class MyBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
-            if (action == Actions.ACTION_PLAY_START) {
+            if (action == Constants.ACTION_PLAY_START) {
                 playPause()
-            } else if (action == Actions.ACTION_PLAY_NEXT) {
+            } else if (action == Constants.ACTION_PLAY_NEXT) {
                 next(null)
             }
         }

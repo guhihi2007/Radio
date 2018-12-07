@@ -3,6 +3,7 @@ package cn.yuntk.radio.ibook.api;
 import cn.yuntk.radio.ibook.XApplication;
 import cn.yuntk.radio.ibook.common.Api;
 import cn.yuntk.radio.ibook.util.NetworkUtils;
+import cn.yuntk.radio.ibook.util.PackageUtils;
 import cn.yuntk.radio.ibook.util.ToastUtil;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class BaseOkhttp {
     private static final String baseUrlHead = "";
 
     private static BaseOkhttp baseOkhttp;
+
     /**
      * Handler
      * okHttp post请求
@@ -64,6 +66,13 @@ public class BaseOkhttp {
 
         String requestUrl = String.format("%s%s?%s", baseUrlHead, urlPart, json);
         okhttp3.Request request = new okhttp3.Request.Builder()
+                .removeHeader("User-Agent")
+                .addHeader("User-Agent", PackageUtils.getUserAgent()) // 不能转UTF-8
+                .addHeader("Accept-Encoding","gzip, deflate")
+                .addHeader("Content-Type","application/x-www-form-urlencoded")
+                .addHeader("Connection","keep-alive")
+                .addHeader("Accept","*/*")
+                .addHeader("Accept-Language","zh-Hans-CN;q=1")
                 .url(requestUrl)
                 .build();
         client.newCall(request).enqueue(new Callback() {
@@ -91,7 +100,7 @@ public class BaseOkhttp {
      * @param map
      * @param callback
      */
-    public void get(String urlPart, Map<String, String> map, final RequestCallback callback){
+    public void getSearch(String urlPart, Map<String, String> map, final RequestCallback callback){
         String json = null;
         try {
             json = pinjiePrarms(map);
@@ -102,6 +111,12 @@ public class BaseOkhttp {
         }
         String requestUrl = String.format("%s%s?%s", baseUrlHead, urlPart, json);
         okhttp3.Request request = new okhttp3.Request.Builder()
+                .removeHeader("User-Agent")
+                .addHeader("User-Agent", PackageUtils.getUserAgent()) // 不能转UTF-8
+                .addHeader("Content-Type","application/x-www-form-urlencoded")
+                .addHeader("Connection","keep-alive")
+                .addHeader("Accept","*/*")
+                .addHeader("Accept-Language","zh-Hans-CN;q=1")
                 .url(requestUrl)
                 .build();
         client.newCall(request).enqueue(new Callback() {
@@ -173,7 +188,15 @@ public class BaseOkhttp {
 
         RequestBody body = builder.build();
 
-        final Request request = new Request.Builder().url(url).post(body).build();
+        final Request request = new Request.Builder()
+                .removeHeader("User-Agent")
+                .addHeader("User-Agent", PackageUtils.getUserAgent()) // 不能转UTF-8
+                .addHeader("Accept-Encoding","gzip, deflate")
+                .addHeader("Content-Type","application/x-www-form-urlencoded")
+                .addHeader("Connection","keep-alive")
+                .addHeader("Accept","*/*")
+                .addHeader("Accept-Language","zh-Hans-CN;q=1")
+                .url(url).post(body).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -203,7 +226,15 @@ public class BaseOkhttp {
     public void postJson(String url, String json, final RequestCallback callback) {
 
         RequestBody body = RequestBody.create(JSON, json);
-        final Request request = new Request.Builder().url(url).post(body).build();
+        final Request request = new Request.Builder()
+                .removeHeader("User-Agent")
+                .addHeader("User-Agent", PackageUtils.getUserAgent()) // 不能转UTF-8
+                .addHeader("Content-Type","application/x-www-form-urlencoded")
+                .addHeader("Connection","keep-alive")
+                .addHeader("Accept","*/*")
+                .addHeader("Accept-Language","zh-Hans-CN;q=1")
+                .url(url)
+                .post(body).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -234,11 +265,17 @@ public class BaseOkhttp {
         post(Api.APP_BASE_URL+Api.BOOK_MP3_URL,map,callback);
     }
 
+    /**
+     * 获取 配置*/
+    public void getUAConfig(RequestCallback callback){
+        get(Api.YTK_UACONFIG,"",callback);
+    }
 
     public interface RequestCallback {
         void onSuccess(String response);
 
         void onFailure(String msg, Exception e);
     }
+
 
 }

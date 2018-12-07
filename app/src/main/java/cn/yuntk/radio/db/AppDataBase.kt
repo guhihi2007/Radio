@@ -17,7 +17,6 @@ import cn.yuntk.radio.bean.PageFMBean
  * 数据库升级：
  * 1、version +1
  * 2、实现migration 并添加 addMigrations(migration)
- *
  */
 @Database(entities = [(FMBean::class), (PageFMBean::class), (HistoryFMBean::class)], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)//此处声明后ROOM可以使用定义的转换器
@@ -47,8 +46,9 @@ abstract class AppDataBase : RoomDatabase() {
 //        1.清单文件中需要声明versionCode属性，否则Studio在run阶段会报错
 //        private val migration = object : Migration(1, 2) {
 //            override fun migrate(@NonNull database: SupportSQLiteDatabase) {
-//                //version1--->version2 增加表:HISTORY_FMBEAN
+                //version1--->version2 增加表:HISTORY_FMBEAN
 //                database.execSQL("CREATE TABLE `HISTORY_FMBEAN` (`id` INTEGER, `fmBean` FMBean, PRIMARY KEY(`id`))")
+//                database.execSQL("CREATE TABLE `FRAGMENT_FMBEAN` (`code` INTEGER, `fmBean` FMBean, PRIMARY KEY(`code`))")
 //            }
 //        }
     }

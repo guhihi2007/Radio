@@ -48,4 +48,9 @@ data class FMBean(@PrimaryKey(autoGenerate = false)
     var isPlaying: Boolean = false
     var listenerTime: String? = null
     var cityName: String? = null
+    override fun toString(): String {
+        return "FMBean(name='$name', radioId=$radioId, parentId=$parentId, radioFm=$radioFm, radioUrl=$radioUrl, backUrl=$backUrl, state=$state, sort=$sort, level=$level, isExisUrl=$isExisUrl, addTime=$addTime, updateTime=$updateTime, isSelected=$isSelected, isPlaying=$isPlaying, listenerTime=$listenerTime, cityName=$cityName)"
+    }
+
+
 }
