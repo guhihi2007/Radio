@@ -83,8 +83,7 @@ public class MyViewFM extends View {
      * @param event
      * @return
      */
-    double oldCurrentFM=-1;
-    int oldEvent=-1;
+    boolean touchFlag;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float touchX=event.getX();
@@ -124,16 +123,11 @@ public class MyViewFM extends View {
                 currentFM=360+Math.atan(tan)*180/3.1415926;
             myViewTouch.onTouch(currentFM,event.getAction());
             invalidate();
-            if(event.getAction()==MotionEvent.ACTION_UP){
-                oldCurrentFM=currentFM;
-            }
-            oldEvent=event.getAction();
-        }else if (oldCurrentFM!=-1&&oldEvent==MotionEvent.ACTION_MOVE){
-            myViewTouch.onTouch(oldCurrentFM,MotionEvent.ACTION_MOVE);
-            currentFM=oldCurrentFM;
+            touchFlag=true;
+        }else if(touchFlag){
+            myViewTouch.onTouch(currentFM,MotionEvent.ACTION_UP);
             invalidate();
-            oldCurrentFM=-1;
-            oldEvent=-1;
+            touchFlag=false;
         }
         return true;
     }
