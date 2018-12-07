@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="D:\AndroidStudio\Radio\vitamio\src\main\shaders"/></dataSet><dataSet config="debug"><source path="D:\AndroidStudio\Radio\vitamio\src\debug\shaders"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="E:\Android Studio Project\android_radio\vitamio\src\main\shaders"/></dataSet><dataSet config="debug"><source path="E:\Android Studio Project\android_radio\vitamio\src\debug\shaders"/></dataSet></merger>

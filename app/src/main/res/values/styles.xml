@@ -42,11 +42,13 @@
     </style>
     <!--锁屏界面配置主题-->
     <style name="LockScreenBase" parent="AppTheme">
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowFullscreen">true</item>
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowContentOverlay">@null</item>

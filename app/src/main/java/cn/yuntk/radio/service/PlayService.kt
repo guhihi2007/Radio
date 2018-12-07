@@ -28,6 +28,7 @@ import cn.yuntk.radio.Constants.STATE_PREPARING
 import cn.yuntk.radio.Constants.STATE_PLAYING
 import cn.yuntk.radio.Constants.STATE_PAUSE
 import cn.yuntk.radio.manager.PlayServiceManager
+import cn.yuntk.radio.ui.activity.FMActivity
 import cn.yuntk.radio.viewmodel.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -42,7 +43,7 @@ class PlayService : Service() {
 
     private val TAG = "Service"
     private val TIME_UPDATE = 300L
-    private val RETRY = 999 //播放完成重试
+    val RETRY = 999 //播放完成重试
 
     private val mNoisyReceiver = NoisyAudioStreamReceiver()
     private val mNoisyFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
@@ -82,7 +83,8 @@ class PlayService : Service() {
         //查库，当前页面的所有FMBean-------start
         val page = SPUtil.getInstance().getString(Constants.CURRENT_PAGE)
         if (lastPage != page) {
-            lastPage = page
+            list.clear()//若不清除，则list会累加；
+            lastPage = page//lastPage为上一个播放的fm所在的页面；page为当前播放的fm所在的页面
             if (page != null) {
                 val pageViewModel = PageViewModel(Injection.getPageDao())
                 disposable.add(pageViewModel.getListByPage(page)
@@ -92,7 +94,7 @@ class PlayService : Service() {
                             log("PlayService queryPageList 异步查库getList==${it.size}")
                             list.addAll(it.map { it.fmBean })
                         })
-            }
+                }
         }
         //查库，当前页面的所有FMBean-------end
     }
@@ -111,7 +113,7 @@ class PlayService : Service() {
     }
 
     private var currentFMBean: FMBean? = null
-
+    var handler : Handler?=null
     fun play(fmBean: FMBean, context: Activity?) {
         //TODO 检查网络
         if (!NetworkUtils.isAvailable(this)) {
@@ -119,7 +121,7 @@ class PlayService : Service() {
             return
         }
         //自动结束了 延迟播放handler
-        val handler = @SuppressLint("HandlerLeak")
+        handler = @SuppressLint("HandlerLeak")
         object : Handler() {
             override fun handleMessage(msg: Message?) {
                 super.handleMessage(msg)
@@ -141,22 +143,22 @@ class PlayService : Service() {
         mPlayer.setDataSource(fmBean.radioUrl)
         mPlayer.prepareAsync()
         mPlayState = STATE_PREPARING
-        mPlayer.setOnBufferingUpdateListener { mp, percent ->
+        mPlayer.setOnBufferingUpdateListener { mp, percent ->//缓冲中
             //            log("setOnBufferingUpdateListener percent=$percent")
         }
         mPlayer.setOnCompletionListener {
             log("setOnCompletionListener")
             postEvent(ListenEvent(STATE_IDLE))
             //自动结束了要重新播放
-            handler.postDelayed(
+            (handler as Handler).postDelayed(
                     {
-                        handler.sendEmptyMessage(RETRY)
+                        (handler as Handler).sendEmptyMessage(RETRY)
                         log("OnCompletion postDelayed 延迟播放")
                     }, 2 * 1000
             )
         }
         mPlayer.setOnPreparedListener {
-            log("setOnPreparedListener")
+            log("setOnPreparedListener")//缓冲完成
             mPlayer.start()
             mPlayState = STATE_PLAYING
             postEvent(ListenEvent(STATE_PLAYING, fmBean))

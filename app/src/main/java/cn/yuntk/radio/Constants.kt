@@ -40,6 +40,9 @@ object Constants {
     const val UPDATE = "update"
     const val ABOUTUS = "about_us"
     const val NOVEL = "novel"
+    const val FM_ACTIVITY = "fm"
+    //地区电台集合，包括全国频道
+    val placeCodeList:ArrayList<String> = arrayListOf(NATION_CODE,PROVINCE_CODE)
     //首页抽屉列表
     var channelList = ObservableArrayList<ChannelBean>().apply {
         add(ChannelBean("国家电台", NATION_CODE, R.mipmap.icon_nation))
@@ -72,4 +75,7 @@ object Constants {
     const val UMENG_KEY = "5b6a5dc0b27b0a590b000106"
     //startActivityForResult 返回码
     const val SET_NET_CODE = 1111
+
+    //当前省份
+    const val PROVINCE = "province"
 }

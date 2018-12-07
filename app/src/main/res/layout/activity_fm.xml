@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:myView="http://schemas.android.com/apk/res-auto">
+
+    <data class="FMBinding">
+
+        <import type="android.view.View" />
+
+        <variable
+            name="fmActivityBean"
+            type="cn.yuntk.radio.bean.FMActivityBean" />
+
+        <variable
+            name="presenter"
+            type="cn.yuntk.radio.base.Presenter" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_listener"
+            android:orientation="vertical">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                android:theme="@style/AppTheme.AppBarOverlay">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    myView:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            </android.support.design.widget.AppBarLayout>
+
+            <TextView
+                android:id="@+id/location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+
+                android:onClick="@{(v)->presenter.onClick(v)}"
+                android:text="@{fmActivityBean.province}"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="@{fmActivityBean.loading ? View.VISIBLE:View.GONE}" />
+
+            <cn.yuntk.radio.view.MyViewFM
+                android:id="@+id/my_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:visibility="@{fmActivityBean.loading ? View.VISIBLE:View.GONE}"
+                myView:currentFM="@{fmActivityBean.currentFM}"
+                myView:fmChannel="@{fmActivityBean.radioFm}"
+                myView:name="@{fmActivityBean.name}"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="@{fmActivityBean.loading ? View.VISIBLE:View.GONE}">
+
+                    <ImageView
+                        android:id="@+id/top"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:onClick="@{(v)->presenter.onClick(v)}"
+                        android:src="@mipmap/ic_play_btn_prev_pressed" />
+
+                    <ImageView
+                        android:id="@+id/pause"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:onClick="@{(v)->presenter.onClick(v)}"
+                        android:src="@drawable/play_btn_play_pause_selector" />
+
+                    <ImageView
+                        android:id="@+id/down"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:onClick="@{(v)->presenter.onClick(v)}"
+                        android:src="@mipmap/ic_play_btn_next_pressed" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <include
+                android:id="@+id/layout_net_error"
+                layout="@layout/comm_net_error"
+                android:visibility="@{fmActivityBean.loadFailed ? View.VISIBLE:View.GONE}"
+                myView:presenter="@{presenter}" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/favorite_ImageView"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:onClick="@{(v)->presenter.onClick(v)}"
+            android:src="@drawable/collection_uncollection_selector"
+            android:visibility="@{fmActivityBean.loading ? View.VISIBLE:View.GONE}" />
+    </FrameLayout>
+</layout>

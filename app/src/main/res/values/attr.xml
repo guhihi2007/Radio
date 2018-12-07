@@ -15,4 +15,11 @@
         <attr name="ring_width" format="dimension" />
         <attr name="ring_radius" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="MyViewFM">
+        <attr name="fmChannel" format="string"/><!--圆中心显示的字符，例如：FM96.2-->
+        <attr name="currentFM" format="float"/><!--当前收听的fm相对位置-->
+        <attr name="name" format="string"/>
+    </declare-styleable>
+
 </resources>

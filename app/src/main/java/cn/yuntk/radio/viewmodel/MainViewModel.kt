@@ -53,6 +53,34 @@ class MainViewModel : ViewModel() {
                 })
 
     }
+    /**
+     * 请求频道信息(不包含省市列表)，请求最终结果；
+     * 未曾使用，未曾写完；由于我想到的判断数据是否全部加载完成的方法不够合理，所以还没有使用过
+     */
+    private fun loadFMBeanByChannel(channelCode: List<String>,level: String ="3"){
+        val service = RetrofitFactory.instance.create(FMService::class.java)
+        for (temp in channelCode){
+            service.getChannel(level, "1", temp, "1")
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        val result = it.result
+                        if (result != null) {
+                            if (result[0].isExisUrl!=1){
+                                val resultList=ArrayList<String>()
+                                for (f in result) {
+                                    resultList.add(f.radioId.toString())
+                                }
+                                loadFMBeanByChannel(resultList,"4")
+                            }else {
+                                fmBeanList.addAll(result)
+                            }
+                        }
+                    }, {
+
+                    })
+        }
+    }
 
     //请求广告配置信息
     fun loadAdConfig() {

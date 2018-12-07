@@ -86,7 +86,7 @@ open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
                 //上一曲
                 lockScreenPre.id -> {
                     lockScreenPre.clickWithTrigger {
-                        val playFMBean = PlayServiceManager.next(this@LockScreenActivity)
+                        val playFMBean = PlayServiceManager.pre(this@LockScreenActivity)
                         if (playFMBean == null) {
                             toast("已经到顶了")
                         } else {
@@ -107,7 +107,7 @@ open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
                 //下一曲
                 lockScreenNext.id -> {
                     lockScreenNext.clickWithTrigger {
-                        val preFMBean = PlayServiceManager.pre(this@LockScreenActivity)
+                        val preFMBean = PlayServiceManager.next(this@LockScreenActivity)
                         if (preFMBean == null) {
                             toast("已经到底了")
                         } else {

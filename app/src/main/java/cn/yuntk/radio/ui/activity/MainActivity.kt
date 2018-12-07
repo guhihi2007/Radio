@@ -309,7 +309,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-//        menuInflater.inflate(R.menu.collection_delete, menu)
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_fm ->{
+                jumpActivity(FMActivity::class.java,null)
+            }
+        }
         return true
     }
 

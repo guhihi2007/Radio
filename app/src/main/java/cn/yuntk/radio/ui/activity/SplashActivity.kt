@@ -60,6 +60,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun askPermissions() {
         if (hasStoragePermission()) {
+            sendRequest()
             checkIn()
         } else {
             val dialog = object : AuthorityDialog(this) {
@@ -76,7 +77,8 @@ class SplashActivity : AppCompatActivity() {
     private fun sendRequest() {
         AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
                 Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
                 .callback(permissionListener).start()
     }
 

@@ -25,7 +25,7 @@ android {
         //bugly统计需要
         ndk {
             // 设置支持的SO库架构
-            abiFilters 'armeabi' , 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+            abiFilters 'armeabi', 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
         }
     }
     dataBinding {
@@ -79,7 +79,7 @@ android {
 
 
     productFlavors {
-        Raido_anzhi{
+        Raido_anzhi {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_anzhi"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -97,9 +97,9 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+            manifestPlaceholders = [app_name_channel: "FM收音机"]
         }
-        Raido_lenovo{
+        Raido_lenovo {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_lenovo"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -117,9 +117,9 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+            manifestPlaceholders = [app_name_channel: "FM收音机"]
         }
-        Raido_oppo{
+        Raido_oppo {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_oppo"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -137,9 +137,9 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+            manifestPlaceholders = [app_name_channel: "FM收音机"]
         }
-        Raido_vivo{
+        Raido_vivo {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_vivo"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -157,9 +157,9 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+            manifestPlaceholders = [app_name_channel: "FM收音机"]
         }
-        Raido_360{
+        Raido_360 {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_360"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -177,9 +177,9 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "收音机有声电台"]
+            manifestPlaceholders = [app_name_channel: "收音机有声电台"]
         }
-        Raido_xiaomi{
+        Raido_xiaomi {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_xiaomi"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -197,9 +197,9 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "收音机-有声电台"]
+            manifestPlaceholders = [app_name_channel: "收音机-有声电台"]
         }
-        Raido_yingyongbao{
+        Raido_yingyongbao {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_yingyongbao"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -217,9 +217,9 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+            manifestPlaceholders = [app_name_channel: "FM收音机"]
         }
-        Raido_baidu{
+        Raido_baidu {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_baidu"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -237,9 +237,9 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+            manifestPlaceholders = [app_name_channel: "FM收音机"]
         }
-        Raido_huawei{
+        Raido_huawei {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_huawei"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -257,9 +257,9 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+            manifestPlaceholders = [app_name_channel: "FM收音机"]
         }
-        Raido_meizu{
+        Raido_meizu {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_meizu"'
             buildConfigField "String", "umengKey", '"5b6a5dc0b27b0a590b000106"'
@@ -277,7 +277,7 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "收音机-广播电台"]
+            manifestPlaceholders = [app_name_channel: "收音机-广播电台"]
         }
         greendao {
             schemaVersion 1
