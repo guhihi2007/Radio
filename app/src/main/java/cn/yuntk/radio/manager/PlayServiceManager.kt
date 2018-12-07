@@ -64,7 +64,7 @@ object PlayServiceManager {
         if (FloatViewService.isAddToWindow())
             FloatViewService.startCommand(context, Actions.SERVICE_GONE_WINDOW)
         playService?.handler?.removeMessages(playService!!.RETRY)
-        if (NeedReplaceURLContent.replaceContent.containsKey(fmBean.radioId) )
+        if (NeedReplaceURLContent.replaceContent.containsKey(fmBean.radioId) )//更换不能播放的url
             fmBean.radioUrl=NeedReplaceURLContent.replaceContent[fmBean.radioId]
         playService?.play(fmBean, context)
     }

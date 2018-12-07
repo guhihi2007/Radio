@@ -45,7 +45,7 @@ class PlayService : Service() {
 
     private val TAG = "Service"
     private val TIME_UPDATE = 300L
-    private val RETRY = 999 //播放完成重试
+    val RETRY = 999 //播放完成重试
 
     private val mNoisyReceiver = NoisyAudioStreamReceiver()
     private val mNoisyFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)

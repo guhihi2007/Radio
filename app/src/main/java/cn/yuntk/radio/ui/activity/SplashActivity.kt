@@ -75,28 +75,24 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun sendRequest() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (Build.VERSION.SDK_INT >= 28) {
 
             AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    , Manifest.permission.FOREGROUND_SERVICE
-//                ,Manifest.permission.ACCESS_COARSE_LOCATION
+//                    , Manifest.permission.FOREGROUND_SERVICE
+                ,Manifest.permission.ACCESS_COARSE_LOCATION
             )
                     .callback(permissionListener).start()
         } else {
             AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                ,Manifest.permission.ACCESS_COARSE_LOCATION
+                ,Manifest.permission.ACCESS_COARSE_LOCATION
             )
                     .callback(permissionListener).start()
         }
-        AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                .callback(permissionListener).start()
+
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
