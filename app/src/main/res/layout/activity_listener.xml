@@ -35,7 +35,6 @@
                 app:title="@{fmBean.name}" />
         </android.support.design.widget.AppBarLayout>
 
-
         <RelativeLayout
             android:id="@+id/ll_Rounded_ImageView"
             android:layout_width="200dp"
@@ -54,6 +53,7 @@
                 android:onClick="@{(v)->presenter.onClick(v)}" />
 
         </RelativeLayout>
+
         <FrameLayout
             android:id="@+id/ad_container_fl"
             android:layout_width="250dip"

@@ -15,7 +15,7 @@ public class Api {
     public static final String BOOK_LIST3 = "index_ys.html";
     public static final String BOOK_LIST4 = "index_lz.html";
 
-    public static final String BOOK_MP3_URL="uull.asp";
+    public static final String BOOK_MP3_URL="uudd.asp";
     public static final String BOOK_CLASSIFY="list.html";
     public static final String BOOK_SEARCH = "so.asp";
 

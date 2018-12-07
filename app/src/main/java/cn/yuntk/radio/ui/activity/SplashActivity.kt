@@ -2,6 +2,7 @@ package cn.yuntk.radio.ui.activity
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.FragmentTransaction
@@ -74,10 +75,23 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun sendRequest() {
-        AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .callback(permissionListener).start()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+
+            AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    , Manifest.permission.FOREGROUND_SERVICE
+//                ,Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+                    .callback(permissionListener).start()
+        } else {
+            AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                ,Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+                    .callback(permissionListener).start()
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {

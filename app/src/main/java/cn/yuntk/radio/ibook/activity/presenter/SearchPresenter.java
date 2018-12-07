@@ -28,7 +28,7 @@ public class SearchPresenter extends BasePresenter<ISearchView,ISearchModel> {
     public void serchBookForKeyword(String key){
         Map<String, String> map = new HashMap<String, String>();
         map.put("keyword", key);
-        BaseOkhttp.getInstance().get(
+        BaseOkhttp.getInstance().getSearch(
                 Api.APP_BASE_URL_SEACHER + Api.BOOK_SEARCH,
                 map, new BaseOkhttp.RequestCallback() {
                     @Override

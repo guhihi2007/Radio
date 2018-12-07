@@ -44,39 +44,14 @@ public final class HeaderInterceptor implements Interceptor {
 //                .addHeader("User-Agent", Constants.UAConfig+" (iPhone; iOS "+ Build.VERSION.RELEASE+"; Scale/2.00)") // 不能转UTF-8
                 .removeHeader("User-Agent")
                 .addHeader("User-Agent", PackageUtils.getUserAgent()) // 不能转UTF-8
-                .addHeader("X-User-Agent", PackageUtils.getUserAgent())
-                .addHeader("X-Device-Id", TelephonyUtils.getIMEI(XApplication.getsInstance()))
-//                .addHeader("Host", "api.zhuishushenqi.com")
-                .addHeader("Connection", "Keep-Alive")
-                .addHeader("If-None-Match", "W/\"2a04-4nguJ+XAaA1yAeFHyxVImg\"")
-                .addHeader("If-Modified-Since", "Tue, 02 Aug 2016 03:20:06 UTC")
-                .addHeader("X-Client-Info",new Gson().toJson(new HeaderParams()))
+                .addHeader("Accept-Encoding","gzip, deflate")
+                .addHeader("Content-Type","application/x-www-form-urlencoded")
+                .addHeader("Connection","keep-alive")
+                .addHeader("Accept","*/*")
+                .addHeader("Accept-Language","zh-Hans-CN;q=1")
                 .build();
         return chain.proceed(request);
 
 //        return chain.proceed(original);
     }
-//    @Override
-//    public Response intercept(Chain chain) throws IOException {
-//        Request original = chain.request();
-//        String url = original.url().toString();
-//        if (url.contains("book/") ||
-//                url.contains("book-list/") ||
-//                url.contains("toc/") ||
-//                url.contains("post/") ||
-//                url.contains("user/") || url.contains("bookreader")) {
-//            Request request = original.newBuilder()
-//                    .addHeader("User-Agent", "ZhuiShuShenQi/3.40[preload=false;locale=zh_CN;clientidbase=android-nvidia]") // 不能转UTF-8
-//                    .addHeader("X-User-Agent", "ZhuiShuShenQi/3.40[preload=false;locale=zh_CN;clientidbase=android-nvidia]")
-//                    .addHeader("X-Device-Id", TelephonyUtils.getIMEI(XApplication.getsInstance()))
-////                    .addHeader("Host", "api.zhuishushenqi.com")
-//                    .addHeader("Connection", "Keep-Alive")
-//                    .addHeader("If-None-Match", "W/\"2a04-4nguJ+XAaA1yAeFHyxVImg\"")
-//                    .addHeader("If-Modified-Since", "Tue, 02 Aug 2016 03:20:06 UTC")
-//                    .addHeader("X-Client-Info",new Gson().toJson(new HeaderParams()))
-//                    .build();
-//            return chain.proceed(request);
-//        }
-//        return chain.proceed(original);
-//    }
 }

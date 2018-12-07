@@ -219,7 +219,7 @@ public class BookPlayActivity extends BaseTitleActivity<BookPalyPresenter> imple
         if (data!=null&&!StringUtils.isEmpty(data.getUrl_id())){
             //存储本书籍音频前缀
             aCache.put(Constants.YTK_PREFIX_STR+bookid, GsonUtils.parseToJsonString(data));
-            String prefix_str = data.getUrl_id().substring(0,data.getUrl_id().indexOf("com/"))+"com/";
+            String prefix_str = data.getUrl_id().substring(0,data.getUrl_id().indexOf("com:8000/"))+"com:8000/";
             mp3Url = prefix_str+data_id;//音频地址
             SharedPreferencesUtil.getInstance().putString(Constants.BOOK_URL,prefix_str);
             AudioPlayer.get().setMusicList(MusicType.ALBUM_SOURCE);//整本小说 添加到播放列表

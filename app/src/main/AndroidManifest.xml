@@ -60,7 +60,7 @@
         android:label="${app_name_channel}"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup"><!--replace字段因feedback:3.1.6 冲突添加-->
+        tools:replace="android:allowBackup,android:label"><!--replace字段因feedback:3.1.6 冲突添加-->
         <activity
             android:name=".ui.activity.SplashActivity"
             android:screenOrientation="portrait"

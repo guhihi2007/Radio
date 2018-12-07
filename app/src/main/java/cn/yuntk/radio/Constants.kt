@@ -40,6 +40,8 @@ object Constants {
     const val UPDATE = "update"
     const val ABOUTUS = "about_us"
     const val NOVEL = "novel"
+    const val EXTRA_NOTIFICATION = "radio_notification"
+
     //首页抽屉列表
     var channelList = ObservableArrayList<ChannelBean>().apply {
         add(ChannelBean("国家电台", NATION_CODE, R.mipmap.icon_nation))
@@ -72,4 +74,12 @@ object Constants {
     const val UMENG_KEY = "5b6a5dc0b27b0a590b000106"
     //startActivityForResult 返回码
     const val SET_NET_CODE = 1111
+
+    //状态栏点击的key
+    const val ACTION_MEDIA_STOP = "fairy.ACTION_MEDIA_STOP"
+    const val ACTION_MEDIA_PLAY_PAUSE = "radio.ACTION_MEDIA_PLAY_PAUSE"
+    const val ACTION_MEDIA_NEXT = "radio.ACTION_MEDIA_NEXT"
+    const val ACTION_MEDIA_PRE = "radio.ACTION_MEDIA_PREVIOUS"
+    const val ACTION_PLAY_NEXT = "radio.PLAY_NEXT"
+    const val ACTION_PLAY_START = "radio.PLAY_START"
 }

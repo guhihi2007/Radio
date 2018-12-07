@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import cn.yuntk.radio.service.PlayService
+import cn.yuntk.radio.Constants.ACTION_MEDIA_PLAY_PAUSE
 
 /**
  *  来电/耳机拔出时暂停播放
@@ -14,6 +15,6 @@ import cn.yuntk.radio.service.PlayService
 class NoisyAudioStreamReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        PlayService.startCommand(context, Actions.ACTION_MEDIA_PLAY_PAUSE)
+        PlayService.startCommand(context, ACTION_MEDIA_PLAY_PAUSE)
     }
 }
