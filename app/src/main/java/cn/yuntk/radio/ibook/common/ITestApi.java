@@ -1,59 +1,54 @@
 package cn.yuntk.radio.ibook.common;
 
-import cn.yuntk.radio.ibook.bean.BookDetailBean;
-import cn.yuntk.radio.ibook.bean.BookListBean;
-import cn.yuntk.radio.ibook.bean.ClassifyListBean;
-import cn.yuntk.radio.ibook.bean.Mp3urlBean;
-import cn.yuntk.radio.ibook.bean.PsListBean;
-import cn.yuntk.radio.ibook.bean.SearchBean;
 
-import java.util.Map;
+import java.util.HashMap;
 
+import cn.yuntk.radio.ibook.base.RootBean;
+import cn.yuntk.radio.ibook.base.RootListBean;
+import cn.yuntk.radio.ibook.bean.TCBean1;
+import cn.yuntk.radio.ibook.bean.TCBean3;
+import cn.yuntk.radio.ibook.bean.TCBean4;
+import cn.yuntk.radio.ibook.bean.TCBean5;
+import cn.yuntk.radio.ibook.bean.TCBean6;
 import io.reactivex.Observable;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 /**
  * 创建时间:2018/4/3
- * 创建人: yb
+ * 创建人:
  * 描述:
  */
 
 public interface ITestApi {
 
-    /**
-     * app接口
-     */
-    @GET(Api.BOOK_LIST1)
-    Observable<BookListBean> getBookList1();
+    //一级分类
+    @GET(Api.CLASSIFY_1)
+    Observable<RootBean<TCBean1>> getBookTypeList(@QueryMap HashMap<String, String> map);
 
-    @GET(Api.BOOK_LIST2)
-    Observable<BookListBean> getBookList2();
+    //点击分类之后的书籍列表
+    @GET(Api.CLASSIFY_2)
+    Observable<RootListBean<TCBean3>> getAlbumByBookTypeid(@QueryMap HashMap<String, String> map);
 
-    @GET(Api.BOOK_LIST3)
-    Observable<BookListBean> getBookList3();
+    //榜单 书籍列表
+    @GET(Api.RANK_INDEX_2)
+    Observable<RootListBean<TCBean3>> getAlbumInRank(@QueryMap HashMap<String, String> map);
 
-    @GET(Api.BOOK_LIST4)
-    Observable<BookListBean> getBookList4();
+    //专辑详情
+    @GET(Api.ALBUM_DETAIL)
+    Observable<RootBean<TCBean4>> getAlbumDetail(@QueryMap HashMap<String, String> map);
 
-    @GET(Api.BOOK_CLASSIFY)
-    Observable<ClassifyListBean> getClassifyList();
+    //声音列表
+    @GET(Api.ALBUM_TRACK)
+    Observable<RootListBean<TCBean5>> getAlbumTracks(@QueryMap HashMap<String, String> map);
 
-    @FormUrlEncoded
-    @POST(Api.BOOK_MP3_URL)
-    Observable<Mp3urlBean> getMp3Url(@FieldMap Map<String, String> params);
+    //获取播放地址
+    @GET(Api.LISTENER)
+    Observable<RootBean<TCBean6>> getPlayCdn(@QueryMap HashMap<String, String> map);
 
-    @GET("a_html/{id}.html")
-    Observable<BookDetailBean> getBookInfo(@Path("id") String id);
+    //获取播放地址
+    @GET(Api.TC_SEARCH)
+    Observable<RootListBean<TCBean3>> serchAlbumForKeyword(@QueryMap HashMap<String, String> map);
 
-    @GET("/a_list/{id}_hot.html")
-    Observable<PsListBean> getPsList(@Path("id") String id);
-
-    @GET("/so.asp")
-    Observable<SearchBean> searchBookForKeyword(@Query("keyword") String key);
 
 }

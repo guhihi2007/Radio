@@ -90,7 +90,7 @@ public class LoadingView extends View {
         mPaint.setStrokeWidth(mRing.strokeWidth);
 
         if (attrs != null) {
-            TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.LoadingView, 0, 0);
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LoadingView, 0, 0);
             setColor(a.getInt(R.styleable.LoadingView_loadding_color, DEFAULT_COLOR));
             setRingStyle(a.getInt(R.styleable.LoadingView_ring_style, RING_STYLE_SQUARE));
             setProgressStyle(a.getInt(R.styleable.LoadingView_progress_style, PROGRESS_STYLE_MATERIAL));

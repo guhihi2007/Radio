@@ -5,11 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.IBinder
-import cn.yuntk.radio.ibook.XApplication
-import cn.yuntk.radio.ibook.activity.ScreenOffAcivity
-import cn.yuntk.radio.ibook.service.AudioPlayer
+import cn.yuntk.radio.XApplication
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.ui.activity.LockScreenActivity
 import cn.yuntk.radio.utils.jumpActivity
@@ -31,33 +28,34 @@ class LockService : Service() {
         myBinder = MyLockServiceBinder(this)
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                log("LockService onReceive ==${intent?.action}")
-                if (!getHasJump()) {
+                log("LockService onReceive ==${intent?.action},hasJump==$hasJump")
+                if (!hasJump) {
                     if (intent?.action == Intent.ACTION_SCREEN_OFF) {
 
-                        XApplication.sInstance.isBackGroud = true
+                        XApplication.sInstance.isBackGround = true
 
                         if (PlayServiceManager.isListenerFMBean()) {
                             log(" jumpActivity LockScreenActivity")
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                                hasJump = true
-                                jumpActivity(LockScreenActivity::class.java)
-                                return
-                            }
+//                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                            hasJump = true
+                            jumpActivity(LockScreenActivity::class.java)
+                            return
+//                            }
                         }
                         if (status == "stop") {
                             stopSelf()
                             return
                         }
-                        if (AudioPlayer.get().isPlaying || AudioPlayer.get().isPreparing) {
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                                jumpActivity(ScreenOffAcivity::class.java)
-                            }
-                        }
+//                        if (AudioPlayer.get().isPlaying || AudioPlayer.get().isPreparing) {
+//                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+//                                jumpActivity(ScreenOffAcivity::class.java)
+//                            }
+//                        }
 
                     }
                 }
             }
+
         }
 
         val filter = IntentFilter()
@@ -77,6 +75,7 @@ class LockService : Service() {
     }
 
     fun setJump(boolean: Boolean) {
+        log(" LockScreenActivity setJump==$boolean")
         hasJump = boolean
     }
 

@@ -11,6 +11,7 @@ import cn.yuntk.radio.base.BaseActivity
 import cn.yuntk.radio.bean.Time
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.databinding.ActivityLockScreenBinding
+import cn.yuntk.radio.XApplication
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.service.LockService
 import cn.yuntk.radio.service.MyLockServiceBinder
@@ -36,6 +37,7 @@ open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
     private lateinit var conn: LockServiceConnection
     private var service: LockService? = null
     override fun initView() {
+
         mBinding.run {
             getDate()
             fmBean = PlayServiceManager.getListenerFMBean()
@@ -78,6 +80,12 @@ open class LockScreenActivity : BaseActivity<ActivityLockScreenBinding>() {
         intent.setClass(this, LockService::class.java)
         bindService(intent, conn, Context.BIND_AUTO_CREATE)
 
+    }
+
+    override fun onResume() {
+        XApplication.sInstance.isBackGround = false
+        super.onResume()
+        XApplication.sInstance.isBackGround = true
     }
 
     override fun onClick(view: View?) {

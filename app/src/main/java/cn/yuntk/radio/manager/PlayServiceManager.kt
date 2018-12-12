@@ -1,19 +1,14 @@
 package cn.yuntk.radio.manager
 
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.ibook.service.Actions
 import cn.yuntk.radio.ibook.service.AudioPlayer
 import cn.yuntk.radio.ibook.service.FloatViewService
-import cn.yuntk.radio.service.MyPlayServiceBinder
+import cn.yuntk.radio.play.PlayManager
 import cn.yuntk.radio.service.PlayService
-import cn.yuntk.radio.utils.LT
-import cn.yuntk.radio.utils.logE
+import cn.yuntk.radio.viewmodel.NeedReplaceURLContent
 
 /**
  * Author : Gupingping
@@ -22,36 +17,14 @@ import cn.yuntk.radio.utils.logE
  */
 object PlayServiceManager {
 
-    private var playService: PlayService? = null
-    private var conn: ServiceConnection
-
-    init {
-        conn = PlayServiceConnection()
-    }
-
     fun init(activity: Activity) {
         start(activity)
-        bind(activity)
     }
 
     private fun start(activity: Activity) {
         val intent = Intent()
         intent.setClass(activity, PlayService::class.java)
         activity.startService(intent)
-    }
-
-    //绑定service
-    private fun bind(activity: Activity) {
-        val intent = Intent()
-        intent.setClass(activity, PlayService::class.java)
-        val isBind = activity.bindService(intent, conn, Context.BIND_AUTO_CREATE)
-        "bind isBind=$isBind".logE(LT.RadioNet)
-    }
-
-    //解绑service
-    fun unbind(activity: Activity) {
-        val isBind = activity.unbindService(conn)
-        "bind isBind=$isBind".logE(LT.RadioNet)
     }
 
     @JvmStatic
@@ -61,16 +34,16 @@ object PlayServiceManager {
         if (!AudioPlayer.get().isIdle) {
             AudioPlayer.get().stopPlayer()
         }
-        if (FloatViewService.isAddToWindow())
+        if (FloatViewService.isShow == "0")
             FloatViewService.startCommand(context, Actions.SERVICE_GONE_WINDOW)
-        playService?.handler?.removeMessages(playService!!.RETRY)
-        if (NeedReplaceURLContent.replaceContent.containsKey(fmBean.radioId) )//更换不能播放的url
-            fmBean.radioUrl=NeedReplaceURLContent.replaceContent[fmBean.radioId]
-        playService?.play(fmBean, context)
+        PlayManager.instance.handler?.removeMessages(PlayManager.instance.RETRY)
+        if (NeedReplaceURLContent.replaceContent.containsKey(fmBean.radioId))//更换不能播放的url
+            fmBean.radioUrl = NeedReplaceURLContent.replaceContent[fmBean.radioId]
+        PlayManager.instance.play(fmBean, context)
     }
 
     fun stop() {
-        playService?.stop()
+        PlayManager.instance.stop()
     }
 
     @JvmStatic
@@ -79,52 +52,38 @@ object PlayServiceManager {
         if (!AudioPlayer.get().isIdle) {
             AudioPlayer.get().stopPlayer()
         }
-        playService?.playPause()
+        PlayManager.instance.playPause()
     }
 
     @JvmStatic
     fun getListenerFMBean(): FMBean? {
-        return playService?.getCurrentFMBean()
+        return PlayManager.instance.getCurrentFMBean()
     }
 
     @JvmStatic
     fun getListenerState(): Int {
-        return playService?.getListenerState() ?: 0
+        return PlayManager.instance.getListenerState() ?: 0
     }
 
     @JvmStatic
     fun isListenerFMBean(): Boolean {
-        return playService?.isPlaying() ?: false
+        return PlayManager.instance.isPlaying() ?: false
     }
 
     fun isListenerIdle(): Boolean {
-        return playService?.isIdle() ?: false
+        return PlayManager.instance.isIdle() ?: false
     }
 
     fun getPageList(): List<FMBean> {
-        return playService?.getPageList() ?: ArrayList<FMBean>()
+        return PlayManager.instance.getPageList() ?: ArrayList<FMBean>()
     }
 
     fun next(activity: Activity): FMBean? {
-        return playService?.next(activity)
+        return PlayManager.instance.next(activity)
     }
 
     fun pre(activity: Activity): FMBean? {
-        return playService?.pre(activity)
-    }
-
-    class PlayServiceConnection : ServiceConnection {
-        override fun onServiceDisconnected(name: ComponentName?) {
-            "PlayService onServiceDisconnected".logE(LT.RadioNet)
-        }
-
-        override fun onServiceConnected(name: ComponentName?, iBinder: IBinder) {
-            val myBinder = iBinder as MyPlayServiceBinder
-            val playService: PlayService = myBinder.mService
-            PlayServiceManager.playService = playService
-            "PlayService onServiceConnected playService==$playService".logE(LT.RadioNet)
-        }
-
+        return PlayManager.instance.pre(activity)
     }
 
 }

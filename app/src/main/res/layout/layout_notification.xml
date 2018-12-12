@@ -19,7 +19,7 @@
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"
         android:padding="@dimen/padding_5"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:src="@mipmap/ic_search_delete" />
 
     <TextView

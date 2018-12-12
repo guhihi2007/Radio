@@ -10,6 +10,6 @@ public class Logger implements LoggingInterceptor.Logger {
 
     @Override
     public void log(String message) {
-        Log.e("http----: " ,message);
+        Log.i("http : " ,message);
     }
 }

@@ -153,7 +153,7 @@
 //                Lg.e("FloatViewKt", "ll_play")
 //                mFloatPlay.isSelected = !mFloatPlay.isSelected
 //                val state = PlayServiceManager.getListenerState()
-//                if (state == Constants.STATE_IDLE || state == Constants.STATE_PAUSE) {
+//                if (state == TingConstants.STATE_IDLE || state == TingConstants.STATE_PAUSE) {
 //                    PlayServiceManager.play(fmBean?.get()!!, mContext)
 //                } else {
 //                    PlayServiceManager.pauseContinue()

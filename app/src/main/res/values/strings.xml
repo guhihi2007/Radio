@@ -62,7 +62,9 @@
     <string name="book_detail_order">排序</string>
     <string name="book_detail_download">下载</string>
     <string name="book_detail_last_page">上次听到</string>
-
+    <string name="book_detail_zz">作者</string>
+    <string name="book_detail_bf">播放</string>
+    <string name="book_detail_bj">播讲</string>
     <string name="play_time_start">00:00</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -79,7 +81,10 @@
     <string name="unable_to_play">暂时无法播放</string>
     <string name="unable_to_error_play_url">播放地址获取失败</string>
     <string name="sure_exit_app">确定退出应用</string>
-
+    <string name="batch_download">批量下载</string>
+    <string name="start_chapter">开始章节:</string>
+    <string name="end_chapter">结束章节:</string>
+    <string name="download_tip">注意：每次最多下载100章，同时下载过多可能造成卡顿</string>
     <string name="hadr_loading">努力加载中...</string>
     <string name="collect_succ_tip">收藏成功</string>
     <string name="collect_cancle_tip">取消收藏成功</string>
@@ -87,4 +92,21 @@
     <string name="download_success">%s下载完成</string>
     <string name="unable_to_download">暂时无法下载</string>
     <string name="now_download">正在下载：%s</string>
+    <string name="click_to_skip">点击跳过</string>
+    <string name="net_bad">点击重新加载</string>
+    <string name="history_record">历史记录</string>
+    <string name="clear_history_record"> 清除历史记录</string>
+    <string name="tip_hc">- 长按可选择删除收藏或者历史 -</string>
+    <string name="play_speed_tip">倍速播放</string>
+    <string name="to_top">置顶</string>
+    <string name="delete">删除</string>
+    <string name="novel_title">小说</string>
+    <string name="storytelling_title">评书</string>
+    <string name="system_low">因手机系统版本过低，不支持倍速播放功能</string>
+    <string name="load_over">已全部加载</string>
+    <string name="download_limit">单次下载章节数量不能多于100章</string>
+    <string name="index_title_1">热门小说</string>
+    <string name="index_title_2">热搜小说</string>
+    <string name="index_title_3">热门评书</string>
+    <string name="index_title_4">热搜评书</string>
 </resources>

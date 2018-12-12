@@ -1,8 +1,10 @@
 package cn.yuntk.radio.ui.activity
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.databinding.ObservableField
+import android.media.AudioManager
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -25,6 +27,7 @@ import cn.yuntk.radio.Constants.UPDATE
 import cn.yuntk.radio.Constants.channelList
 
 import cn.yuntk.radio.R
+import cn.yuntk.radio.ad.AdController
 import cn.yuntk.radio.adapter.BaseDataBindingAdapter
 import cn.yuntk.radio.base.BaseActivity
 import cn.yuntk.radio.base.ItemClickPresenter
@@ -32,16 +35,13 @@ import cn.yuntk.radio.bean.ChannelBean
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.databinding.ActivityMainBinding
-import cn.yuntk.radio.ibook.MainActivity
-import cn.yuntk.radio.ibook.ads.ADConstants
-import cn.yuntk.radio.ibook.ads.AdController
+import cn.yuntk.radio.ibook.TingMainActivity
+import cn.yuntk.radio.ibook.receiver.MediaButtonReceiver
 import cn.yuntk.radio.ibook.service.Actions
-import cn.yuntk.radio.ibook.service.AudioPlayer
-import cn.yuntk.radio.ibook.service.FloatViewService
+import cn.yuntk.radio.ibook.service.TingPlayService
 import cn.yuntk.radio.view.FloatViewManager
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.play.QuitTimer
-import cn.yuntk.radio.receiver.StatusBarReceiver
 import cn.yuntk.radio.service.LockService
 import cn.yuntk.radio.ui.fragment.FragmentByChannelCode
 import cn.yuntk.radio.utils.*
@@ -51,6 +51,8 @@ import cn.yuntk.radio.viewmodel.MainViewModel
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI
 import com.alibaba.sdk.android.feedback.util.IUnreadCountCallback
 import com.google.android.gms.ads.MobileAds
+import com.liulishuo.filedownloader.FileDownloadMonitor
+import com.liulishuo.filedownloader.FileDownloader
 import com.tencent.bugly.Bugly
 import com.tencent.bugly.BuglyStrategy
 import com.tencent.bugly.beta.Beta
@@ -86,7 +88,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         val strategy = configUpgradeInfo()
         Bugly.init(this, BUGLY_KEY, BuildConfig.DEBUG, strategy)
         //初始化Google广告
-        MobileAds.initialize(this, ADConstants.AD_GOOGLE_APPID)
+        MobileAds.initialize(this, BuildConfig.AD_GOOGLE_APPID)
 
         /**--------布局初始化--------*/
         val toolbar = mBinding.toolbar
@@ -116,6 +118,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         /**--------获取反馈回复--------*/
 
         getFeedbackUnreadCounts()
+
     }
 
 
@@ -127,7 +130,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         mainViewModel.loadAdConfig()
         builder = AdController.Builder(this@MainActivity)
                 .setContainer(mBinding.llAd)
-                .setPage(ADConstants.HOME_PAGE_NEW)
+                .setPage(Constants.HOME_PAGE_NEW)
                 .create()
     }
 
@@ -144,12 +147,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
 //            }
             FloatViewManager.show(this)
 
-        } else if (AudioPlayer.get().isPlaying) {
-            FloatViewService.startCommand(this, Actions.SERVICE_VISABLE_WINDOW)
-        } else {
-            FloatViewService.startCommand(this, Actions.SERVICE_GONE_WINDOW)
-
         }
+
     }
 
     override fun onResume() {
@@ -210,7 +209,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
                 Beta.checkUpgrade()
             }
             NOVEL -> {
-                jumpActivity(MainActivity::class.java, null)
+                jumpActivity(TingMainActivity::class.java, null)
             }
         }
     }
@@ -314,9 +313,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.action_fm ->{
-                jumpActivity(FMActivity::class.java,null)
+        when (item.itemId) {
+            R.id.action_fm -> {
+                jumpActivity(FMActivity::class.java, null)
             }
         }
         return true
@@ -337,6 +336,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), ItemClickPresenter<Cha
         LockService.status = "stop"//改写soup服务状态
         builder.destroy()
         unRegisterEventBus()
+        //关闭听书
+        cn.yuntk.radio.ibook.service.LockService.status = "stop"//改写soup服务状态
+        TingPlayService.startCommand(this@MainActivity, Actions.ACTION_STOP)
+        if (android.os.Build.VERSION.SDK_INT < 21) {
+            (getSystemService(Context.AUDIO_SERVICE) as AudioManager).unregisterMediaButtonEventReceiver(ComponentName(this, MediaButtonReceiver::class.java))
+        }
+        FileDownloader.getImpl().unBindServiceIfIdle()
+        FileDownloadMonitor.releaseGlobalMonitor()
     }
 
     override fun isFullScreen(): Boolean = false

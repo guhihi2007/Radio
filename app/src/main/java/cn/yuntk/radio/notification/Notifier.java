@@ -24,6 +24,7 @@ import java.util.List;
 import cn.yuntk.radio.Constants;
 import cn.yuntk.radio.R;
 import cn.yuntk.radio.bean.FMBean;
+import cn.yuntk.radio.play.PlayManager;
 import cn.yuntk.radio.receiver.StatusBarReceiver;
 import cn.yuntk.radio.service.PlayService;
 import cn.yuntk.radio.ui.activity.MainActivity;
@@ -115,8 +116,8 @@ public class Notifier {
     private RemoteViews getBigRemoteViews(Context context, FMBean fmBean, boolean isPlaying) {
         String title = fmBean.getName();
         String subtitle = "";
-        if (playService.getCurrentFMBean() != null) {
-            subtitle = playService.getCurrentFMBean().getName();
+        if (PlayManager.Companion.getInstance().getCurrentFMBean() != null) {
+            subtitle = PlayManager.Companion.getInstance().getCurrentFMBean().getName();
         }
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.layout_notification);
 
@@ -137,18 +138,6 @@ public class Notifier {
         remoteViews.setImageViewResource(R.id.play_start, getPlayIconRes(isLightNotificationTheme, isPlaying));
         remoteViews.setOnClickPendingIntent(R.id.play_start, playPendingIntent);
 
-//        Intent nextIntent = new Intent(StatusBarReceiver.ACTION_STATUS_BAR);
-//        nextIntent.putExtra(StatusBarReceiver.EXTRA, StatusBarReceiver.EXTRA_NEXT);
-//        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(context, 1, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        remoteViews.setImageViewResource(R.id.play_next, getNextIconRes(isLightNotificationTheme));
-//        remoteViews.setOnClickPendingIntent(R.id.play_next, nextPendingIntent);
-
-//        Intent preIntent = new Intent(StatusBarReceiver.ACTION_STATUS_BAR);
-//        preIntent.putExtra(StatusBarReceiver.EXTRA, StatusBarReceiver.EXTRA_PRE);
-//        PendingIntent prePendingIntent = PendingIntent.getBroadcast(context, 2, preIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        remoteViews.setImageViewResource(R.id.play_prev, getPreIconRes(isLightNotificationTheme));
-//        remoteViews.setOnClickPendingIntent(R.id.play_prev, prePendingIntent);
-
         Intent stopIntent = new Intent(StatusBarReceiver.ACTION_STATUS_BAR);
         stopIntent.putExtra(StatusBarReceiver.EXTRA, StatusBarReceiver.EXTRA_STOP);
         PendingIntent stopPendingIntent = PendingIntent.getBroadcast(context, 3, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -161,8 +150,8 @@ public class Notifier {
     private RemoteViews getRemoteViews(Context context, FMBean fmBean, boolean isPlaying) {
         String title = fmBean.getName();
         String subtitle = "";
-        if (playService.getCurrentFMBean() != null) {
-            subtitle = playService.getCurrentFMBean().getName();
+        if (PlayManager.Companion.getInstance().getCurrentFMBean() != null) {
+            subtitle = PlayManager.Companion.getInstance().getCurrentFMBean().getName();
         }
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.layout_notification);
 

@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 
+
 import cn.yuntk.radio.R;
 import cn.yuntk.radio.ibook.util.ImageUtils;
 
@@ -45,6 +46,7 @@ public class AlbumCoverView extends View implements ValueAnimator.AnimatorUpdate
     private Point mDiscPoint = new Point();
     private Point mCoverPoint = new Point();
     private Point mNeedlePoint = new Point();
+
     // 旋转中心坐标
     private Point mDiscCenterPoint = new Point();
     private Point mCoverCenterPoint = new Point();
@@ -72,11 +74,11 @@ public class AlbumCoverView extends View implements ValueAnimator.AnimatorUpdate
     }
 
     private void init() {
-        mTopLine = getResources().getDrawable(R.drawable.listener_play_page_cover_top_line_shape);
-        mCoverBorder = getResources().getDrawable(R.drawable.listener_play_page_cover_border_shape);
-        mDiscBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.play_page_disc);//外层黑胶圈
+        mTopLine = getResources().getDrawable(R.drawable.ting_play_page_cover_top_line_shape);
+        mCoverBorder = getResources().getDrawable(R.drawable.ting_play_page_cover_border_shape);
+        mDiscBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ting_play_page_disc);//外层黑胶圈
         mCoverBitmap = CoverLoader.get().loadRound(null);
-        mNeedleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.play_page_needle);//指针
+        mNeedleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ting_play_page_needle);//指针
         mTopLineHeight = dp2px(1);
         mCoverBorderWidth = dp2px(1);
 

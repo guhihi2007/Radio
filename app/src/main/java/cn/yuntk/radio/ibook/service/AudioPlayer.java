@@ -4,35 +4,51 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.bean.BookDetailBean;
-import cn.yuntk.radio.ibook.bean.DownloadMusicInfo;
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import cn.yuntk.radio.XApplication;
+import cn.yuntk.radio.ibook.api.BaseOkhttp;
+import cn.yuntk.radio.ibook.base.RootBean;
+import cn.yuntk.radio.ibook.base.RootListBean;
 import cn.yuntk.radio.ibook.bean.Music;
-import cn.yuntk.radio.ibook.common.Constants;
+import cn.yuntk.radio.ibook.bean.TCAlbumTable;
+import cn.yuntk.radio.ibook.bean.TCBean4;
+import cn.yuntk.radio.ibook.bean.TCBean5;
+import cn.yuntk.radio.ibook.bean.TCBean6;
+import cn.yuntk.radio.ibook.bean.TCLastListenerTable;
+import cn.yuntk.radio.ibook.bean.TCListenerTable;
+import cn.yuntk.radio.ibook.common.TingConstants;
 import cn.yuntk.radio.ibook.dbdao.Mp3DaoUtils;
+import cn.yuntk.radio.ibook.dbdao.TCAlbumTableManager;
+import cn.yuntk.radio.ibook.dbdao.TCLastListenerTableManager;
+import cn.yuntk.radio.ibook.dbdao.TCListenerTableManager;
 import cn.yuntk.radio.ibook.receiver.NoisyAudioStreamReceiver;
-import cn.yuntk.radio.ibook.util.GsonUtils;
 import cn.yuntk.radio.ibook.util.LogUtils;
 import cn.yuntk.radio.ibook.util.NetworkUtils;
 import cn.yuntk.radio.ibook.util.SharedPreferencesUtil;
 import cn.yuntk.radio.ibook.util.StringUtils;
 import cn.yuntk.radio.ibook.util.ToastUtil;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import cn.yuntk.radio.ibook.bean.Music;
-import cn.yuntk.radio.manager.PlayServiceManager;
+import cn.yuntk.radio.play.PlayManager;
 
 /**
- * Created by hzwangchenyan on 2018/1/26.
+ * Created by xue on 2018/1/26.
+ *
+ * 播放器控制
  */
 public class AudioPlayer {
     private static final int STATE_IDLE = 0;
@@ -46,11 +62,12 @@ public class AudioPlayer {
     private AudioFocusManager audioFocusManager;
     private MediaPlayer mediaPlayer;
     private Handler handler;
-//    private NoisyAudioStreamReceiver noisyReceiver;
+    private NoisyAudioStreamReceiver noisyReceiver;
     private IntentFilter noisyFilter;
-    private List<Music> musicList;
+    private List<TCBean5> musicList;
     private final List<OnPlayerEventListener> listeners = new ArrayList<>();
     private int state = STATE_IDLE;
+    private int speedLevel = 0;//倍速播放等级
     private Mp3DaoUtils mp3DaoUtils;
 
     public static AudioPlayer get() {
@@ -75,33 +92,28 @@ public class AudioPlayer {
         mediaPlayer = new MediaPlayer();
         handler = new Handler(Looper.getMainLooper());
 
-//        noisyReceiver = new NoisyAudioStreamReceiver();
+        noisyReceiver = new NoisyAudioStreamReceiver();
         noisyFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
 //        当前播放结束监听
         mediaPlayer.setOnCompletionListener(mp -> {
             next();
-            LogUtils.showLog("AudioPlayer1:setOnCompletionListener:" + getPlayMusic().getPath());
+            LogUtils.showLog("AudioPlayer1:setOnCompletionListener:"+getPlayMusic().getPath());
         });
         //        当前播放错误监听
         mediaPlayer.setOnErrorListener((mp, what, extra) -> {
             stopPlayer();
-//            ToastUtil.showToast("音频播放错误");
-            LogUtils.showLog("AudioPlayer1:setOnErrorListener:" + getPlayMusic().getPath());
+            ToastUtil.showToast("音频播放错误");
+            LogUtils.showLog("AudioPlayer1:setOnErrorListener:"+getPlayMusic().getPath());
             return true;
         });
         mediaPlayer.setOnPreparedListener(mp -> {
             if (isPreparing()) {
                 int duration = mediaPlayer.getDuration();
-                Music music = getPlayMusic();
-                LogUtils.showLog("AudioPlayer1:setOnPreparedListener:duration" + duration + ":Path:" + music.getPath());
+                TCBean5 music = getPlayMusic();
+                LogUtils.showLog("AudioPlayer1:setOnPreparedListener:duration"+duration+":Path:"+music.getPath());
                 music.setDuration(duration);
-                updataBook_Zj(music);
-                startPlayer();
-                if (music.getType() == Music.Type.LOCAL) {
-                    for (OnPlayerEventListener listener : listeners) {
-                        listener.onBufferingUpdate(100);
-                    }
-                }
+                updataBook_Zj(music);//存储上次收听到的章节 并将章节加入到收听进度数据库
+
             }
         });
         mediaPlayer.setOnBufferingUpdateListener((mp, percent) -> {
@@ -112,59 +124,68 @@ public class AudioPlayer {
     }
 
     public void setMusicList(String musicType) {
-        switch (musicType) {
+        switch (musicType){
             case MusicType.ALBUM_SOURCE:
                 setTheAlbum();
                 break;
             case MusicType.HISTORY_SOURCE:
-                this.musicList = mp3DaoUtils.queryListDB_History();
                 break;
             case MusicType.COLLECT_SOURCE:
-                this.musicList = mp3DaoUtils.queryListDB_Collect();
                 break;
             case MusicType.DOWNLOAD_SOURCE:
-                this.musicList = mp3DaoUtils.queryListDB_DownLoad();
                 break;
             case MusicType.DEFAULT_SOURCE:
-                this.musicList = mp3DaoUtils.queryListDB();
-            default:
+                default:
         }
     }
 
     //    设置专辑
-    public void setTheAlbum() {
-        String json = SharedPreferencesUtil.getInstance().getString(Constants.BOOK_DETAIL);
-        String book_url = SharedPreferencesUtil.getInstance().getString(Constants.BOOK_URL);//有可能是空 断网播放本地音频
-        if (!StringUtils.isEmpty(json)) {
+    public void setTheAlbum(){
+        String album_json = SharedPreferencesUtil.getInstance().getString(TingConstants.ALBUM_DETAIL);//获取正在播放的专辑详情
+        String track_json = SharedPreferencesUtil.getInstance().getString(TingConstants.ALBUM_TRACK);//获取正在播放的专辑目录
+        if (!StringUtils.isEmpty(album_json)){
+            if (musicList == null){
+                ToastUtil.showToast("遇到未知问题，请重启App!");
+                return;
+            }
             this.musicList.clear();
-            BookDetailBean bookDetailBean = GsonUtils.parseObject(json, BookDetailBean.class);
-            if (bookDetailBean != null && bookDetailBean.getUrl_list() != null && bookDetailBean.getUrl_list().size() != 0) {
-                for (int i = 0; i < bookDetailBean.getUrl_list().size(); i++) {
-                    Music music = new Music();
-                    music.setSongId(bookDetailBean.getHtml_id());//小说id
-                    music.setTitle(bookDetailBean.getTitle());//小说标题
-                    music.setIs_collect(Music.Collect_Type.NO);//是否收藏
-                    music.setAlbum(bookDetailBean.getType());//小说类型
-                    music.setIs_history(Music.History_Type.YES);
+            Type album_type = new TypeToken<RootBean<TCBean4>>() {}.getType();
+            Type track_type = new TypeToken<RootListBean<TCBean5>>() {}.getType();
 
-                    if (bookDetailBean.getUrl_list().get(i).getIs_download().equals("1") && !StringUtils.isEmpty(bookDetailBean.getUrl_list().get(i).getPath())) {
+            RootBean<TCBean4> albumDetail = new Gson().fromJson(album_json, album_type);
+            RootListBean<TCBean5> tracks = new Gson().fromJson(track_json, track_type);
+
+            if (albumDetail!=null&&tracks!=null&&tracks.getData().size()!=0){
+                for (int i=0;i<tracks.getData().size();i++){
+                    TCBean5 music = new TCBean5();
+                    music.setBookID(albumDetail.getData().getBookID());//小说id
+                    music.setBookname(albumDetail.getData().getBookName());//小说标题
+                    music.setBookPhoto(albumDetail.getData().getBookPhoto());//专辑封面
+                    music.setIntro(albumDetail.getData().getIntro());//专辑简介
+                    music.setHostName(albumDetail.getData().getHostName());//播讲
+                    music.setPlayNum(albumDetail.getData().getPlayNum());//播放量
+
+                    music.setEpis(tracks.getData().get(i).getEpis());//章节id
+                    music.setZname(tracks.getData().get(i).getZname());//章节标题
+                    music.setFilesize(tracks.getData().get(i).getFilesize());//章节大小
+                    music.setTimesize(tracks.getData().get(i).getTimesize());//章节时长
+
+                    music.setListenerStatus(0);//播放状态
+                    music.setTypeid(SharedPreferencesUtil.getInstance().getString(TingConstants.PLAY_PAGE_TYPE));//专辑类型
+
+                    if (tracks.getData().get(i).getIs_download().equals("1")
+                            &&!StringUtils.isEmpty(tracks.getData().get(i).getPath())){
                         //本地已下载过了 直接读取
-                        music.setPath(bookDetailBean.getUrl_list().get(i).getPath());//小说路径
-                        music.setType(Music.Type.LOCAL);
-                    } else {
-                        music.setPath(book_url + bookDetailBean.getUrl_list().get(i).getUrl());//小说路径
-                        music.setType(Music.Type.ONLINE);
+                        music.setPath(tracks.getData().get(i).getPath());//小说路径
+                        music.setIs_local("1");
+                    }else {
+                        music.setPath("onilen");//小说路径
+                        music.setIs_local("0");
                     }
-
-                    music.setZj_id(Integer.parseInt(bookDetailBean.getUrl_list().get(i).getU()));//章节id
-                    music.setZj_title(bookDetailBean.getUrl_list().get(i).getName());//章节标题
-                    music.setBook_con(bookDetailBean.getCon());//小说简介
-                    music.setMark_1(bookDetailBean.getSvid() + "");
-                    music.setMark_2(bookDetailBean.getUrl_list().get(i).getUrl());
                     this.musicList.add(music);
                 }
                 //查看是否为倒序
-                if (getBookStatus(bookDetailBean.getHtml_id() + "")) {
+                if (getBookStatus(albumDetail.getData().getBookID()+"")){
                     Collections.reverse(musicList);
                 }
             }
@@ -183,74 +204,192 @@ public class AudioPlayer {
         listeners.remove(listener);
     }
 
-    public void addAndPlay(Music music) {
-        int position = musicList.indexOf(music);
-        if (position < 0) {
-            musicList.add(music);
-            mp3DaoUtils.insertDB(music);
-            position = musicList.size() - 1;
-        }
-        play(position);
-    }
 
     public void play(int position) {
 
-        if (musicList == null || musicList.isEmpty()) {
+        if (musicList == null||musicList.isEmpty()) {
             return;
         }
-        if (!NetworkUtils.isConnected(context) && musicList.get(position).getType() == Music.Type.ONLINE) {
-            LogUtils.showLog("网络未连接 不能播放线上歌曲：Path:" + musicList.get(position).getPath() + ":Type:" + musicList.get(position).getType());
-            ToastUtil.showToast("网络未连接 不能播放线上音频");
-            return;
-        }
+
+        TCBean5 album_track =  musicList.get(position);
+
+        LogUtils.showLog("play(int position):" +
+                        "BookName:"+ album_track.getBookname()+
+                        ":ZName:"+album_track.getZname()+
+                        ":Path:"+ album_track.getPath());
+
         if (position < 0) {
-            ToastUtil.showToast("已经是第一章了");
+            showToast_("已经是第一章了");
             return;
         } else if (position >= musicList.size()) {
-            ToastUtil.showToast("已经是最后一章了");
+            showToast_("已经是最后一章了");
             return;
         }
 
-        setPlayPosition(position);
-        Music music = getPlayMusic();
+
+        if (album_track.getIs_download().equals("1")){
+            delayPlay(position);//播放已下载音频
+        }else {
+            if (!NetworkUtils.isConnected(context)){
+                showToast_("网络未连接 不能播放线上音频");
+            }else {
+                if (!isGetPlayCdn){
+                    isGetPlayCdn = true;
+                    getPlayCdn(
+                            album_track.getBookID()+"",
+                            album_track.getTypeid(),
+                            album_track.getEpis()+"",
+                            position);
+                }
+            }
+        }
+    }
+
+    private boolean isGetPlayCdn = false;//判断是否在请求中 false没有请求 true请求中
+    //获取播放地址
+    private void getPlayCdn(String bookid, String bookType, String epis, int position){
+
+        HashMap<String,String> map = new HashMap<String,String>();
+        map.put("bookID",bookid);
+        map.put("bookType",bookType);
+        map.put("episodes",epis);
+
+        BaseOkhttp.getInstance().getPlayCdn(map,new BaseOkhttp.RequestCallback(){
+            @Override
+            public void onSuccess(String response) {
+                try{
+                    Type jsonType = new TypeToken<RootBean<TCBean6>>(){}.getType();
+                    RootBean<TCBean6> mp3Data = new Gson().fromJson(response, jsonType);
+                    if (mp3Data!=null&&mp3Data.getStatus() == 1){
+                        TCBean5 album_track =  musicList.get(position);
+                        album_track.setPath(mp3Data.getData().getUrl());
+                        XApplication.getMainThreadHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                delayPlay(position);
+                            }
+                        });
+                    }else {
+                        showToast_("获取播放地址错误");
+                    }
+                }catch (Exception e){
+                    showToast_("获取播放地址错误");
+                }
+                isGetPlayCdn = false;
+            }
+
+            @Override
+            public void onFailure(String msg, Exception e) {
+                showToast_("获取播放地址失败");
+                isGetPlayCdn = false;
+            }
+        });
+    }
+
+    private void delayPlay(int position){
+
+        if (isPlaying()||isPausing()){
+            updateListenerProgress();//切换歌曲前先保存当前播放进度到数据库
+        }
+
+        setPlayPosition(position);//存储当前位置
+        TCBean5 music = getPlayMusic();
 
         try {
-            delayPlay(music);
+
+//            URL url = new URL(music.getPath());
+//            String url1 = url.getPath();
+//            String url2 = url.toExternalForm();
+//
+//            String strUTF8 = URLEncoder.encode(music.getPath(), "UTF-8");
+//            System.out.println(strUTF8);
+//            String str = new String(music.getPath().getBytes("UTF-8"), "UTF-8");
+
+            //只把中文字符转成utf-8
+            String allowedChars=":._-$,;~()/ ";
+            String urlEncoded = Uri.encode(music.getPath(), allowedChars);
+
+
+            //http://audio.xmcdn.com/group49/M02/FA/61/wKgKl1u664TSIIthAA6H1FLDF10326.m4a
+            //http://tcdn44.tingchina.com/5C061AB7/4593bf6247422bae275e7f6664029837/yousheng/%E7%8E%84%E5%B9%BB%E5%A5%87%E5%B9%BB/%E6%96%97%E7%A0%B4%E8%8B%8D%E7%A9%B9_%E8%9C%A1%E7%AC%94%E5%B0%8F%E5%8B%87/0003%E7%AC%AC0002%E7%AB%A0_%E6%96%97%E6%B0%94%E5%A4%A7%E9%99%86.mp3
+            //http://tcdn44.tingchina.com/5C061EAE/dafd3c88312587232bba2d62b573b3ec/yousheng/%E7%8E%84%E5%B9%BB%E5%A5%87%E5%B9%BB/%E6%96%97%E7%A0%B4%E8%8B%8D%E7%A9%B9_%E8%9C%A1%E7%AC%94%E5%B0%8F%E5%8B%87/0004%E7%AC%AC0003%E7%AB%A0_%E5%AE%A2%E4%BA%BA.mp3
+
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(urlEncoded);
+            mediaPlayer.prepareAsync();
+
+            //更新播放页面参数设置 音频转换实时更新
+            SharedPreferencesUtil.getInstance().putString(TingConstants.PLAY_PAGE_BOOK_ID,music.getBookID()+"");
+            SharedPreferencesUtil.getInstance().putString(TingConstants.PLAY_PAGE_TITLE,music.getBookname());
+            SharedPreferencesUtil.getInstance().putString(TingConstants.PLAY_PAGE_EPISODES,music.getEpis()+"");
+            SharedPreferencesUtil.getInstance().putString(TingConstants.PLAY_PAGE_TITLE_NAME,music.getZname());
+
+            // this checks on API 23 and up
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                //设置上次的播放速度
+                String speedLevel = SharedPreferencesUtil.getInstance().getString(TingConstants.LISTENER_SPEED);
+                if (StringUtils.isEmpty(speedLevel)){speedLevel = "0";}
+                int level = Integer.parseInt(speedLevel);
+                this.speedLevel = level;
+                float speed = 1.0f;
+                if (level == 0){
+                    speed = 1.0f;
+                }if (level == 1){
+                    speed = 1.25f;
+                }else if (level == 2){
+                    speed = 1.5f;
+                }else if (level == 3){
+                    speed = 1.75f;
+                }else if (level == 4){
+                    speed = 1.99f;
+                }else if (level == 5){
+                    speed = 0.5f;
+                }
+                if (isPlaying()) {
+                    mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(speed));
+                } else if (isPausing()){
+                    mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(speed));
+                }
+            }
+
             state = STATE_PREPARING;
             for (OnPlayerEventListener listener : listeners) {
                 listener.onChange(music);
             }
+
+            Music m = new Music();
+            m.setTitle(music.getBookname());
+            m.setZj_title(music.getZname());
+            m.setAlbum("");
+            m.setDuration(Long.parseLong(music.getTimesize())*1000);
+            m.setAlbumId(music.getBookID());
+            m.setCoverPath(music.getBookPhoto());
+            if (music.getIs_local().equals("1")){
+                m.setType(0);//本地
+            }else {
+                m.setType(1);//在线
+            }
+
+        Notifier.get().showPlay(m);
+        MediaSessionManager.get().updateMetaData(m);
+        MediaSessionManager.get().updatePlaybackState();
         } catch (IOException e) {
             e.printStackTrace();
-            ToastUtil.showToast("当前音频无法播放");
+            showToast_("当前音频无法播放");
+        }catch (Exception e){
+            e.printStackTrace();
+        }catch (Throwable throwable){
+            throwable.printStackTrace();
+            LogUtils.showLog("1111Throwable:"+throwable.toString());
         }
 
     }
 
-    private void delayPlay(Music music) throws IOException {
-
-        mediaPlayer.stop();
-        mediaPlayer.reset();
-        mediaPlayer.setDataSource(music.getPath());
-        mediaPlayer.prepareAsync();
-        //更新播放页面参数设置 音频转换实时更新
-        SharedPreferencesUtil.getInstance().putString(Constants.PLAY_PAGE_TYPE, music.getAlbum());
-        SharedPreferencesUtil.getInstance().putString(Constants.PLAY_PAGE_DATA_ID, music.getMark_2());
-        SharedPreferencesUtil.getInstance().putString(Constants.PLAY_PAGE_SVV_ID, music.getMark_1());
-        SharedPreferencesUtil.getInstance().putString(Constants.PLAY_PAGE_TITLE, music.getTitle());
-        SharedPreferencesUtil.getInstance().putString(Constants.PLAY_PAGE_TITLE_NAME, music.getZj_title());
-        SharedPreferencesUtil.getInstance().putString(Constants.PLAY_PAGE_BOOK_ID, music.getSongId() + "");
-        SharedPreferencesUtil.getInstance().putString(Constants.PLAY_PAGE_CON, music.getBook_con());
-
-//        Notifier.get().showPlay(music);
-        MediaSessionManager.get().updateMetaData(music);
-        MediaSessionManager.get().updatePlaybackState();
-    }
-
     public void delete(int position) {
         int playPosition = getPlayPosition();
-        Music music = musicList.remove(position);
-        mp3DaoUtils.deleteBtn(music.getSongId() + "");
+        TCBean5 music = musicList.remove(position);
+        mp3DaoUtils.deleteBtn(music.getBookID()+"");
         if (playPosition > position) {
             setPlayPosition(playPosition - 1);
         } else if (playPosition == position) {
@@ -279,25 +418,38 @@ public class AudioPlayer {
     }
 
     public void startPlayer() {
-        //听小说道前，如果广播频道不是空闲状态就停止
-        if (!PlayServiceManager.INSTANCE.isListenerIdle()) {
-            PlayServiceManager.INSTANCE.stop();
-        }
+
         if (!isPreparing() && !isPausing()) {
             return;
         }
+        PlayManager.Companion.getInstance().stop();//停止收音机播放
+
         if (audioFocusManager.requestAudioFocus()) {
             mediaPlayer.start();
             state = STATE_PLAYING;
             handler.post(mPublishRunnable);
-//            Notifier.get().showPlay(getPlayMusic());
+            TCBean5 bean5 = getPlayMusic();
+            Music m = new Music();
+            m.setTitle(bean5.getBookname());
+            m.setZj_title(bean5.getZname());
+            m.setAlbum("");
+            m.setDuration(Long.parseLong(bean5.getTimesize())*1000);
+            m.setAlbumId(bean5.getBookID());
+            m.setCoverPath(bean5.getBookPhoto());
+            if (bean5.getIs_local().equals("1")){
+                m.setType(0);//本地
+            }else {
+                m.setType(1);//在线
+            }
+            Notifier.get().showPlay(m);
             MediaSessionManager.get().updatePlaybackState();
-//            context.registerReceiver(noisyReceiver, noisyFilter);
+            context.registerReceiver(noisyReceiver, noisyFilter);
 
             for (OnPlayerEventListener listener : listeners) {
                 listener.onPlayerStart();
             }
         }
+
     }
 
     public void pausePlayer() {
@@ -305,11 +457,6 @@ public class AudioPlayer {
     }
 
     public void pausePlayer(boolean abandonAudioFocus) {
-        //听小说道前，如果广播频道不是空闲状态就停止
-        if (!PlayServiceManager.INSTANCE.isListenerIdle()) {
-            PlayServiceManager.INSTANCE.stop();
-        }
-
         if (!isPlaying()) {
             return;
         }
@@ -317,15 +464,33 @@ public class AudioPlayer {
         mediaPlayer.pause();
         state = STATE_PAUSE;
         handler.removeCallbacks(mPublishRunnable);
-//        Notifier.get().showPause(getPlayMusic());
-        MediaSessionManager.get().updatePlaybackState();
 
-//        context.unregisterReceiver(noisyReceiver);
+        TCBean5 bean5 = getPlayMusic();
+        Music m = new Music();
+        m.setTitle(bean5.getBookname());
+        m.setZj_title(bean5.getZname());
+        m.setAlbum("");
+        m.setDuration(Long.parseLong(bean5.getTimesize())*1000);
+        m.setAlbumId(bean5.getBookID());
+        m.setCoverPath(bean5.getBookPhoto());
+        if (bean5.getIs_local().equals("1")){
+            m.setType(0);//本地
+        }else {
+            m.setType(1);//在线
+        }
+
+        Notifier.get().showPause(m);
+        MediaSessionManager.get().updatePlaybackState();
+        try{
+            context.unregisterReceiver(noisyReceiver);
+        }catch (Exception e){
+        }
 
         if (abandonAudioFocus) {
             audioFocusManager.abandonAudioFocus();
         }
-
+        //暂停时候记录进度
+        updateListenerProgress();
         for (OnPlayerEventListener listener : listeners) {
             listener.onPlayerPause();
         }
@@ -342,17 +507,18 @@ public class AudioPlayer {
     }
 
     public void next() {
-        if (musicList == null || musicList.isEmpty()) {
+        if (musicList == null||musicList.isEmpty()) {
             return;
         }
-        int po = getPlayPosition() + 1;
-        if (po < musicList.size()) {
+        int po = getPlayPosition()+1;
+        if (po<musicList.size()){
             play(po);
-        } else {
+        }else {
             ToastUtil.showToast("已经是最后一章了");
         }
-        LogUtils.showLog("next--next" + po);
-//        PlayModeEnum mode = PlayModeEnum.valueOf(SharedPreferencesUtil.getInstance().getInt(Constants.PLAY_MODE));
+        LogUtils.showLog("next--next"+po);
+
+//        PlayModeEnum mode = PlayModeEnum.valueOf(SharedPreferencesUtil.getInstance().getInt(TingConstants.PLAY_MODE));
 //        switch (mode) {
 //            case SHUFFLE:
 //                play(new Random().nextInt(musicList.size()));
@@ -369,17 +535,18 @@ public class AudioPlayer {
     }
 
     public void prev() {
-        if (musicList == null || musicList.isEmpty()) {
+        if (musicList == null||musicList.isEmpty()) {
             return;
         }
-        int po = getPlayPosition() - 1;
-        if (po < 0) {
+        int po = getPlayPosition()-1;
+        if (po<0){
             ToastUtil.showToast("已经是第一章了");
-        } else {
+        }else {
             play(po);
         }
-        LogUtils.showLog("prev--prev" + po);
-//        PlayModeEnum mode = PlayModeEnum.valueOf(SharedPreferencesUtil.getInstance().getInt(Constants.PLAY_MODE));
+        LogUtils.showLog("prev--prev"+po);
+
+//        PlayModeEnum mode = PlayModeEnum.valueOf(SharedPreferencesUtil.getInstance().getInt(TingConstants.PLAY_MODE));
 //        switch (mode) {
 //            case SHUFFLE:
 //                play(new Random().nextInt(musicList.size()));
@@ -396,7 +563,6 @@ public class AudioPlayer {
 
     /**
      * 跳转到指定的时间位置
-     *
      * @param msec 时间
      */
     public void seekTo(int msec) {
@@ -416,15 +582,10 @@ public class AudioPlayer {
                 for (OnPlayerEventListener listener : listeners) {
                     listener.onPublish(mediaPlayer.getCurrentPosition());
                 }
-
             }
             handler.postDelayed(this, TIME_UPDATE);
         }
     };
-
-    public int getAudioSessionId() {
-        return mediaPlayer.getAudioSessionId();
-    }
 
     public long getAudioPosition() {
         if (isPlaying() || isPausing()) {
@@ -434,8 +595,8 @@ public class AudioPlayer {
         }
     }
 
-    public Music getPlayMusic() {
-        if (musicList == null || musicList.isEmpty()) {
+    public TCBean5 getPlayMusic() {
+        if (musicList == null||musicList.isEmpty()) {
             return null;
         }
         return musicList.get(getPlayPosition());
@@ -445,7 +606,7 @@ public class AudioPlayer {
         return mediaPlayer;
     }
 
-    public List<Music> getMusicList() {
+    public List<TCBean5> getMusicList() {
         return musicList;
     }
 
@@ -466,107 +627,245 @@ public class AudioPlayer {
     }
 
     public int getPlayPosition() {
-        if (musicList == null || musicList.isEmpty()) {
+        if (musicList == null||musicList.isEmpty()) {
             return 0;
         }
-        int position = SharedPreferencesUtil.getInstance().getInt(Constants.PLAY_POSITION);
+        int position = SharedPreferencesUtil.getInstance().getInt(TingConstants.PLAY_POSITION);
         if (position < 0 || position >= musicList.size()) {
             position = 0;
-            SharedPreferencesUtil.getInstance().putInt(Constants.PLAY_POSITION, position);
+            SharedPreferencesUtil.getInstance().putInt(TingConstants.PLAY_POSITION,position);
         }
         return position;
     }
 
     public void setPlayPosition(int position) {
-        SharedPreferencesUtil.getInstance().putInt(Constants.PLAY_POSITION, position);
+        SharedPreferencesUtil.getInstance().putInt(TingConstants.PLAY_POSITION,position);
+        SharedPreferencesUtil.getInstance().putInt(TingConstants.PLAY_CLICK_POSITION,position);
     }
-
-    /**
-     * 下载完成后 如果是当前播放的列表 就及时更新
-     */
-    public void downloadRefreshMusics(DownloadMusicInfo downloadMusicInfo) {//集合倒序
-        String book_id = downloadMusicInfo.getBook_id();
-        if (musicList != null && musicList.size() != 0 && !StringUtils.isEmpty(book_id)) {
-            if (musicList.get(0).getSongId() == Long.parseLong(book_id)) {
-                for (Music music : musicList) {
-                    if (music.getMark_2().equals(downloadMusicInfo.getData_id())) {
-                        music.setPath(downloadMusicInfo.getMusicPath());//小说路径
-                        music.setType(Music.Type.LOCAL);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
 
     //倒序当前播放
-    public void reverseList(String book_id) {//集合倒序
-        if (musicList != null && musicList.size() != 0) {
-            if (musicList.get(0).getSongId() == Long.parseLong(book_id)) {
+    public void reverseList(String book_id){//集合倒序
+        if (musicList!=null&&musicList.size()!=0){
+            if (musicList.get(0).getBookID() == Long.parseLong(book_id)){
                 Collections.reverse(musicList);
             }
         }
     }
 
-
-    /*异步更新*/
-    public void updataBook_Zj(Music music_zj) {
+    /** 异步更新 */
+    public void updataBook_Zj(TCBean5 music_zj){
         XApplication.getDaoSession(context).startAsyncSession().runInTx(() -> {
             //DELETE 异步操作 插入数据库
-            //DELETE
-            //UPDATE
-            updataDB(music_zj);
+            savaListenerProgress(music_zj);//新增章节收听进度
         });
     }
 
-    /*
-     *更新到最新章节信息
-     * */
-    public Music updataDB(Music music_zj) {
-        Music music = mp3DaoUtils.queryListDB(music_zj.getSongId() + "");
-        if (music != null) {
-            music.setIs_history(Music.History_Type.YES);
-            music.setPath(music_zj.getPath());
-            music.setZj_title(music_zj.getZj_title());//章节标题
-            music.setDuration(music_zj.getDuration());
-            music.setZj_id(music_zj.getZj_id());
-            music.setMark_1(music_zj.getMark_1());
-            music.setMark_2(music_zj.getMark_2());
-            mp3DaoUtils.updateBtn(music);
-        } else {
-            music = new Music();
-            music.setSongId(music_zj.getSongId());//小说id
-            music.setTitle(music_zj.getTitle());//小说标题
-            music.setIs_collect(Music.Collect_Type.NO);//是否收藏
-            music.setAlbum(music_zj.getAlbum());//小说类型
-            music.setIs_history(Music.History_Type.YES);
-            music.setPath(music_zj.getPath());//小说路径
-            music.setType(Music.Type.ONLINE);
-            music.setZj_title(music_zj.getZj_title());//章节标题
-            music.setBook_con(music_zj.getBook_con());//小说简介
-            music.setDuration(music_zj.getDuration());
-            music.setZj_id(music_zj.getZj_id());
-            music.setMark_1(music_zj.getMark_1());
-            music.setMark_2(music_zj.getMark_2());
-            mp3DaoUtils.insertDB(music);
-        }
-        return music;
-    }
-
-
-    /*查看该书籍是否倒序*/
-    private boolean getBookStatus(String bookid) {
-        String json = SharedPreferencesUtil.getInstance().getString(Constants.BOOK_STATUS);
+    /** 查看该书籍是否倒序 */
+    private boolean getBookStatus(String bookid){
+        String json = SharedPreferencesUtil.getInstance().getString(TingConstants.BOOK_STATUS);
         List<String> bookOrderStatuses = new ArrayList<String>();
-        if (!StringUtils.isEmpty(json)) {
+        if (!StringUtils.isEmpty(json)){
             Gson gson = new Gson();
-            bookOrderStatuses.addAll(gson.fromJson(json, List.class));
+            bookOrderStatuses.addAll(gson.fromJson(json,List.class));
         }
-        if (bookOrderStatuses.contains(bookid)) {
+        if (bookOrderStatuses.contains(bookid)){
             return true;
-        } else {
+        }else {
             return false;
         }
     }
+
+    //    倍速
+    public void changeplayerSpeed(int level) {
+        if (level == this.speedLevel) return;
+        this.speedLevel = level;
+        float speed = 1.0f;
+        if (level == 0){
+            speed = 1.0f;
+        }if (level == 1){
+            speed = 1.25f;
+        }else if (level == 2){
+            speed = 1.5f;
+        }else if (level == 3){
+            speed = 1.75f;
+        }else if (level == 4){
+            speed = 1.99f;
+        }else if (level == 5){
+            speed = 0.5f;
+        }
+        try {
+            // this checks on API 23 and up
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                LogUtils.showLog("Speed:"+mediaPlayer.getPlaybackParams().getSpeed());
+                if (isPlaying()) {
+                    mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(speed));
+                } else {
+                    mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(speed));
+                    pausePlayer();
+                }
+                SharedPreferencesUtil.getInstance().putString(TingConstants.LISTENER_SPEED,speedLevel+"");
+            }
+        }catch (Exception e){
+            LogUtils.showLog("changeplayerSpeed:"+e.toString());
+            SharedPreferencesUtil.getInstance().putString(TingConstants.LISTENER_SPEED,speedLevel+"");
+        }
+    }
+
+    //存储书籍 章节进度
+    public void savaListenerProgress(TCBean5 music){
+        //查询本书章节收听进度
+        TCAlbumTable albumInfo = TCAlbumTableManager.getInstance(context).queryBeanBykey((long)music.getBookID());
+        if (albumInfo==null){
+            //插入收听记录
+            TCAlbumTable bookInfo = new TCAlbumTable();
+            bookInfo.setBookID((long)music.getBookID());
+            bookInfo.setBookName(music.getBookname());
+            bookInfo.setIntro(music.getIntro());
+            bookInfo.setBookPhoto(music.getBookPhoto());
+            bookInfo.setHostName(music.getHostName());
+            bookInfo.setPlayNum(music.getPlayNum());
+            bookInfo.setIs_history("1");
+            bookInfo.setRemark1(SharedPreferencesUtil.getInstance().getString(TingConstants.PLAY_PAGE_TYPE));//专辑类型 1小说2评书
+            TCAlbumTableManager.getInstance(context).insertMusic(bookInfo);
+            albumInfo = bookInfo;//
+            EventBus.getDefault().post(TingConstants.UPDATA_HISTORY);//通知刷新历史记录页面
+        }
+//        else {
+//            albumInfo.setIs_history("1");
+//            TCAlbumTableManager.getInstance(context).insertMusic(albumInfo);
+//        }
+
+
+        //查询最后收听章节
+        TCLastListenerTable lastListenerTable = TCLastListenerTableManager.getInstance(context).queryBeanBykey((long)music.getBookID());
+        if (lastListenerTable==null){
+            //插入收听记录
+            lastListenerTable = new TCLastListenerTable();
+            lastListenerTable.setBookID((long)music.getBookID());
+            lastListenerTable.setBookName(music.getBookname());
+            lastListenerTable.setEpis(music.getEpis());
+            lastListenerTable.setZname(music.getZname());
+            TCLastListenerTableManager.getInstance(context).insertMusic(lastListenerTable);
+        }else {
+            lastListenerTable.setEpis(music.getEpis());
+            lastListenerTable.setZname(music.getZname());
+            TCLastListenerTableManager.getInstance(context).updateMusic(lastListenerTable);
+        }
+
+        albumInfo.getMusics();
+        List<TCListenerTable> musicInfos = albumInfo.getMusics();
+        if (musicInfos!=null||musicInfos.size() == 0){
+            for (TCListenerTable musicInfo:musicInfos){
+                if (musicInfo.getEpis() == music.getEpis()){
+//                    如果数据库中存在相同数据 就不新增了 并且将进度条调到数据库记录进度
+                    if (musicInfo.getListenerStatus() == 2){//已经播放完成 开始从头播放
+                        onPreparedPlay(music,"0",0);
+                    }else {//播放了一段 从记录进度处开始继续播放
+                        onPreparedPlay(music,"1",musicInfo.getProgress());
+                    }
+                    LogUtils.showLog("进度表数据库存在数据：Bookname:"+musicInfo.getBookname());
+                    LogUtils.showLog("进度表数据库存在数据：Zname:"+musicInfo.getZname());
+                    LogUtils.showLog("进度表数据库存在数据：Seek To Progress:"+musicInfo.getProgress());
+                    return;
+                }
+            }
+        }
+
+        TCListenerTable info = new TCListenerTable();
+        info.setBookID((long)music.getBookID());
+        info.setBookname(music.getBookname());
+        info.setEpis(music.getEpis());
+        info.setZname(music.getZname());
+        info.setIs_local(music.getIs_local());//歌曲类型:本地1/网络0
+        info.setListenerStatus(1);//已经开始播放 播放状态
+        info.setIs_download(music.getIs_download());
+        info.setDuration(music.getDuration());//总时长
+        info.setPath(music.getPath());//音频路径
+        info.setProgress(1);//播放进度
+        TCListenerTableManager.getInstance(context).insertMusic(info);
+        //数据流准备完成 数据查完之后 开始通知播放
+        onPreparedPlay(music,"0",0);
+    }
+
+    //准备完成后 查询数据库后 播放 isSeekTo 0不滑动1滑动
+    private void onPreparedPlay(TCBean5 music, String isSeekTo, int progress){
+        XApplication.getMainThreadHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                startPlayer();
+                if (music.getIs_local() .equals("1")){
+                    for (OnPlayerEventListener listener : listeners) {
+                        listener.onBufferingUpdate(100);
+                    }
+                }
+                if (isSeekTo.equals("1")){
+                    seekTo(progress);
+                }
+            }
+        });
+    }
+
+    //更新章节进度
+    public void updateListenerProgress(){
+        TCBean5 music = getPlayMusic();
+        if (music == null)
+            return;
+        long progress = mediaPlayer.getCurrentPosition();
+        //查询本书章节收听进度
+        TCAlbumTable albumInfo = TCAlbumTableManager.getInstance(context).queryBeanBykey((long)music.getBookID());
+        if (albumInfo!=null){
+
+            //查询最后收听章节
+            TCLastListenerTable lastListenerTable = TCLastListenerTableManager.getInstance(context).queryBeanBykey((long)music.getBookID());
+            if (lastListenerTable==null){
+                //插入收听记录
+                lastListenerTable = new TCLastListenerTable();
+                lastListenerTable.setBookID((long)music.getBookID());
+                lastListenerTable.setBookName(music.getBookname());
+                lastListenerTable.setEpis(music.getEpis());
+                lastListenerTable.setZname(music.getZname());
+                TCLastListenerTableManager.getInstance(context).insertMusic(lastListenerTable);
+            }else {
+                lastListenerTable.setEpis(music.getEpis());
+                lastListenerTable.setZname(music.getZname());
+                TCLastListenerTableManager.getInstance(context).updateMusic(lastListenerTable);
+            }
+
+            albumInfo.getMusics();
+            List<TCListenerTable> musicInfos = albumInfo.getMusics();
+            if (musicInfos!=null&&musicInfos.size() != 0){
+                for (TCListenerTable musicInfo:musicInfos){
+                    if (musicInfo.getEpis() == music.getEpis()){
+                        if (musicInfo.getDuration()-progress<=1000){
+                            musicInfo.setListenerStatus(2);
+                            musicInfo.setProgress(musicInfo.getDuration());
+
+                        }else {
+                            musicInfo.setListenerStatus(1);
+                            musicInfo.setProgress(Integer.parseInt(progress+""));
+                        }
+                        LogUtils.showLog("进度表数据库更新数据：Bookname:"+musicInfo.getBookname());
+                        LogUtils.showLog("进度表数据库更新数据：Zname:"+musicInfo.getZname());
+                        LogUtils.showLog("进度表数据库更新数据：Seek To Progress:"+musicInfo.getProgress());
+                        TCListenerTableManager.getInstance(context).updateMusic(musicInfo);
+                        return;
+                    }
+                }
+
+                EventBus.getDefault().post(TingConstants.UPDATA_LISTENER_PROGRESS);//通知刷新收听进度
+
+            }
+        }
+    }
+
+    //吐司
+    public void showToast_(String string){
+        XApplication.getMainThreadHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                ToastUtil.showShortToast(string);
+            }
+        });
+    }
+
 }

@@ -10,15 +10,14 @@ import android.view.ViewGroup;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.base.presenter.BasePresenter;
-import cn.yuntk.radio.ibook.base.view.IBaseView;
-import cn.yuntk.radio.ibook.component.AppComponent;
-
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.yuntk.radio.XApplication;
+import cn.yuntk.radio.ibook.base.presenter.BasePresenter;
+import cn.yuntk.radio.ibook.base.view.IBaseView;
+import cn.yuntk.radio.ibook.component.AppComponent;
 
 /**
  * 创建时间:2018/4/3
@@ -77,10 +76,10 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (mContentView == null) {
-            mContentView = inflater.inflate(getLayoutId(), container, false);
-            unbinder = ButterKnife.bind(this, mContentView);
-            setupActivityComponent(XApplication.getsInstance().getAppComponent());
+        if (mContentView==null){
+            mContentView = inflater.inflate(getLayoutId(),container,false);
+            unbinder = ButterKnife.bind(this,mContentView);
+            setupActivityComponent(XApplication.getInstance().getAppComponent());
         }
         return mContentView;
     }
@@ -88,10 +87,10 @@ public abstract class BaseFragment<T extends BasePresenter> extends RxFragment i
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mPresenter != null) {
+        if (mPresenter != null){
             mPresenter.detachView();
         }
-        if (unbinder != null) {
+        if (unbinder!=null){
             unbinder.unbind();
         }
     }

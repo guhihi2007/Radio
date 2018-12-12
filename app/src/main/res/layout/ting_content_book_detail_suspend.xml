@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:background="@android:color/white"
+    android:gravity="center_vertical"
+    android:paddingRight="10dip"
+    android:id="@+id/suspend_parent_ll"
+    android:paddingLeft="10dip"
+    android:translationZ="6dip"
+    android:elevation="6dip"
+    android:layout_height="50dip">
+
+    <TextView
+        android:id="@+id/book_zj_count_tv"
+        android:paddingTop="7dip"
+        android:paddingBottom="7dip"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+        android:gravity="center"
+        android:background="@drawable/ting_shape_gray"
+        android:text="共0集"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="1dip"/>
+
+    <TextView
+        android:id="@+id/like_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/ting_select_detail_collect"
+        android:textColor="@color/white"
+        android:visibility="visible" />
+
+    <TextView
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="10dip"
+        android:textStyle="normal"
+        android:paddingTop="5dip"
+        android:paddingLeft="9dip"
+        android:visibility="gone"
+        android:paddingBottom="5dip"
+        android:id="@+id/page_skip_tv"
+        android:gravity="center"
+        android:background="@mipmap/icon_detail_tzzj"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="10dip"
+        android:visibility="visible"
+        android:id="@+id/fab_order_iv"
+        android:src="@drawable/ting_select_detail_reverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:visibility="visible"
+        android:id="@+id/detail_download_iv"
+        android:layout_width="30dip"
+        android:src="@drawable/ting_icon_batch_download"
+        android:layout_height="30dip" />
+
+</LinearLayout>

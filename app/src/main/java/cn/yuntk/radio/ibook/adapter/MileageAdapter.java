@@ -8,9 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.shizhefei.view.indicator.IndicatorViewPager;
-import cn.yuntk.radio.R;
 
 import java.util.List;
+
+import cn.yuntk.radio.R;
 
 /*Tab 适配器*/
 public class MileageAdapter<T extends Fragment> extends IndicatorViewPager.IndicatorFragmentPagerAdapter {
@@ -34,7 +35,7 @@ public class MileageAdapter<T extends Fragment> extends IndicatorViewPager.Indic
     public View getViewForTab(int position, View convertView, ViewGroup container) {
         if (convertView==null){
             inflater = LayoutInflater.from(container.getContext());
-            convertView = inflater.inflate(R.layout.listener_tab_top, container, false);
+            convertView = inflater.inflate(R.layout.ting_tab_top, container, false);
         }
         TextView tabName = (TextView) convertView;
         tabName.setText(titles[position]);

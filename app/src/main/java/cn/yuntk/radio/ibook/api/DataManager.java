@@ -5,15 +5,14 @@ import android.content.Context;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
-import cn.yuntk.radio.BuildConfig;
-import cn.yuntk.radio.ibook.common.CommonSubcriber;
-import cn.yuntk.radio.ibook.common.DataCallBack;
-import cn.yuntk.radio.ibook.util.LogUtils;
-import cn.yuntk.radio.ibook.util.loger.Loger;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import cn.yuntk.radio.ibook.common.CommonSubcriber;
+import cn.yuntk.radio.ibook.common.DataCallBack;
+import cn.yuntk.radio.ibook.util.BuildConfig;
+import cn.yuntk.radio.ibook.util.LogUtils;
+import cn.yuntk.radio.ibook.util.loger.Loger;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -72,7 +71,7 @@ public class DataManager {
                 .client(builder.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .baseUrl("")
+                .baseUrl(BuildConfig.API_SERVER_URL)
                 .build();
     }
 

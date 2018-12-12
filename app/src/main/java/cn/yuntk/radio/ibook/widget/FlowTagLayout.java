@@ -8,12 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 
-import cn.yuntk.radio.ibook.adapter.OnTagClickListener;
-import cn.yuntk.radio.ibook.adapter.OnTagSelectListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import cn.yuntk.radio.ibook.adapter.OnTagClickListener;
+import cn.yuntk.radio.ibook.adapter.OnTagSelectListener;
 
 /**
  * 流式标签布局

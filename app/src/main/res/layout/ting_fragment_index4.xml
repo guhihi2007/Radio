@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <RelativeLayout
+        android:id="@+id/tab_rl"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_title_height"
+        android:background="@color/color_theme_"
+        android:gravity="center"
+        android:visibility="visible">
+
+        <com.shizhefei.view.indicator.FixedIndicatorView
+            android:id="@+id/integral_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/common_title_height"
+            android:layout_centerInParent="true"
+            android:gravity="center" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        app:layout_constraintTop_toBottomOf="@+id/tab_rl"
+        app:layout_constraintBottom_toTopOf="@+id/container_fl"
+        android:id="@+id/tip_rl"
+        android:background="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="30dip">
+
+        <TextView
+            android:id="@+id/tip_tv"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginRight="15dip"
+            android:layout_marginLeft="15dip"
+            android:text="@string/tip_hc"
+            android:layout_centerInParent="true"
+            android:textColor="@color/color_theme_"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_alignParentBottom="true"
+            android:background="@color/color_e5e5e5"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dip"/>
+
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        app:layout_constraintTop_toBottomOf="@+id/tip_rl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/container_fl"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="1"/>
+
+</android.support.constraint.ConstraintLayout>

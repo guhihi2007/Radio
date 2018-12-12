@@ -15,17 +15,19 @@
  */
 package cn.yuntk.radio.ibook.module;
 
+
+import java.util.concurrent.TimeUnit;
+
 import cn.yuntk.radio.ibook.api.BookApi;
 import cn.yuntk.radio.ibook.api.DataManager;
 import cn.yuntk.radio.ibook.api.HeaderInterceptor;
 import cn.yuntk.radio.ibook.api.Logger;
 import cn.yuntk.radio.ibook.api.LoggingInterceptor;
-
-import java.util.concurrent.TimeUnit;
-
+import cn.yuntk.radio.ibook.util.LogUtils;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 @Module
 public class BookApiModule {
@@ -41,13 +43,35 @@ public class BookApiModule {
                 .readTimeout(8, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true) // 失败重发
                 .addInterceptor(new HeaderInterceptor())
-                .addInterceptor(new DataManager.MyLogginINterceptor());
+                .addInterceptor(new DataManager.MyLogginINterceptor())
+                .addInterceptor(getHttpLoggingInterceptor());
+
         return builder.build();
     }
 
     @Provides
     protected BookApi provideBookService(OkHttpClient okHttpClient) {
         return BookApi.getInstance(okHttpClient);
+    }
+
+    /**
+     * 日志输出
+     * 自行判定是否添加
+     *
+     * @return
+     */
+    private HttpLoggingInterceptor getHttpLoggingInterceptor() {
+        //日志显示级别
+        HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
+        //新建log拦截器
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+               LogUtils.showLog(" BookApiModule====Message:" + message);
+            }
+        });
+        loggingInterceptor.setLevel(level);
+        return loggingInterceptor;
     }
 
 }

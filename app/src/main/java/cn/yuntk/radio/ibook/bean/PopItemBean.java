@@ -1,4 +1,5 @@
 package cn.yuntk.radio.ibook.bean;
+
 /*自定义弹出取值*/
 public class PopItemBean {
 
@@ -6,10 +7,11 @@ public class PopItemBean {
     private PopTpye type;
     private int minValue;
     private int maxValue;
+    private String chooseState = "0";//0为选中 1选中
 
-
+    //睡眠，章节，播放速度
     public enum PopTpye{
-        SLEEP,PAGEITEM
+        SLEEP,PAGEITEM,SPEED
     }
 
     public String getShowString() {
@@ -46,5 +48,13 @@ public class PopItemBean {
     public PopItemBean setMaxValue(int maxValue) {
         this.maxValue = maxValue;
         return this;
+    }
+
+    public String getChooseState() {
+        return chooseState;
+    }
+
+    public void setChooseState(String chooseState) {
+        this.chooseState = chooseState;
     }
 }

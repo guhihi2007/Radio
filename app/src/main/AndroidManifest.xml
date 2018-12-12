@@ -53,11 +53,11 @@
     <!-- bugly升級需要 -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!--获取位置权限-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".ibook.XApplication"
+        android:name=".XApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="${app_name_channel}"
@@ -133,12 +133,6 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <!--听书需要-->
-        <activity
-            android:name=".ibook.MainActivity"
-            android:resizeableActivity="false"
-            android:screenOrientation="portrait"/>
-
         <!--前后台切换开屏广告-->
         <activity
             android:name=".ibook.activity.SplashADActivity"
@@ -149,66 +143,24 @@
         <service
             android:name="com.qq.e.comm.DownloadService"
             android:exported="false" />
+        <service android:name=".ibook.service.TingPlayService" />
+        <service android:name=".ibook.service.FloatViewService" />
 
         <activity
             android:name="com.qq.e.ads.ADActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <!-- 接入广点通权限 end -->
 
+        <activity android:name=".ui.activity.FMActivity" />
+        <activity android:name=".ui.activity.SplashActivityAD" />
+        <activity android:name=".ibook.TingMainActivity" />
+        <activity android:name=".ibook.activity.BookDetailActivity" />
+        <activity android:name=".ibook.activity.BookPlayActivity" />
+        <activity android:name=".ibook.activity.SearchKeyActivtity" />
+        <activity android:name=".ibook.activity.SearchResultActivtity" />
+        <activity android:name=".ibook.activity.SettingActivity" />
+        <activity android:name=".ibook.activity.StoryTellingListActivity" />
 
-        <activity
-            android:name=".ibook.activity.BookDetailActivity"
-            android:launchMode="standard"
-            android:resizeableActivity="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ibook.activity.BookPlayActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-
-
-        <service android:name=".service.PlayService" />
-
-        <receiver android:name=".ibook.receiver.StatusBarReceiver">
-            <intent-filter>
-                <action android:name="me.wcy.music.STATUS_BAR_ACTIONS" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".ibook.receiver.DownloadReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
-            </intent-filter>
-        </receiver>
-        <!--版本低于21 媒体按钮监听-->
-        <receiver android:name=".ibook.receiver.MediaButtonReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
-        <!-- 悬浮窗口 -->
-        <service
-            android:name=".ibook.service.FloatViewService"
-            android:enabled="true"
-            android:exported="true" />
-        <service android:name=".ibook.service.PlayService" />
-
-        <activity
-            android:name=".ibook.activity.StoryTellingListActivity"
-            android:launchMode="standard"
-            android:resizeableActivity="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ibook.activity.BookSearchActivtity"
-            android:launchMode="standard"
-            android:resizeableActivity="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ibook.activity.SettingActivity"
-            android:launchMode="standard"
-            android:resizeableActivity="false"
-            android:screenOrientation="portrait" />
-        <activity android:name=".ibook.activity.ScreenOffAcivity" />
-        <activity android:name=".ui.activity.FMActivity"></activity>
     </application>
 
 </manifest>

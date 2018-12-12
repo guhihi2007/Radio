@@ -1,6 +1,6 @@
 package cn.yuntk.radio.api
 
-import com.yuntk.ibook.ads.AdsConfig
+import cn.yuntk.radio.ad.AdsConfig
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query

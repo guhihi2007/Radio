@@ -16,10 +16,11 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
-import cn.yuntk.radio.ibook.XApplication;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import cn.yuntk.radio.XApplication;
 
 /**
  * Created by feifan on 2017/8/21.
@@ -33,7 +34,7 @@ public class FloatWindowPermissionChecker {
 
     public static boolean checkFloatWindowPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return Settings.canDrawOverlays(XApplication.getsInstance());
+            return Settings.canDrawOverlays(XApplication.getInstance());
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //AppOpsManager添加于API 19
             return checkOps();
@@ -46,7 +47,7 @@ public class FloatWindowPermissionChecker {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static boolean checkOps() {
         try {
-            Object object = XApplication.getsInstance().getSystemService(Context.APP_OPS_SERVICE);
+            Object object = XApplication.getInstance().getSystemService(Context.APP_OPS_SERVICE);
             if (object == null) {
                 return false;
             }
@@ -62,7 +63,7 @@ public class FloatWindowPermissionChecker {
             Object[] arrayOfObject1 = new Object[3];
             arrayOfObject1[0] = 24;
             arrayOfObject1[1] = Binder.getCallingUid();
-            arrayOfObject1[2] = XApplication.getsInstance().getPackageName();
+            arrayOfObject1[2] = XApplication.getInstance().getPackageName();
             int m = (Integer) method.invoke(object, arrayOfObject1);
             //4.4至6.0之间的非国产手机，例如samsung，sony一般都可以直接添加悬浮窗
             return m == AppOpsManager.MODE_ALLOWED || !RomUtils.isDomesticSpecialRom();
@@ -70,21 +71,31 @@ public class FloatWindowPermissionChecker {
         }
         return false;
     }
-
+    static boolean isShow = false;
     public static void askForFloatWindowPermission(final Context context) {
+        if (isShow)return;
+        isShow = true;
         new AlertDialog.Builder(context)
                 .setMessage("需要在应用设置中开启悬浮窗权限，是否前往开启权限？")
                 .setPositiveButton("是", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         tryJumpToPermissonPage(context);
+                        isShow = false;
                         dialog.dismiss();
                     }
                 })
                 .setNegativeButton("否", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        isShow = false;
                         dialog.dismiss();
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        isShow = false;
                     }
                 })
                 .create()

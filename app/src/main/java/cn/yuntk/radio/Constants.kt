@@ -14,6 +14,9 @@ import java.io.File
  * 代码在一个独立的文件夹 ibook 内，懒人听小说作者刘学平
  */
 object Constants {
+    //获取屏幕宽度、高度
+    var width = 0
+    var height = 0
     /**
      * 收音机频道地址
      */
@@ -88,4 +91,37 @@ object Constants {
     const val ACTION_MEDIA_PRE = "radio.ACTION_MEDIA_PREVIOUS"
     const val ACTION_PLAY_NEXT = "radio.PLAY_NEXT"
     const val ACTION_PLAY_START = "radio.PLAY_START"
+    const val HEADSET_PLUG = "android.intent.action.HEADSET_PLUG"//耳机拔插监听
+
+
+    /************************页面命名 */
+    const val MUSIC_DETAIL = "music_detail"
+    const val HOME_PAGE = "home_page"
+    const val HOME_PAGE_NEW = "home_page_new"
+    const val CATEGORY_PAGE = "category_page"
+    const val LISTENING_PAGE = "listening_page"
+    const val START_PAGE = "start_page"
+    /************************页面命名*************************/
+
+    /************************开屏广告 */
+    const val AD_APP_LOAD_TIME = "ad_app_load_time"//App启动时间
+    const val AD_APP_BACKGROUND_TIME = "ad_app_background_time"//App退到后台时间
+    const val AD_SPREAD_PERIOD = "ad_spread_period"//开屏后台设置的时间间隔
+    const val AD_SPLASH_STATUS = "ad_splash_status"//开屏开关
+    /************************开屏广告*************************/
+
+
+    /************************插屏广告 */
+
+    const val AD_INSERT_SHOW_PERIOD = "ad_insert_change_period"//插屏广告显示间隔
+    const val AD_INSERT_LAST_SHOW = "ad_insert_last_origin"//插屏广告上展示时间
+
+    /************************插屏广告 */
+
+    const val AD_BANNER_LAST_CHANGE = "AD_BANNER_LAST_CHANGE"
+    /************************插屏广告*************************/
+
+    /************************Native广告 */
+    const val AD_NATIVE_PERIOD = "ad_native_period"
+    /************************Native广告*************************/
 }

@@ -21,17 +21,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import cn.yuntk.radio.R;
 import cn.yuntk.radio.ibook.activity.BookPlayActivity;
 import cn.yuntk.radio.ibook.base.ActivityManager;
-import cn.yuntk.radio.ibook.bean.Music;
-import cn.yuntk.radio.ibook.common.Constants;
+import cn.yuntk.radio.ibook.bean.TCBean5;
+import cn.yuntk.radio.ibook.common.TingConstants;
 import cn.yuntk.radio.ibook.floatwindow.FloatWindowPermissionChecker;
 import cn.yuntk.radio.ibook.util.DisplayUtil;
 import cn.yuntk.radio.ibook.util.LogUtils;
 import cn.yuntk.radio.ibook.util.PackageUtils;
 import cn.yuntk.radio.ibook.util.SystemUtils;
 import cn.yuntk.radio.ibook.util.ToastUtil;
+import cn.yuntk.radio.manager.PlayServiceManager;
+import cn.yuntk.radio.play.PlayManager;
 
 import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
@@ -63,7 +66,7 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
     WindowManager.LayoutParams wmParams;
     //创建浮动窗口设置布局参数的对象
     WindowManager mWindowManager;
-    private static boolean isAddToWindow = false;
+    private boolean isAddToWindow = false;
 
     public FloatViewService() {
     }
@@ -81,13 +84,21 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
     }
 
     public static void startCommand(Context context, String action) {
-        Intent intent = new Intent(context, FloatViewService.class);
-        intent.setAction(action);
-        context.startService(intent);
+//        由于coloros的OPPO手机自动熄屏一段时间后，会启用系统自带的电量优化管理，禁止一切自启动的APP（用户设置的自启动白名单除外），需要try catch(腾讯Bugly)
+        try{
+            Intent intent = new Intent(context, FloatViewService.class);
+            intent.setAction(action);
+            context.startService(intent);
+        }catch (Exception e){
+//            LogUtils.showLog("Exception:"+e.toString());
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (!isAddToWindow){
+            createFloatView();
+        }
         if (intent != null && intent.getAction() != null) {
             switch (intent.getAction()) {
                 case Actions.SERVICE_GONE_WINDOW:
@@ -142,11 +153,11 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
         wmParams.windowAnimations = android.R.style.Animation_Translucent;
 
         //调整悬浮窗显示的停靠位置为左侧置顶
-        wmParams.gravity = Gravity.LEFT | Gravity.TOP;
+        wmParams.gravity = Gravity.LEFT | Gravity.CENTER;
 
         // 以屏幕底部为原点，设置x、y初始值
         wmParams.x = 0;
-        wmParams.y =Constants.height-(DisplayUtil.dip2px(this,230f));
+        wmParams.y = TingConstants.height-(DisplayUtil.dip2px(this,330f));
 
         //设置悬浮窗口长宽数据
         wmParams.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -154,7 +165,7 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
 
         LayoutInflater inflater = LayoutInflater.from(getApplication());
         //获取浮动窗口视图所在布局
-        mFloatLayout = (FrameLayout) inflater.inflate(R.layout.listener_float_view, null);
+        mFloatLayout = (FrameLayout) inflater.inflate(R.layout.ting_float_view, null);
         parent_ll = mFloatLayout.findViewById(R.id.parent_ll);
         float_title_tv  = mFloatLayout.findViewById(R.id.float_title_tv);
         click_aren_ll = mFloatLayout.findViewById(R.id.click_aren_ll);
@@ -184,13 +195,14 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
         }
 
         if(AudioPlayer.get().isPlaying()){
-            iv_play_pause.setImageResource(R.drawable.ic_status_bar_pause_dark_selector);
+            iv_play_pause.setImageResource(R.drawable.ting_ic_status_bar_pause_dark_selector);
         }else {
-            iv_play_pause.setImageResource(R.drawable.ic_status_bar_play_dark_selector);
+            iv_play_pause.setImageResource(R.drawable.ting_ic_status_bar_play_dark_selector);
         }
-        iv_play_pause.setColorFilter(Color.parseColor("#d81e06"));
+        iv_play_pause.setColorFilter(Color.parseColor("#ff000c"));
 
         AudioPlayer.get().addOnPlayEventListener(this);
+
         showFloatWindow();
     }
 
@@ -253,11 +265,22 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void updateViewPosition() {
-        if (mFloatLayout.isAttachedToWindow()){
-            //更新浮动窗口位置参数
-            wmParams.x = (int) (x - mTouchStartX);
-            wmParams.y = (int) (y - mTouchStartY);
-            mWindowManager.updateViewLayout(mFloatLayout, wmParams);
+        try{
+            if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+                //更新浮动窗口位置参数
+                wmParams.x = (int) (x - mTouchStartX);
+                wmParams.y = (int) (y - mTouchStartY);
+                mWindowManager.updateViewLayout(mFloatLayout, wmParams);
+            }else {
+                if (mFloatLayout.isAttachedToWindow()){
+                    //更新浮动窗口位置参数
+                    wmParams.x = (int) (x - mTouchStartX);
+                    wmParams.y = (int) (y - mTouchStartY);
+                    mWindowManager.updateViewLayout(mFloatLayout, wmParams);
+                }
+            }
+        }catch (Exception e){
+
         }
     }
 
@@ -284,7 +307,7 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
                     startActivity(intent);
                 }else {
                     Toast toast = Toast.makeText(this,"暂无播放内容", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.TOP , 0, Constants.height-(DisplayUtil.dip2px(this,190f)));
+                    toast.setGravity(Gravity.TOP , 0, TingConstants.height-(DisplayUtil.dip2px(this,190f)));
                     toast.show();
                 }
                 isShow = "1";
@@ -325,10 +348,10 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
         AudioPlayer.get().prev();
     }
 
-    Music music;
+    TCBean5 music;
 
     @Override
-    public void onChange(Music music) {
+    public void onChange(TCBean5 music) {
         LogUtils.showLog("FloatViewService:onChange");
         this.music = music;
         float_title_tv.setText(getString(R.string.hadr_loading));
@@ -338,9 +361,9 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
     public void onPlayerStart() {
         try{
             LogUtils.showLog("FloatViewService:onPlayerStart");
-            float_title_tv.setText(music.getZj_title());
-            float_progress_total_tv.setText("/"+SystemUtils.formatTime("mm:ss",music.getDuration()));
-            iv_play_pause.setImageResource(R.drawable.ic_status_bar_pause_dark_selector);
+            float_title_tv.setText(music.getZname());
+            float_progress_total_tv.setText("/"+ SystemUtils.formatTime("mm:ss",music.getDuration()));
+            iv_play_pause.setImageResource(R.drawable.ting_ic_status_bar_pause_dark_selector);
             iv_play_pause.setColorFilter(Color.parseColor("#d81e06"));
         }catch (Exception e){
 
@@ -350,7 +373,7 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
     @Override
     public void onPlayerPause() {
         LogUtils.showLog("FloatViewService:onPlayerPause");
-        iv_play_pause.setImageResource(R.drawable.ic_status_bar_play_dark_selector);
+        iv_play_pause.setImageResource(R.drawable.ting_ic_status_bar_play_dark_selector);
         iv_play_pause.setColorFilter(Color.parseColor("#d81e06"));
     }
 
@@ -367,7 +390,4 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
 //        LogUtils.showLog("FloatViewService:onBufferingUpdate");
     }
 
-    public static boolean isAddToWindow() {
-        return isAddToWindow;
-    }
 }

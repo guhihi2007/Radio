@@ -6,38 +6,41 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import cn.yuntk.radio.R;
-import cn.yuntk.radio.ibook.bean.ClassifyListBean;
 
 import java.util.List;
+
+import cn.yuntk.radio.R;
+import cn.yuntk.radio.ibook.bean.TCBean2;
 
 /*分类Item适配器*/
 public class ClassifyItemAdapter extends RecyclerView.Adapter<ClassifyItemAdapter.ViewHolder> {
 
-    private List<ClassifyListBean.ClassifyItem> data;
-    private RvItemClickInterface rvItemClickInterface;
+    private List<TCBean2> data;
+    private String type;
+    private ClassifyItemClickInterface clickInterface;
 
-    public ClassifyItemAdapter(List<ClassifyListBean.ClassifyItem> data) {
+    public ClassifyItemAdapter(List<TCBean2> data, String type) {
         this.data = data;
+        this.type = type;
     }
 
-    public void setRvItemClickInterface(RvItemClickInterface rvItemClickInterface) {
-        this.rvItemClickInterface = rvItemClickInterface;
+    public void setClickInterface(ClassifyItemClickInterface clickInterface) {
+        this.clickInterface = clickInterface;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.listener_item_classify_items,null,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ting_item_classify_items,null,false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ClassifyListBean.ClassifyItem item = data.get(position);
-        holder.textView.setText(item.getTitle());
+        TCBean2 item = data.get(position);
+        holder.textView.setText(item.getName());
         holder.itemView.setOnClickListener(v -> {
-            if (rvItemClickInterface!=null){
-                rvItemClickInterface.onItemClick(item);
+            if (clickInterface!=null){
+                clickInterface.onTCBean2ItemClick(item,type);
             }
         });
     }

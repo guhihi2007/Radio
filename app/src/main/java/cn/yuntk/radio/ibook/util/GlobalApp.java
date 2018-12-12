@@ -1,7 +1,6 @@
 package cn.yuntk.radio.ibook.util;
 
-
-import cn.yuntk.radio.ibook.XApplication;
+import android.app.Application;
 
 /**
  * 创建时间:2018/4/3
@@ -10,5 +9,5 @@ import cn.yuntk.radio.ibook.XApplication;
  */
 
 public class GlobalApp {
-    public static XApplication APP;
+    public static Application APP;
 }

@@ -1,6 +1,9 @@
 package cn.yuntk.radio.ibook.bean;
 
+
 import java.util.List;
+
+import cn.yuntk.radio.ibook.base.RootBase;
 
 /*小说详情*/
 public class BookDetailBean extends PageInfo{
@@ -89,7 +92,7 @@ public class BookDetailBean extends PageInfo{
         this.url_list = url_list;
     }
 
-    public static class UrlListBean {
+    public static class UrlListBean extends RootBase {
         /**
          * u : 1
          * url : %E9%80%9A%E4%BF%97%E5%B0%8F%E8%AF%B4%2F%E9%BB%84%E9%87%91%E7%9E%B3%2F001.mp3
@@ -101,6 +104,43 @@ public class BookDetailBean extends PageInfo{
         private String name;
         private String is_download = "0";//0未下载1下载2正在下载
         private String path = "";//下载的路径
+
+        private int listenerStatus = 0;//播放状态 0//未播放 1播放了一段 2已播放完成
+        private int duration;//总时长
+        private int progress;//进度
+        private String displayProgress;//显示百分比
+
+        public int getListenerStatus() {
+            return listenerStatus;
+        }
+
+        public void setListenerStatus(int listenerStatus) {
+            this.listenerStatus = listenerStatus;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public void setDuration(int duration) {
+            this.duration = duration;
+        }
+
+        public int getProgress() {
+            return progress;
+        }
+
+        public void setProgress(int progress) {
+            this.progress = progress;
+        }
+
+        public String getDisplayProgress() {
+            return displayProgress;
+        }
+
+        public void setDisplayProgress(String displayProgress) {
+            this.displayProgress = displayProgress;
+        }
 
         public String getPath() {
             return path;

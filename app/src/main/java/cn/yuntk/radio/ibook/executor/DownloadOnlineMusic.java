@@ -3,15 +3,16 @@ package cn.yuntk.radio.ibook.executor;
 import android.app.Activity;
 import android.text.TextUtils;
 
-import cn.yuntk.radio.ibook.api.BaseOkhttp;
-import cn.yuntk.radio.ibook.bean.OnlineMusic;
-import cn.yuntk.radio.ibook.common.Api;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import cn.yuntk.radio.ibook.api.BaseOkhttp;
+import cn.yuntk.radio.ibook.bean.OnlineMusic;
+import cn.yuntk.radio.ibook.common.Api;
 
 /**
  * 下载音乐

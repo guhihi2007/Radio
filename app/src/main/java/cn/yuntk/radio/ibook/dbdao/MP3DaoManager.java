@@ -2,16 +2,16 @@ package cn.yuntk.radio.ibook.dbdao;
 
 import android.content.Context;
 
+
 import org.greenrobot.greendao.query.QueryBuilder;
 
-import cn.yuntk.radio.ibook.XApplication;
+import java.util.List;
+
+import cn.yuntk.radio.XApplication;
 import cn.yuntk.radio.ibook.bean.Music;
 import cn.yuntk.radio.ibook.dbdao.local.DaoMaster;
 import cn.yuntk.radio.ibook.dbdao.local.DaoSession;
 import cn.yuntk.radio.ibook.dbdao.local.MusicDao;
-
-
-import java.util.List;
 
 /*
 *本地数据库操作
@@ -58,6 +58,10 @@ public void deleteMusic(Music music) {
 
 public void deleteAll() {
     musicDao.deleteAll();
+}
+
+public void updateMusic(List<Music> musics){
+   musicDao.updateInTx(musics);
 }
 
 public void updateMusic(Music music) {

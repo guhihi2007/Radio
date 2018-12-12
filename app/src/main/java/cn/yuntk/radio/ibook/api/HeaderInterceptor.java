@@ -15,11 +15,6 @@
  */
 package cn.yuntk.radio.ibook.api;
 
-import com.google.gson.Gson;
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.util.PackageUtils;
-import cn.yuntk.radio.ibook.util.TelephonyUtils;
-
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -40,15 +35,13 @@ public final class HeaderInterceptor implements Interceptor {
         String url = original.url().toString();
 
         Request request = original.newBuilder()
-//                .addHeader("User-Agent", "ZhuiShuShenQi/3.40[preload=false;locale=zh_CN;clientidbase=android-nvidia]") // 不能转UTF-8
-//                .addHeader("User-Agent", Constants.UAConfig+" (iPhone; iOS "+ Build.VERSION.RELEASE+"; Scale/2.00)") // 不能转UTF-8
-                .removeHeader("User-Agent")
-                .addHeader("User-Agent", PackageUtils.getUserAgent()) // 不能转UTF-8
-                .addHeader("Accept-Encoding","gzip, deflate")
+//                .removeHeader("User-Agent")
+//                .addHeader("User-Agent", PackageUtils.getUserAgent()) // 不能转UTF-8
+//                .addHeader("Accept-Encoding","gzip, deflate")
                 .addHeader("Content-Type","application/x-www-form-urlencoded")
-                .addHeader("Connection","keep-alive")
-                .addHeader("Accept","*/*")
-                .addHeader("Accept-Language","zh-Hans-CN;q=1")
+//                .addHeader("Connection","keep-alive")
+//                .addHeader("Accept","*/*")
+//                .addHeader("Accept-Language","zh-Hans-CN;q=1")
                 .build();
         return chain.proceed(request);
 

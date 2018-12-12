@@ -7,20 +7,21 @@ import android.content.Intent;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import cn.yuntk.radio.R;
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.bean.DownloadMusicInfo;
-import cn.yuntk.radio.ibook.common.Constants;
-import cn.yuntk.radio.ibook.service.AppCache;
-import cn.yuntk.radio.ibook.util.LogUtils;
-import cn.yuntk.radio.ibook.util.SharedPreferencesUtil;
-import cn.yuntk.radio.ibook.util.StringUtils;
-import cn.yuntk.radio.ibook.util.ToastUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.yuntk.radio.R;
+import cn.yuntk.radio.XApplication;
+import cn.yuntk.radio.ibook.bean.DownloadMusicInfo;
+import cn.yuntk.radio.ibook.common.TingConstants;
+import cn.yuntk.radio.ibook.service.AppCache;
+import cn.yuntk.radio.ibook.util.LogUtils;
+import cn.yuntk.radio.ibook.util.SharedPreferencesUtil;
+import cn.yuntk.radio.ibook.util.StringUtils;
+import cn.yuntk.radio.ibook.util.ToastUtil;
 
 /**
  * 下载完成广播接收器
@@ -50,7 +51,7 @@ public class DownloadReceiver extends BroadcastReceiver {
 
         List<DownloadMusicInfo> infos = new ArrayList<DownloadMusicInfo>();
 
-        String json =  SharedPreferencesUtil.getInstance().getString(Constants.BOOK_DOWNLOAD_RECORD1);
+        String json =  SharedPreferencesUtil.getInstance().getString(TingConstants.BOOK_DOWNLOAD_RECORD1);
         if (!StringUtils.isEmpty(json)){
             Gson gson = new Gson();
             infos.addAll(gson.fromJson(json,new TypeToken<List<DownloadMusicInfo>>(){}.getType()));
@@ -73,6 +74,6 @@ public class DownloadReceiver extends BroadcastReceiver {
             downloadRecord.append("[]");
         }
         LogUtils.showLog("downloadRecord:"+downloadRecord.toString());
-        SharedPreferencesUtil.getInstance().putString(Constants.BOOK_DOWNLOAD_RECORD1,downloadRecord.toString());
+        SharedPreferencesUtil.getInstance().putString(TingConstants.BOOK_DOWNLOAD_RECORD1,downloadRecord.toString());
     }
 }

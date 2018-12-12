@@ -2,9 +2,9 @@ package cn.yuntk.radio.ibook.api;
 
 import android.content.Context;
 
-import cn.yuntk.radio.BuildConfig;
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.common.Constants;
+
+import cn.yuntk.radio.XApplication;
+import cn.yuntk.radio.ibook.common.TingConstants;
 import cn.yuntk.radio.ibook.util.PackageUtils;
 import cn.yuntk.radio.ibook.util.TelephonyUtils;
 
@@ -25,17 +25,19 @@ public class HeaderParams {
 
 
     public HeaderParams() {
-        Context application = XApplication.getsInstance();
+        Context application = XApplication.getInstance();
         version = PackageUtils.getVersionName(application);
         version_code = PackageUtils.getVersionCode(application);
-        os_version = TelephonyUtils.getBuildLevel() + "";
+        os_version = TelephonyUtils.getBuildLevel()+"";
         device = TelephonyUtils.getPhoneUser();
-        metrics = Constants.width + "*" + Constants.height;
-        channel = BuildConfig.FLAVOR.substring(BuildConfig.FLAVOR.indexOf("_"), BuildConfig.FLAVOR.length());//g
+        metrics = TingConstants.width + "*" + TingConstants.height ;
+//        channel = BuildConfig.FLAVOR;
+//        if (channel.startsWith("_")) {
+//            channel = channel.substring(1, channel.length());
+//        }
         memory_size = TelephonyUtils.getAvailablMemorySize();
         install_time = String.valueOf(System.currentTimeMillis());
-//        project = BuildConfig.APPLICATION_ID;
-        project = "cn.yuntk.radio";
+        project = "BookReader";
         hasSIM = TelephonyUtils.hasSIMCard(application);
         brand = TelephonyUtils.getPhoneBrand();
     }

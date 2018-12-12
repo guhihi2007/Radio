@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:elevation="6dip"
+    android:translationZ="6dip"
+    android:layout_height="match_parent">
+
+    <com.yuntk.ibook.floatwindow.FakeVideoView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ting_shape_window_play"/>
+
+    <LinearLayout
+        android:id="@+id/parent_ll"
+        android:padding="10dip"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="60dip">
+
+        <LinearLayout
+            android:id="@+id/click_aren_ll"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:id="@+id/float_title_tv"
+                android:text="暂无播放"
+                android:textColor="@color/color_20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/float_progress_tv"
+                    android:text="0:00"
+                    android:textColor="@color/color_20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/float_progress_total_tv"
+                    android:text="/0:00"
+                    android:textColor="@color/color_20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:paddingLeft="10.0dp">
+
+            <ImageView
+                android:id="@+id/iv_play_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:contentDescription="@null"
+                android:scaleType="center"
+                android:src="@drawable/ting_ic_status_bar_pause_dark" />
+
+            <ImageView
+                android:id="@+id/iv_next"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:contentDescription="@null"
+                android:scaleType="center"
+                android:tint="@color/color_theme_"
+                android:src="@drawable/ting_ic_status_bar_next_dark" />
+
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:visibility="visible"
+                android:id="@+id/close_iv"
+                android:tint="@android:color/black"
+                android:src="@mipmap/icon_close_pop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

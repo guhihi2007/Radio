@@ -1,8 +1,9 @@
 package cn.yuntk.radio.ibook.adapter;
 
-import cn.yuntk.radio.ibook.widget.FlowTagLayout;
 
 import java.util.List;
+
+import cn.yuntk.radio.ibook.widget.FlowTagLayout;
 
 /**
  * Created by HanHailong on 15/10/20.

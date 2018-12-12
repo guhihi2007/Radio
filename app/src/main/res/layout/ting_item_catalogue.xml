@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cn.yuntk.radio.ibook.widget.SwipeMenuLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_swipe_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    app:ios="false"
+    app:leftSwipe="false"
+    app:swipeEnable="false">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/catalogue_content_cl"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip">
+
+        <LinearLayout
+            android:paddingTop="3dip"
+            android:paddingBottom="3dip"
+            android:id="@+id/track_ll"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/download_status_tv"
+            android:layout_width="0dip"
+            android:orientation="vertical"
+            app:layout_constraintHorizontal_weight="1"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:paddingBottom="3dip"
+                android:id="@+id/track_title_tv"
+                android:text="Track_Title"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textColor="@color/color_20"
+                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:visibility="gone"
+                    android:layout_weight="1"
+                    android:text="音频:0"
+                    android:textSize="12sp"
+                    android:id="@+id/filesize_tv"
+                    android:textColor="@color/text_76"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:text="时长:00:00"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_76"
+                    android:id="@+id/duration_tv"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:text="10%"
+                    android:textSize="11sp"
+                    android:id="@+id/listener_progress_tv"
+                    android:visibility="invisible"
+                    android:textColor="@color/color_theme_"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            app:layout_constraintLeft_toRightOf="@+id/track_ll"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/download_status_tv"
+            android:text=""
+            android:padding="10dip"
+            android:visibility="invisible"
+            app:layout_constraintHorizontal_weight="1"
+            android:textColor="@color/color_20"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <ProgressBar
+            android:id="@+id/download_pb"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progressDrawable="@drawable/ting_seek_bar_progress_style"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/track_ll"
+            app:layout_constraintBottom_toTopOf="@+id/divide_line"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="3dip"
+            android:layout_height="8dip" />
+
+        <View
+            android:id="@+id/divide_line"
+            android:background="@color/color_e5e5e5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/download_pb"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dip"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <View
+        android:layout_width="10.5dip"
+        android:layout_height="match_parent"
+        android:background="@color/transparent" />
+
+    <!-- 下面是侧滑菜单项 即：第2+个子view-->
+    <Button
+        android:visibility="gone"
+        android:id="@+id/btn_zd"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:background="#d9dee4"
+        android:text="@string/to_top"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:background="#F76E6B"
+        android:text="@string/delete"
+        android:textColor="@android:color/white"/>
+
+</cn.yuntk.radio.ibook.widget.SwipeMenuLayout>

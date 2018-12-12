@@ -61,9 +61,10 @@ public class MediaSessionManager {
     public void updatePlaybackState(int playState) {
         Lg.e("MediaSessionManager updatePlaybackState");
 
-        int state = (playService.isPlaying() || playService.isPreparing()) ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED;
+        int state = (PlayManager.Companion.getInstance().isPlaying() ||
+                PlayManager.Companion.getInstance().isPreparing()) ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED;
 
-        stateBuilder.setState(state, playService.getCurrentIndex(), 1.0f);
+        stateBuilder.setState(state, PlayManager.Companion.getInstance().getCurrentIndex(), 1.0f);
         mediaSession.setPlaybackState(stateBuilder.build());
     }
 
@@ -78,7 +79,7 @@ public class MediaSessionManager {
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeResource(playService.getResources(), R.mipmap.ic_launcher));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            metaData.putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, playService.getPageList().size());
+            metaData.putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, PlayManager.Companion.getInstance().getPageList().size());
         }
 
         mediaSession.setMetadata(metaData.build());
@@ -88,35 +89,35 @@ public class MediaSessionManager {
         @Override
         public void onPlay() {
             Lg.e("MediaSessionCompat callback onPlay");
-            playService.playPause();
+            PlayManager.Companion.getInstance().playPause();
 
         }
 
         @Override
         public void onPause() {
             Lg.e("MediaSessionCompat callback onPause");
-            playService.playPause();
+            PlayManager.Companion.getInstance().playPause();
 
         }
 
         @Override
         public void onSkipToNext() {
             Lg.e("MediaSessionCompat callback onSkipToNext");
-            playService.next(null);
+            PlayManager.Companion.getInstance().next(null);
 
         }
 
         @Override
         public void onSkipToPrevious() {
             Lg.e("MediaSessionCompat callback onSkipToPrevious");
-            playService.pre(null);
+            PlayManager.Companion.getInstance().pre(null);
 
         }
 
         @Override
         public void onStop() {
             Lg.e("MediaSessionCompat callback onStop");
-            playService.stop();
+            PlayManager.Companion.getInstance().stop();
 
         }
 

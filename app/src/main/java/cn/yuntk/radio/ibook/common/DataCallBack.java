@@ -3,11 +3,11 @@ package cn.yuntk.radio.ibook.common;
 import android.app.Dialog;
 import android.content.Context;
 
-import cn.yuntk.radio.ibook.base.view.IBaseView;
-import cn.yuntk.radio.ibook.widget.SimpleLoadingDialog;
 
 import java.lang.ref.WeakReference;
 
+import cn.yuntk.radio.ibook.base.view.IBaseView;
+import cn.yuntk.radio.ibook.widget.SimpleLoadingDialog;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 

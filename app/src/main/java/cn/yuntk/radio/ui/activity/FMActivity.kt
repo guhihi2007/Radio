@@ -30,16 +30,16 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.lang.Exception
 
-class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
+class FMActivity : BaseActivity<FMBinding>(), MyViewTouch, Notification {
     private var resultFMBean = ArrayList<FMBean>()//所有电台的结果集
     private var current: Int = 0//正在播放第几个/
-    private lateinit var currentFMBean:FMBean
-    private var cache:Boolean=true//是否本来就有播放的fm
-    private var fmActivityBean:FMActivityBean=FMActivityBean()
-    private var province:String="北京"//当前省份
-    private var items=ArrayList<String>()//省份集合
-    private var isInit:Boolean=true//是否第一次进入
-    private var locationUtil:LocationUtil?=null
+    private lateinit var currentFMBean: FMBean
+    private var cache: Boolean = true//是否本来就有播放的fm
+    private var fmActivityBean: FMActivityBean = FMActivityBean()
+    private var province: String = "北京"//当前省份
+    private var items = ArrayList<String>()//省份集合
+    private var isInit: Boolean = true//是否第一次进入
+    private var locationUtil: LocationUtil? = null
     private lateinit var pageViewModel: PageViewModel
     override fun isFullScreen(): Boolean {
         return false
@@ -51,63 +51,63 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
 
     override fun onResume() {
         super.onResume()
-        if (SPUtil.getInstance().getString(Constants.CURRENT_PAGE)==Constants.FM_ACTIVITY){
+        if (SPUtil.getInstance().getString(Constants.CURRENT_PAGE) == Constants.FM_ACTIVITY) {
             try {
-                currentFMBean=SPUtil.getInstance().getObject(Constants.LAST_PLAY,FMBean::class.java)
-                current=resultFMBean.indexOf(currentFMBean)
-                fmActivityBean.currentFM=(360.0* current/resultFMBean.size).toFloat()
-                fmActivityBean.name=resultFMBean[current].name
-                fmActivityBean.radioFm= resultFMBean[current].radioFm!!
-                mBinding.fmActivityBean=fmActivityBean
+                currentFMBean = SPUtil.getInstance().getObject(Constants.LAST_PLAY, FMBean::class.java)
+                current = resultFMBean.indexOf(currentFMBean)
+                fmActivityBean.currentFM = (360.0 * current / resultFMBean.size).toFloat()
+                fmActivityBean.name = resultFMBean[current].name
+                fmActivityBean.radioFm = resultFMBean[current].radioFm!!
+                mBinding.fmActivityBean = fmActivityBean
                 mBinding.myView.invalidate()
-            }catch (e:Exception){
-                current=0
+            } catch (e: Exception) {
+                current = 0
             }
         }
     }
+
     override fun initView() {
         val pageViewModelFactory = Injection.providePageViewModelFactory(this)
 
         pageViewModel = ViewModelProviders.of(this, pageViewModelFactory).get(PageViewModel::class.java)
         try {
-            province=SPUtil.getInstance().getString(Constants.PROVINCE)
-        }catch (e:Exception){
-            locationUtil=LocationUtil.getInstance(this)
+            province = SPUtil.getInstance().getString(Constants.PROVINCE)
+        } catch (e: Exception) {
+            locationUtil = LocationUtil.getInstance(this)
         }
         try {
-            currentFMBean=SPUtil.getInstance().getObject(Constants.LAST_PLAY,FMBean::class.java)
-        }catch (e:Exception){
-            cache=false
+            currentFMBean = SPUtil.getInstance().getObject(Constants.LAST_PLAY, FMBean::class.java)
+        } catch (e: Exception) {
+            cache = false
         }
         mBinding.run {
             presenter = this@FMActivity
             initBackToolbar(toolbar)
-            toolbar.title="收音机"
+            toolbar.title = "调频"
         }
         registerEventBus()
     }
 
     override fun loadData() {
         loadingDialog.show()
-        fmActivityBean.loading=false
-        mBinding.fmActivityBean=fmActivityBean
-        Thread{
+        fmActivityBean.loading = false
+        mBinding.fmActivityBean = fmActivityBean
+        Thread {
             kotlin.run {
                 locationUtil?.checkPermission()
-                i=0
-                n=Constants.placeCodeList.size
+                i = 0
+                n = Constants.placeCodeList.size
                 if (isInit) {
-                    if (locationUtil?.province != ""&&locationUtil!=null) {
+                    if (locationUtil?.province != "" && locationUtil != null) {
                         province = locationUtil?.province.toString()
-                        SPUtil.getInstance().putString(Constants.PROVINCE,province)
+                        SPUtil.getInstance().putString(Constants.PROVINCE, province)
                     }
-                }
-                else if (resultFMBean.size>0)
-                    currentFMBean=resultFMBean[current]
+                } else if (resultFMBean.size > 0)
+                    currentFMBean = resultFMBean[current]
                 resultFMBean.clear()
                 items.clear()
-                for (i in Constants.placeCodeList.iterator()){
-                    loadFMBeanByChannel(i,"3")
+                for (i in Constants.placeCodeList.iterator()) {
+                    loadFMBeanByChannel(i, "3")
                 }
             }
         }.start()
@@ -117,19 +117,21 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
         super.onDestroy()
         unRegisterEventBus()
     }
-    //这是定位获取的结果的通知，定位功能写的不够完善
-    override fun myNoification(description: String?,result:String?) {
-        if (result=="ok"){
 
-        }else{
+    //这是定位获取的结果的通知，定位功能写的不够完善
+    override fun myNoification(description: String?, result: String?) {
+        if (result == "ok") {
+
+        } else {
             Looper.prepare()
-            Toast.makeText(this,"无定位权限",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "无定位权限", Toast.LENGTH_SHORT).show()
 //            Looper.loop()
         }
     }
+
     //获取电台
-    var n=Constants.placeCodeList.size//需要执行n次才可以将所有电台获取
-    var i=0//用于统计执行了多少次
+    var n = Constants.placeCodeList.size//需要执行n次才可以将所有电台获取
+    var i = 0//用于统计执行了多少次
     private fun loadFMBeanByChannel(channelCode: String, level: String = "3") {
         val service = RetrofitFactory.instance.create(FMService::class.java)
         service.getChannel(level, "1", channelCode, "1")
@@ -138,32 +140,32 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
                 .subscribe({
                     val result = it.result
                     if (result != null) {
-                        if (result[0].isExisUrl!=1){
+                        if (result[0].isExisUrl != 1) {
                             n += result.size
                             for (f in result) {
                                 items.add(f.name)
-                                if (f.name.equals(province)){
+                                if (f.name.equals(province)) {
                                     loadFMBeanByChannel(f.radioId.toString(), "4")
-                                }else{
+                                } else {
                                     i++
                                 }
 //                                loadFMBeanByChannel(f.radioId.toString(), "4")
                             }
-                        }else {
+                        } else {
                             resultFMBean.addAll(result)
                         }
 
                     }
                     i++
-                    if (i==n){
+                    if (i == n) {
                         orderResult()
                         //此时所有电台均已获取
-                        if (!isInit||cache) {
+                        if (!isInit || cache) {
                             for (item in 0..(resultFMBean.size - 1)) {
                                 if (currentFMBean.radioId == resultFMBean[item].radioId) {
                                     current = item
                                     if (PlayServiceManager.isListenerFMBean())
-                                        mBinding.pause.isSelected=true
+                                        mBinding.pause.isSelected = true
                                     break
                                 }
                                 if (item == resultFMBean.size - 1) {
@@ -171,49 +173,49 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
                                 }
                             }
                         }
-                        currentFMBean=resultFMBean[current]
-                        fmActivityBean.province="当前位置："+province
-                        fmActivityBean.currentFM=(360.0* current/resultFMBean.size).toFloat()
-                        fmActivityBean.name=resultFMBean[current].name
-                        fmActivityBean.radioFm= resultFMBean[current].radioFm!!
-                        fmActivityBean.loading=true
-                        mBinding.fmActivityBean=fmActivityBean
+                        currentFMBean = resultFMBean[current]
+                        fmActivityBean.province = "当前位置：$province  [切换]"
+                        fmActivityBean.currentFM = (360.0 * current / resultFMBean.size).toFloat()
+                        fmActivityBean.name = resultFMBean[current].name
+                        fmActivityBean.radioFm = resultFMBean[current].radioFm!!
+                        fmActivityBean.loading = true
+                        mBinding.fmActivityBean = fmActivityBean
                         mBinding.myView.invalidate()
                         loadingDialog.dismiss()
-                        isInit=false
+                        isInit = false
                         upDataFavoriteImageView()
                         saveData()
                     }
                 }, {
                     i++
-                    if (i==n){
+                    if (i == n) {
                         orderResult()
                         //此时所有电台均已获取
-                        if (resultFMBean.size==0){
-                            Toast.makeText(this,"加载失败",Toast.LENGTH_SHORT).show()
-                            fmActivityBean.loadFailed=true
-                        }else{
-                            if (!cache){
-                                fmActivityBean.name=resultFMBean[current].name
-                                fmActivityBean.currentFM= (current/resultFMBean.size*360).toFloat()
-                                fmActivityBean.radioFm= resultFMBean[current].radioFm!!
-                            } else{
-                                for (item in 0..(resultFMBean.size-1)){
-                                    if (currentFMBean.radioId==resultFMBean[item].radioId){
-                                        mBinding.fmActivityBean?.currentFM=(360.0*i/resultFMBean.size).toFloat()
-                                        current=item
+                        if (resultFMBean.size == 0) {
+                            Toast.makeText(this, "加载失败", Toast.LENGTH_SHORT).show()
+                            fmActivityBean.loadFailed = true
+                        } else {
+                            if (!cache) {
+                                fmActivityBean.name = resultFMBean[current].name
+                                fmActivityBean.currentFM = (current / resultFMBean.size * 360).toFloat()
+                                fmActivityBean.radioFm = resultFMBean[current].radioFm!!
+                            } else {
+                                for (item in 0..(resultFMBean.size - 1)) {
+                                    if (currentFMBean.radioId == resultFMBean[item].radioId) {
+                                        mBinding.fmActivityBean?.currentFM = (360.0 * i / resultFMBean.size).toFloat()
+                                        current = item
                                         if (PlayServiceManager.isListenerFMBean())
-                                            mBinding.pause.isSelected=true
+                                            mBinding.pause.isSelected = true
                                     }
                                 }
                             }
-                            fmActivityBean.loading=true
-                            isInit=false
+                            fmActivityBean.loading = true
+                            isInit = false
                             saveData()
                         }
-                        currentFMBean=resultFMBean[current]
-                        fmActivityBean.province="当前位置："+province
-                        mBinding.fmActivityBean=fmActivityBean
+                        currentFMBean = resultFMBean[current]
+                        fmActivityBean.province = "当前位置：" + province
+                        mBinding.fmActivityBean = fmActivityBean
                         mBinding.myView.invalidate()
                         loadingDialog.dismiss()
                         upDataFavoriteImageView()
@@ -223,22 +225,22 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
 
     override fun onClick(view: View?) {
         super.onClick(view)
-        if (resultFMBean.size>0) {
+        if (resultFMBean.size > 0) {
             when (view) {
                 mBinding.top -> {
                     if (current > 0)
-                        listenerRadio(resultFMBean[--current],this)
+                        listenerRadio(resultFMBean[--current], this)
                     else {
                         current = resultFMBean.size - 1
-                        listenerRadio(resultFMBean[current],this)
+                        listenerRadio(resultFMBean[current], this)
                     }
                 }
                 mBinding.down -> {
-                    if (current < resultFMBean.size-1)
-                        listenerRadio(resultFMBean[++current],this)
+                    if (current < resultFMBean.size - 1)
+                        listenerRadio(resultFMBean[++current], this)
                     else {
                         current = 0
-                        listenerRadio(resultFMBean[current],this)
+                        listenerRadio(resultFMBean[current], this)
                     }
                 }
                 mBinding.pause -> {
@@ -249,7 +251,7 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
                         mBinding.pause.isSelected = false
                     }
                 }
-                mBinding.favoriteImageView ->{
+                mBinding.favoriteImageView -> {
                     mBinding.favoriteImageView.isSelected = !mBinding.favoriteImageView.isSelected
                     if (mBinding.favoriteImageView.isSelected) {
                         disposable.add(viewModel.addFMBeanToCollection(resultFMBean[current])
@@ -268,70 +270,72 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
                     }
                 }
             }
-            currentFMBean=resultFMBean[current]
-            fmActivityBean.name=resultFMBean[current].name
-            fmActivityBean.currentFM= (current*360.0/resultFMBean.size).toFloat()
-            fmActivityBean.radioFm= resultFMBean[current].radioFm!!
-            if (view!=mBinding.favoriteImageView)
+            currentFMBean = resultFMBean[current]
+            fmActivityBean.name = resultFMBean[current].name
+            fmActivityBean.currentFM = (current * 360.0 / resultFMBean.size).toFloat()
+            fmActivityBean.radioFm = resultFMBean[current].radioFm!!
+            if (view != mBinding.favoriteImageView)
                 upDataFavoriteImageView()
-            if(mBinding.pause.isSelected)
+            if (mBinding.pause.isSelected)
                 PlayServiceManager.play(resultFMBean[current], this)
-        }else{
-            when(view?.id){
+        } else {
+            when (view?.id) {
                 R.id.tv_refresh -> {
                     loadData()
                     loadingDialog.show()
-                    fmActivityBean.loadFailed=false
+                    fmActivityBean.loadFailed = false
                 }
                 R.id.tv_set_net -> {
                     startActivityForResult(Intent(Settings.ACTION_SETTINGS), Constants.SET_NET_CODE)
                 }
             }
         }
-        var dialog:TimingDialog?=null
-        when(view){
-            mBinding.location->{
-                dialog=TimingDialog(this,object : ItemClickPresenter<Any> {
+        var dialog: TimingDialog? = null
+        when (view) {
+            mBinding.location -> {
+                dialog = TimingDialog(this, object : ItemClickPresenter<Any> {
                     override fun onItemClick(view: View?, item: Any) {
                         log(item.toString())
-                        province=item.toString()
-                        SPUtil.getInstance().putString(Constants.PROVINCE,province)
+                        province = item.toString()
+                        SPUtil.getInstance().putString(Constants.PROVINCE, province)
                         loadData()
                         dialog!!.dismiss()
                     }
                 })
-                val temp : Array<String> = Array(items.size,{""})
-                for (i in 0..(temp.size-1)){
-                    temp[i]= items[i]
+                val temp: Array<String> = Array(items.size, { "" })
+                for (i in 0..(temp.size - 1)) {
+                    temp[i] = items[i]
                 }
                 dialog.setTitle("选择地区")
                 dialog.setItems(temp)
                 dialog.show()
             }
         }
-        mBinding.fmActivityBean=fmActivityBean
+        mBinding.fmActivityBean = fmActivityBean
         mBinding.myView.invalidate()
     }
+
     //这是自定义View的触摸事件，用于及时更新页面
-    override fun onTouch(currentFM: Double,status: Int) {
-        current=(currentFM/360*resultFMBean.size+0.5).toInt()
-        if (current==resultFMBean.size){
-            current=0
+    override fun onTouch(currentFM: Double, status: Int) {
+        current = (currentFM / 360 * resultFMBean.size + 0.5).toInt()
+        if (current == resultFMBean.size) {
+            current = 0
         }
-        fmActivityBean.currentFM=currentFM.toFloat()
-        fmActivityBean.name=resultFMBean[current].name
-        fmActivityBean.radioFm= resultFMBean[current].radioFm!!
-        mBinding.fmActivityBean=fmActivityBean
-        if (status== MotionEvent.ACTION_UP){
+        fmActivityBean.currentFM = currentFM.toFloat()
+        fmActivityBean.name = resultFMBean[current].name
+        fmActivityBean.radioFm = resultFMBean[current].radioFm!!
+        mBinding.fmActivityBean = fmActivityBean
+        if (status == MotionEvent.ACTION_UP) {
             PlayServiceManager.play(resultFMBean[current], this)
-            fmActivityBean.currentFM=(360.0*current/resultFMBean.size).toFloat()
+            fmActivityBean.currentFM = (360.0 * current / resultFMBean.size).toFloat()
             mBinding.myView.invalidate()
             upDataFavoriteImageView()
         }
     }
+
     //更新收藏图标
-    private fun upDataFavoriteImageView(){
-        if (resultFMBean.size>0) {
+    private fun upDataFavoriteImageView() {
+        if (resultFMBean.size > 0) {
             disposable.add(viewModel.isCollectionFMBean(resultFMBean[current])
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -344,6 +348,7 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
                     }))
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun isListening(event: ListenEvent) {
         log("收听界面接收广播，更新页面状态==$event")
@@ -354,20 +359,21 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
             }
             when (event.status) {
                 Constants.STATE_PLAYING -> {
-                    pause.isSelected=true
+                    pause.isSelected = true
                 }
                 Constants.STATE_PAUSE -> {
-                    pause.isSelected=false
+                    pause.isSelected = false
                 }
                 Constants.STATE_IDLE -> {
-                    pause.isSelected=false
+                    pause.isSelected = false
                 }
             }
         }
     }
+
     //将数据存入数据库，便于锁屏页面使用
-    private fun saveData(){
-        SPUtil.getInstance().putString(Constants.CURRENT_PAGE,Constants.FM_ACTIVITY)
+    private fun saveData() {
+        SPUtil.getInstance().putString(Constants.CURRENT_PAGE, Constants.FM_ACTIVITY)
         disposable.add(pageViewModel.getListByPage(Constants.FM_ACTIVITY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -386,37 +392,38 @@ class FMActivity : BaseActivity<FMBinding>(),MyViewTouch,Notification {
                     }
                 })
     }
+
     //对得到的结果进行递增排序,排序方式为"AM"优先于"FM"；当字符串中没有"FM"或"AM"时，而只有数字时，这数字将被当做是"FM"排序；其他情况将全部排在最后
-    private fun orderResult(){
-        var userContrastI : Double
-        var userContrastJ : Double
-        if (resultFMBean.size>0){
-            var temp:FMBean
-            for (i in 0..(resultFMBean.size-2)){
-                for (j in 1+i..(resultFMBean.size-1)){
+    private fun orderResult() {
+        var userContrastI: Double
+        var userContrastJ: Double
+        if (resultFMBean.size > 0) {
+            var temp: FMBean
+            for (i in 0..(resultFMBean.size - 2)) {
+                for (j in 1 + i..(resultFMBean.size - 1)) {
                     userContrastI = try {
-                        if (resultFMBean[i].radioFm!!.contains("FM")||!resultFMBean[i].radioFm!!.contains("AM")){
-                            resultFMBean[i].radioFm?.split("FM")?.last()!!.toDouble()*1000
-                        }else{
+                        if (resultFMBean[i].radioFm!!.contains("FM") || !resultFMBean[i].radioFm!!.contains("AM")) {
+                            resultFMBean[i].radioFm?.split("FM")?.last()!!.toDouble() * 1000
+                        } else {
                             resultFMBean[i].radioFm?.split("AM")?.last()!!.toDouble()
                         }
-                    }catch (e : Exception){
-                        999*1000.0
+                    } catch (e: Exception) {
+                        999 * 1000.0
                     }
                     userContrastJ = try {
-                        if (resultFMBean[j].radioFm!!.contains("FM")||!resultFMBean[j].radioFm!!.contains("AM")){
-                            resultFMBean[j].radioFm?.split("FM")?.last()!!.toDouble()*1000
-                        }else{
+                        if (resultFMBean[j].radioFm!!.contains("FM") || !resultFMBean[j].radioFm!!.contains("AM")) {
+                            resultFMBean[j].radioFm?.split("FM")?.last()!!.toDouble() * 1000
+                        } else {
                             resultFMBean[j].radioFm?.split("AM")?.last()!!.toDouble()
                         }
-                    }catch (e : Exception){
-                        999*1000.0
+                    } catch (e: Exception) {
+                        999 * 1000.0
                     }
 
-                    if (userContrastI>userContrastJ){
-                        temp=resultFMBean[i]
-                        resultFMBean[i]=resultFMBean[j]
-                        resultFMBean[j]=temp
+                    if (userContrastI > userContrastJ) {
+                        temp = resultFMBean[i]
+                        resultFMBean[i] = resultFMBean[j]
+                        resultFMBean[j] = temp
                     }
                 }
             }

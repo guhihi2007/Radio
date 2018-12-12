@@ -4,64 +4,53 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import cn.yuntk.radio.Constants
 import cn.yuntk.radio.R
-import cn.yuntk.radio.ibook.XApplication
-import cn.yuntk.radio.ibook.ads.ADConstants
-import cn.yuntk.radio.ibook.ads.AdController
-import cn.yuntk.radio.ibook.ads.LoadEvent
-import cn.yuntk.radio.ibook.fragment.LoadingFragment
+import cn.yuntk.radio.R.id.*
+import cn.yuntk.radio.ad.AdController
 import cn.yuntk.radio.utils.jumpActivity
-import cn.yuntk.radio.utils.log
-import cn.yuntk.radio.utils.registerEventBus
+import cn.yuntk.radio.utils.lg
 import cn.yuntk.radio.view.widget.AuthorityDialog
 import cn.yuntk.radio.view.widget.SetPermissionDialog
-import cn.yuntk.radio.viewmodel.MainViewModel
 import com.yanzhenjie.permission.AndPermission
 import com.yanzhenjie.permission.PermissionListener
-import io.vov.vitamio.Vitamio
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
+import kotlinx.android.synthetic.main.activity_splash.*
 
 /**
  * Author : Gupingping
- * Date : 2018/8/8
- * Mail : gu12pp@163.com
+ * Date : 2018/10/25
+ * QQ : 464955343
  */
 class SplashActivity : AppCompatActivity() {
+
+    private var builder: AdController? = null
     private val WRITE_EXTERNAL_STORAGE = "android.permission.WRITE_EXTERNAL_STORAGE"
     private val REQUEST_PERMISSION_CODE = 100
     private var isForResult: Boolean = false
     private val FORRESULT_CODE: Int = 400
     private val STORAGE_MESSAGE: String = "存储空间"
-    private lateinit var loadingFragment: LoadingFragment
+    private var canJump = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        registerEventBus()
-        val transaction = supportFragmentManager.beginTransaction()
-        loadingFragment = LoadingFragment()
-        transaction.add(R.id.splash_fragment_content, loadingFragment)
-        hideFragment(transaction)
-        transaction.show(loadingFragment)
-        transaction.commitAllowingStateLoss()
+        askPermissions()
     }
 
-
-    private fun hideFragment(transaction: FragmentTransaction) {
-        transaction.hide(loadingFragment)
-    }
 
     private fun askPermissions() {
         if (hasStoragePermission()) {
-            checkIn()
+//            XApplication.isFromStart = true
+            builder = AdController.Builder(this)
+                    .setPage(Constants.START_PAGE)
+                    .setContainer(splash_container)
+                    .setSkipView(skip_view)
+                    .setSplashHolder(splash_holder)
+                    .setLogo(app_logo)
+                    .create()
+            builder?.show()
         } else {
             val dialog = object : AuthorityDialog(this) {
                 override fun onClick(v: View?) {
@@ -74,13 +63,17 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
+    private fun hasStoragePermission(): Boolean {
+        return AndPermission.hasPermission(this, WRITE_EXTERNAL_STORAGE)
+    }
+
     private fun sendRequest() {
-        if (Build.VERSION.SDK_INT >= 28) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 
             AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                    , Manifest.permission.FOREGROUND_SERVICE
+                    , Manifest.permission.FOREGROUND_SERVICE
                 ,Manifest.permission.ACCESS_COARSE_LOCATION
             )
                     .callback(permissionListener).start()
@@ -93,17 +86,6 @@ class SplashActivity : AppCompatActivity() {
                     .callback(permissionListener).start()
         }
 
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_BACK) {
-            true
-        } else
-            super.onKeyDown(keyCode, event)
-    }
-
-    private fun hasStoragePermission(): Boolean {
-        return AndPermission.hasPermission(this, WRITE_EXTERNAL_STORAGE)
     }
 
     private val permissionListener = object : PermissionListener {
@@ -118,12 +100,12 @@ class SplashActivity : AppCompatActivity() {
 
         override fun onFailed(requestCode: Int, deniedPermissions: List<String>) {
             if (requestCode == REQUEST_PERMISSION_CODE) {
-                log("拒绝权限回调")
+                lg("拒绝权限回调")
                 val hasStoragePermission = hasStoragePermission()
                 val isDeniedStorage = deniedPermissions.contains(WRITE_EXTERNAL_STORAGE)
                 if (AndPermission.hasAlwaysDeniedPermission(this@SplashActivity, deniedPermissions) && isDeniedStorage) {
                     var dialog: SetPermissionDialog? = null
-                    log("永久拒绝存储，弹出相应权限提示")
+                    lg("永久拒绝存储，弹出相应权限提示")
                     dialog = SetPermissionDialog(this@SplashActivity, FORRESULT_CODE, STORAGE_MESSAGE)
                     dialog.show()
                     isForResult = true
@@ -146,6 +128,20 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        canJump = false
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        if (canJump) {
+            next()
+        }
+        canJump = true
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         //勾选了永久拒绝，从设置返回才会进入
@@ -161,20 +157,32 @@ class SplashActivity : AppCompatActivity() {
     }
 
     fun checkIn() {
-        Vitamio.isInitialized(this)
         jumpActivity(MainActivity::class.java, null)
         finish()
     }
 
-    fun jumpHome() {
-        askPermissions()
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun finishActivity(event: LoadEvent) {
-        if (event.isFinish) {
-            jumpHome()
+    /**
+     * 设置一个变量来控制当前开屏页面是否可以跳转，当开屏广告为普链类广告时，点击会打开一个广告落地页，此时开发者还不能打开自己的App主页。当从广告落地页返回以后，
+     * 才可以跳转到开发者自己的App主页；当开屏广告是App类广告时只会下载App。
+     */
+    private operator fun next() {
+        if (canJump) {
+            checkIn()
+        } else {
+            canJump = true
         }
     }
-}
 
+    /** 开屏页一定要禁止用户对返回按钮的控制，否则将可能导致用户手动退出了App而广告无法正常曝光和计费  */
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        return if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME) {
+            true
+        } else super.onKeyDown(keyCode, event)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        builder?.destroy()
+    }
+}

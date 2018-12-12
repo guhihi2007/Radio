@@ -4,11 +4,12 @@ package cn.yuntk.radio.ibook.util.loger;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import cn.yuntk.radio.BuildConfig;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import cn.yuntk.radio.ibook.util.BuildConfig;
 
 
 public final class Loger {
@@ -39,7 +40,7 @@ public final class Loger {
 
     private static String mGlobalTag;
     private static boolean mIsGlobalTagEmpty = true;
-    private static boolean IS_SHOW_LOG = BuildConfig.DEBUG;
+    private static boolean IS_SHOW_LOG = BuildConfig.LOG_ENABLE;
 
     public static void init(boolean isShowLog) {
         IS_SHOW_LOG = isShowLog;

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:myView="http://schemas.android.com/apk/res-auto">
+    xmlns:myView="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data class="FMBinding">
 
@@ -46,7 +47,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="15dp"
-
                 android:onClick="@{(v)->presenter.onClick(v)}"
                 android:text="@{fmActivityBean.province}"
                 android:textColor="@color/white"
@@ -109,7 +109,8 @@
                 android:id="@+id/layout_net_error"
                 layout="@layout/comm_net_error"
                 android:visibility="@{fmActivityBean.loadFailed ? View.VISIBLE:View.GONE}"
-                myView:presenter="@{presenter}" />
+                myView:presenter="@{presenter}"
+                tools:visibility="gone"/>
         </LinearLayout>
 
         <ImageView

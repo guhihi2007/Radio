@@ -15,16 +15,17 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.base.presenter.BasePresenter;
-import cn.yuntk.radio.ibook.base.view.IBaseView;
-import cn.yuntk.radio.ibook.common.ILoadingAction;
-import cn.yuntk.radio.ibook.component.AppComponent;
+import com.umeng.analytics.MobclickAgent;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.yuntk.radio.XApplication;
+import cn.yuntk.radio.ibook.base.presenter.BasePresenter;
+import cn.yuntk.radio.ibook.base.view.IBaseView;
+import cn.yuntk.radio.ibook.common.ILoadingAction;
+import cn.yuntk.radio.ibook.component.AppComponent;
 
 /**
  * 创建时间:2018/4/2
@@ -49,7 +50,8 @@ public abstract class BaseTitleActivity<T extends BasePresenter> extends RxAppCo
         super.onCreate(savedInstanceState);
         setStatusBar();
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setupActivityComponent(XApplication.getsInstance().getAppComponent());
+
+        setupActivityComponent(XApplication.getInstance().getAppComponent());
         init();
     }
 
@@ -105,7 +107,7 @@ public abstract class BaseTitleActivity<T extends BasePresenter> extends RxAppCo
             int visibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE;// 表示允许应用的主题内容占用状态栏的空间
             decorView.setSystemUiVisibility(visibility);
-            getWindow().setStatusBarColor(Color.parseColor("#d81e06"));// 通知栏颜色
+            getWindow().setStatusBarColor(Color.parseColor("#ff5d4d"));// 通知栏颜色
         }
 //            ScreenUtils.paintScreen(this, Color.parseColor("#000000"));
     }
@@ -118,11 +120,13 @@ public abstract class BaseTitleActivity<T extends BasePresenter> extends RxAppCo
     @Override
     protected void onPause() {
         super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
     }
 
     @Override

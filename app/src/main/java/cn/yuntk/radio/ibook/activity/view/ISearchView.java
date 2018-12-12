@@ -1,9 +1,11 @@
 package cn.yuntk.radio.ibook.activity.view;
 
-import cn.yuntk.radio.ibook.base.view.IBaseView;
-import cn.yuntk.radio.ibook.bean.SearchBean;
 
-public interface ISearchView extends IBaseView {
-    void searchSuccess(SearchBean searchBean);
-    void searchFailear(String fail);
+import cn.yuntk.radio.ibook.base.RootListBean;
+import cn.yuntk.radio.ibook.base.refresh.IBaseRefreshView;
+import cn.yuntk.radio.ibook.bean.TCBean3;
+
+public interface ISearchView extends IBaseRefreshView<RootListBean<TCBean3>> {
+//    void searchSuccess(RootListBean<TCBean3> t);
+//    void searchFailear(String fail);
 }

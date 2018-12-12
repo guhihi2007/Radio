@@ -5,9 +5,6 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
-import cn.yuntk.radio.R;
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.service.AppCache;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,6 +21,10 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import cn.yuntk.radio.R;
+import cn.yuntk.radio.XApplication;
+import cn.yuntk.radio.ibook.service.AppCache;
 
 /**
  * @author Stride

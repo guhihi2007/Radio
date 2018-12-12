@@ -1,92 +1,77 @@
 package cn.yuntk.radio.ibook.fragment;
 
-import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import butterknife.BindView;
-import cn.yuntk.radio.R;
-import cn.yuntk.radio.ibook.activity.BookSearchActivtity;
-import cn.yuntk.radio.ibook.activity.SettingActivity;
-import cn.yuntk.radio.ibook.adapter.ViewPagerAdapter;
-import cn.yuntk.radio.ibook.base.BaseFragment;
-import cn.yuntk.radio.ibook.base.presenter.BasePresenter;
-import cn.yuntk.radio.ibook.component.AppComponent;
+import com.shizhefei.view.indicator.Indicator;
+import com.shizhefei.view.indicator.IndicatorViewPager;
+import com.shizhefei.view.indicator.slidebar.ColorBar;
+import com.shizhefei.view.indicator.transition.OnTransitionTextListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Index4Fragment extends BaseFragment implements View.OnClickListener{
+import cn.yuntk.radio.R;
+import cn.yuntk.radio.ibook.adapter.MileageAdapter;
+import cn.yuntk.radio.ibook.base.BaseFragment;
+import cn.yuntk.radio.ibook.base.presenter.BasePresenter;
+import cn.yuntk.radio.ibook.component.AppComponent;
+import cn.yuntk.radio.ibook.util.LogUtils;
 
-    TextView search_tv;
-    TextView setting_tv;
-    LinearLayout title_ll;
-    TextView title_tv1;
-    TextView title_tv2;
+public class Index4Fragment extends BaseFragment {
+
+    Indicator integral_tabs;
     ViewPager container_fl;
-    @BindView(R.id.comm_back_ll)
-    LinearLayout comm_back_ll;
+
+   IndicatorViewPager indicatorViewPager;
 
     // 标题
     private String mFragmentTags[] = new String[2];
     private List<LocalBooksFragment> fragments = new ArrayList<>();
-    private ViewPagerAdapter adapter;
+    private MileageAdapter adapter;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_listener_index4;
+        return R.layout.ting_fragment_index4;
     }
 
     @Override
     protected void initViews() {
-        search_tv = mContentView.findViewById(R.id.search_tv);
-        setting_tv = mContentView.findViewById(R.id.setting_tv);
-        title_ll = mContentView.findViewById(R.id.title_ll);
-        title_tv1 = mContentView.findViewById(R.id.title_tv1);
-        title_tv2 = mContentView.findViewById(R.id.title_tv2);
         container_fl = mContentView.findViewById(R.id.container_fl);
-        comm_back_ll.setVisibility(View.VISIBLE);
-        comm_back_ll.setOnClickListener(this);
-        search_tv.setVisibility(View.GONE);
-        setting_tv.setText("搜索");
-        setting_tv.setOnClickListener(this);
-        title_tv1.setOnClickListener(this);
-        title_tv2.setOnClickListener(this);
+        integral_tabs = mContentView.findViewById(R.id.integral_tabs);
 
-        mFragmentTags[0] = getString(R.string.history);
-        mFragmentTags[1] = getString(R.string.download);
 
-        fragments.add(LocalBooksFragment.newInstance(mFragmentTags[0],"0"));
-        fragments.add(LocalBooksFragment.newInstance(mFragmentTags[1],"1"));
+        mFragmentTags[0] = getString(R.string.collect);
+        mFragmentTags[1] = getString(R.string.history);
+//        mFragmentTags[2] = getString(R.string.download);
 
-        title_tv1.setText(mFragmentTags[0]);
-        title_tv2.setText(mFragmentTags[1]);
+        //1收藏列表2历史列表3下载列表
+        fragments.add(LocalBooksFragment.newInstance(mFragmentTags[0],"1"));
+        fragments.add(LocalBooksFragment.newInstance(mFragmentTags[1],"2"));
+//        fragments.add(LocalBooksFragment.newInstance(mFragmentTags[2],"3"));
+
+        container_fl.setOffscreenPageLimit(mFragmentTags.length);
+        integral_tabs.setScrollBar(new ColorBar(getActivity(), ContextCompat.getColor(getActivity(), android.R.color.white), 5));// 下划线的颜色和高度
+//      integral_tabs.setScrollBar(new TextWidthColorBar(this,indicator,R.color.color_red_bg,30));// 下划线的颜色和高度
+        float unSelectSize = 16;// 未选中的字体大小
+        float selectSize = 16;// 选中的字体大小
+        int selectColor = ContextCompat.getColor(getActivity(), android.R.color.white);// 选中的字体颜色
+        int unSelectColor = ContextCompat.getColor(getActivity(), R.color.text_unselect);// 没有选中的字体颜色
+        integral_tabs.setOnTransitionListener(new OnTransitionTextListener().setColor(selectColor, unSelectColor).setSize(selectSize, unSelectSize));
+        indicatorViewPager = new IndicatorViewPager(integral_tabs, container_fl);
+        indicatorViewPager.setPageOffscreenLimit(mFragmentTags.length);
+        adapter = new MileageAdapter<LocalBooksFragment>(getChildFragmentManager(), fragments, mFragmentTags);
+        indicatorViewPager.setAdapter(adapter);
     }
 
     @Override
     protected void bindEvent() {
-        adapter = new ViewPagerAdapter(getChildFragmentManager(),fragments);
-        container_fl.setOffscreenPageLimit(mFragmentTags.length);
-        container_fl.setAdapter(adapter);
-        container_fl.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        indicatorViewPager.setOnIndicatorPageChangeListener(new IndicatorViewPager.OnIndicatorPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                shiftTitle(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
+            public void onIndicatorPageChange(int preItem, int currentItem) {
+                LogUtils.showLog("preItem:"+preItem+":currentItem:"+currentItem);
             }
         });
-        shiftTitle(0);
     }
 
     @Override
@@ -102,44 +87,6 @@ public class Index4Fragment extends BaseFragment implements View.OnClickListener
     @Override
     protected void setupActivityComponent(AppComponent appComponent) {
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.search_tv:
-                BookSearchActivtity.jumpToSearch(mContext);
-                break;
-            case R.id.setting_tv:
-//                Intent intent = new Intent(mContext,SettingActivity.class);
-//                startActivity(intent);
-                BookSearchActivtity.jumpToSearch(mContext);
-
-                break;
-            case R.id.title_tv1:
-                shiftTitle(0);
-                break;
-            case R.id.title_tv2:
-                shiftTitle(1);
-                break;
-            case R.id.comm_back_ll:
-                if (getActivity()!=null){
-                    getActivity().finish();
-                }
-        }
-    }
-
-
-    //    切换选中项
-    private void shiftTitle(int index){
-        for (int i = 0;i<title_ll.getChildCount();i++){
-            if (i!=index){
-                title_ll.getChildAt(i).setSelected(false);
-            }else {
-                title_ll.getChildAt(i).setSelected(true);
-                container_fl.setCurrentItem(index);
-            }
-        }
     }
 
 }

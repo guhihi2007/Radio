@@ -1,7 +1,8 @@
 package cn.yuntk.radio.ibook.common.refresh;
 
 
-import cn.yuntk.radio.ibook.common.Constants;
+
+import cn.yuntk.radio.ibook.common.TingConstants;
 
 /**
  * <p>类描述：</p>
@@ -12,7 +13,7 @@ import cn.yuntk.radio.ibook.common.Constants;
  * <p>修改备注：   </p>
  */
 public class RefreshConfig {
-    private int pageSize = Constants.PAGE_SIZE;
+    private int pageSize = TingConstants.PAGE_SIZE;
     private boolean autoRefresh = false;
     private boolean enableLoadMore = true;//是否启用加载更多
     private boolean enableRefresh = true;//是否启用下拉刷新

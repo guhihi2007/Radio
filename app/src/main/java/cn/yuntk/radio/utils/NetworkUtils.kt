@@ -2,6 +2,7 @@ package cn.yuntk.radio.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkInfo
 
 /**
  * Author : Gupingping
@@ -16,6 +17,17 @@ class NetworkUtils {
                     .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val info = cm.activeNetworkInfo
             return info != null && info.isAvailable
+        }
+        @JvmStatic
+        private fun getActiveNetworkInfo(context: Context): NetworkInfo? {
+            val cm = context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            return cm.activeNetworkInfo
+        }
+        @JvmStatic
+        fun isConnected(context: Context): Boolean {
+            val info = getActiveNetworkInfo(context)
+            return info != null && info.isConnected
         }
     }
 }

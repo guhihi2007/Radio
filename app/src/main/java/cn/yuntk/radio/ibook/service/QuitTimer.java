@@ -5,15 +5,19 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.format.DateUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by hzwangchenyan on 2017/8/8.
  */
 public class QuitTimer {
+
     private Context context;
-    private OnTimerListener listener;
     private Handler handler;
     private long timerRemain;
+    private List<OnTimerListener> listeners = new ArrayList<OnTimerListener>();
 
     public interface OnTimerListener {
         /**
@@ -38,8 +42,16 @@ public class QuitTimer {
         this.handler = new Handler(Looper.getMainLooper());
     }
 
-    public void setOnTimerListener(OnTimerListener listener) {
-        this.listener = listener;
+    public void addOnTimerListener(OnTimerListener listener) {
+        if (listener!=null&&!listeners.contains(listener)){
+            listeners.add(listener);
+        }
+    }
+
+    public void removeOnTimerListener(OnTimerListener listener) {
+        if (listeners.size()!=0&&listeners.contains(listener)){
+            listeners.remove(listener);
+        }
     }
 
     public void start(long milli) {
@@ -49,8 +61,10 @@ public class QuitTimer {
             handler.post(mQuitRunnable);
         } else {
             timerRemain = 0;
-            if (listener != null) {
-                listener.onTimer(timerRemain);
+            if (listeners != null&&listeners.size() !=0) {
+                for (OnTimerListener listener:listeners){
+                    listener.onTimer(timerRemain);
+                }
             }
         }
     }
@@ -64,13 +78,15 @@ public class QuitTimer {
         public void run() {
             timerRemain -= DateUtils.SECOND_IN_MILLIS;
             if (timerRemain > 0) {
-                if (listener != null) {
-                    listener.onTimer(timerRemain);
+                if (listeners != null&&listeners.size() !=0) {
+                    for (OnTimerListener listener:listeners){
+                        listener.onTimer(timerRemain);
+                    }
                 }
                 handler.postDelayed(this, DateUtils.SECOND_IN_MILLIS);
             } else {
                 AppCache.get().clearStack();
-                PlayService.startCommand(context, Actions.ACTION_STOP);
+                TingPlayService.startCommand(context, Actions.ACTION_STOP);
             }
         }
     };

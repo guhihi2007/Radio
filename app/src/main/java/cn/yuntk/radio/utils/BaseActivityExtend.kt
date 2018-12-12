@@ -18,7 +18,6 @@ import android.widget.Toast
 import cn.yuntk.radio.Constants
 import cn.yuntk.radio.R
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
-import cn.yuntk.radio.ibook.fragment.LoadingFragment
 import org.greenrobot.eventbus.EventBus
 import java.io.Serializable
 
@@ -110,6 +109,9 @@ fun Any.postEvent(any: ListenEvent) {
     EventBus.getDefault().post(any)
 }
 
+fun Activity.lg(msg: String) {
+    LogUtils.e(msg)
+}
 /**
  * View 点击扩展
  */

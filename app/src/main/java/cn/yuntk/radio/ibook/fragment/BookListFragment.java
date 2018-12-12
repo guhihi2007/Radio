@@ -1,23 +1,34 @@
 package cn.yuntk.radio.ibook.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 import cn.yuntk.radio.R;
+import cn.yuntk.radio.ad.AdController;
 import cn.yuntk.radio.ibook.activity.BookDetailActivity;
-import cn.yuntk.radio.ibook.adapter.BooksAdapter;
 import cn.yuntk.radio.ibook.adapter.RvItemClickInterface;
-import cn.yuntk.radio.ibook.ads.ADConstants;
-import cn.yuntk.radio.ibook.ads.AdController;
-import cn.yuntk.radio.ibook.base.BaseFragment;
-import cn.yuntk.radio.ibook.bean.BookListBean;
-import cn.yuntk.radio.ibook.bean.ItemBookBean;
+import cn.yuntk.radio.ibook.adapter.TCBooksAdapter;
+import cn.yuntk.radio.ibook.base.RootBase;
+import cn.yuntk.radio.ibook.base.RootListBean;
+import cn.yuntk.radio.ibook.base.refresh.BaseRefreshFragment;
+import cn.yuntk.radio.ibook.bean.TCBean3;
 import cn.yuntk.radio.ibook.cache.ACache;
-import cn.yuntk.radio.ibook.common.Api;
+import cn.yuntk.radio.ibook.common.refresh.RefreshConfig;
 import cn.yuntk.radio.ibook.component.AppComponent;
 import cn.yuntk.radio.ibook.component.DaggerBookComponent;
 import cn.yuntk.radio.ibook.fragment.presenter.BookListPresenter;
@@ -27,14 +38,8 @@ import cn.yuntk.radio.ibook.util.LogUtils;
 import cn.yuntk.radio.ibook.util.NetworkUtils;
 import cn.yuntk.radio.ibook.util.StringUtils;
 import cn.yuntk.radio.ibook.util.ToastUtil;
-import cn.yuntk.radio.ibook.widget.EmptyRecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindView;
-
-public class BookListFragment extends BaseFragment<BookListPresenter>
+public class BookListFragment extends BaseRefreshFragment<BookListPresenter,RootListBean<TCBean3>>
         implements RvItemClickInterface,IBookListView {
 
     @BindView(R.id.ad_container_fl)
@@ -42,26 +47,31 @@ public class BookListFragment extends BaseFragment<BookListPresenter>
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout refreshLayout;
     @BindView(R.id.rv_subject)
-    EmptyRecyclerView rv_subject;
+    RecyclerView rv_subject;
     @BindView(R.id.no_data_ll)
     LinearLayout no_data_ll;
+    @BindView(R.id.load_again_tv)
+    TextView load_again_tv;
 
-    BooksAdapter adapter;
-    List<ItemBookBean> timeListBeans = new ArrayList<>();
+    TCBooksAdapter adapter;
+    List<TCBean3> timeListBeans = new ArrayList<>();
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
-    private String mParam2;
+    private static final String ARG_PARAM3 = "param3";
+    private String mParam1;//bookTypeId  1热门榜2热搜榜
+    private String mParam2;//type 小说1 评书2
+    private String mParam3;//广告标志
 
     private ACache aCache;
 
     // TODO: Rename and change types and number of parameters
-    public static BookListFragment newInstance(String param1, String param2) {
+    public static BookListFragment newInstance(String param1, String param2, String param3) {
         BookListFragment fragment = new BookListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM3, param3);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,8 +81,9 @@ public class BookListFragment extends BaseFragment<BookListPresenter>
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam3 = getArguments().getString(ARG_PARAM3);
         }
-        return R.layout.fragment_listener_booklist;
+        return R.layout.ting_fragment_booklist;
     }
 
     @Override
@@ -83,41 +94,20 @@ public class BookListFragment extends BaseFragment<BookListPresenter>
     @Override
     protected void bindEvent() {
         aCache = ACache.get(mContext);
-        adapter = new BooksAdapter(getActivity(), timeListBeans,R.layout.listener_item_booklist);
+        adapter = new TCBooksAdapter(mContext, timeListBeans,R.layout.ting_item_booklist_new,"0");
         adapter.setRvItemClickInterface(this);
-        rv_subject.setEmptyView(no_data_ll);
-        rv_subject.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rv_subject.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         rv_subject.setAdapter(adapter);
 
-        //设置 Header 为 Material风格
-        //smartLayout.setRefreshHeader(new MaterialHeader(this).setShowBezierWave(true));
-        //smartLayout.setRefreshHeader(new BezierCircleHeader(this));
-
-        //设置 Footer 为 球脉冲
-        //smartLayout.setRefreshFooter(
-        //        new BallPulseFooter(this)
-        //                .setSpinnerStyle(SpinnerStyle.Scale)
-        //                .setAnimatingColor(Color.parseColor("#fff4511e"))
-        //                .setNormalColor(Color.parseColor("#ff0000")));
-
-        refreshLayout.setEnableRefresh(true);
-        refreshLayout.setEnableLoadmore(false);
-        refreshLayout.setEnableAutoLoadmore(false);
-
-        refreshLayout.setOnRefreshListener(refreshlayout -> refreshData(1,100,false));
-
-        //        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
-//            @Override
-//            public void onLoadmore(RefreshLayout refreshlayout) {
-//                refreshData(1,100,false);
-//            }
-//        });
+        RefreshConfig config = new RefreshConfig();
+        config.enableRefresh(true);
+        config.enableLoadMore(false);
+        initRefreshView(refreshLayout,config);
 
     }
 
     @Override
     protected void loadData() {
-//        requestUrl();
         refreshLayout.autoRefresh();
     }
 
@@ -134,14 +124,25 @@ public class BookListFragment extends BaseFragment<BookListPresenter>
                 .inject(this);
     }
 
-    //recycleriew的item点击
+
+    @OnClick({R.id.load_again_tv})
+    public void onViewClick(View view){
+        switch (view.getId()){
+            case R.id.load_again_tv:
+                refreshLayout.autoRefresh();
+                break;
+        }
+    }
     @Override
-    public void onItemClick(Object o) {
-        ItemBookBean book = (ItemBookBean) o;
+    public void onItemClick(RootBase o) {
         Intent intent = new Intent(mContext, BookDetailActivity.class);
-        intent.putExtra("bookid",book.getId());
-        intent.putExtra("booktitle",book.getTitle());
-        intent.putExtra("booktype",mParam2);
+        if (o instanceof  TCBean3){
+            TCBean3 bookBean = (TCBean3) o;
+            intent.putExtra("bookid",bookBean.getBookID());
+            intent.putExtra("booktitle",bookBean.getBookName());
+            intent.putExtra("booktype",mParam2);
+
+        }
         startActivity(intent);
     }
 
@@ -156,62 +157,33 @@ public class BookListFragment extends BaseFragment<BookListPresenter>
     }
 
     @Override
-    public void refreshSuccess(BookListBean data) {
-        LogUtils.showLog("refreshSuccess:");
-        if (data==null){
-            emptyView(true);
-        }else {
-//            缓存首页列表
-            aCache.put(mParam1, GsonUtils.parseToJsonString(data));
-            switch (mParam1){
-                case Api.BOOK_LIST1:
-                    if (data.getTime_list()==null||data.getTime_list().size()==0){
-                        emptyView(true);
-                    }else {
-                        timeListBeans.clear();
-                        timeListBeans.addAll(data.getTime_list());
-                    }
-                    break;
-                case Api.BOOK_LIST2:
-                    if (data.getPs_list()==null||data.getPs_list().size()==0){
-                        emptyView(true);
-                    }else {
-                        timeListBeans.clear();
-                        timeListBeans.addAll(data.getPs_list());
-                    }
-                    break;
-                case Api.BOOK_LIST3:
-                    if (data.getYs_list()==null||data.getYs_list().size()==0){
-                        emptyView(true);
-                    }else {
-                        timeListBeans.clear();
-                        timeListBeans.addAll(data.getYs_list());
-                    }
-                    break;
-                case Api.BOOK_LIST4:
-                    if (data.getLz_list()==null||data.getLz_list().size()==0){
-                        emptyView(true);
-                    }else {
-                        timeListBeans.clear();
-                        timeListBeans.addAll(data.getLz_list());
-                    }
-                    break;
-            }
-            adapter.notifyDataSetChanged();
-        }
-        refreshLayout.finishRefresh();
-        refreshLayout.finishLoadmore();
+    public void loadMoreData(int pageNo, int pageSize) {
+        requestUrl();
     }
 
     @Override
-    public void refreshFail(int code, String msg) {
+    protected void refreshUISuccess(RootListBean<TCBean3> data, boolean isLoadMore) {
+        LogUtils.showLog("refreshSuccess:");
+        if (data==null||data.getStatus()!=1||data.getData() == null||data.getData().size()==0){
+            emptyView(true);
+        }else {
+            //            缓存首页列表
+            aCache.put(mParam1, GsonUtils.parseToJsonString(data));
+            if (!isLoadMore){
+                timeListBeans.clear();
+            }
+            timeListBeans.addAll(data.getData());
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void refreshUIFail(int code, String msg) {
         LogUtils.showLog("refreshFail:");
-        refreshLayout.finishRefresh();
-        refreshLayout.finishLoadmore();
         String json = aCache.getAsString(mParam1);
         if (!StringUtils.isEmpty(json)){
-            BookListBean data = GsonUtils.parseObject(json,BookListBean.class);
-            refreshSuccess(data);
+//            BookListBean data = GsonUtils.parseObject(json,BookListBean.class);
+//            refreshSuccess(data);
         }else {
             ToastUtil.showToast(getString(R.string.load_again));
         }
@@ -222,9 +194,15 @@ public class BookListFragment extends BaseFragment<BookListPresenter>
         LogUtils.showLog("emptyView:");
     }
 
-    //    loadurl
-    private void requestUrl(){
-        mPresenter.getBookList(mParam1);
+    public void requestUrl(){
+        //榜单只有一页 可以有100个
+        HashMap<String,String> map = new HashMap<String,String>();
+        map.put("bookTypeId",mParam1);//1热门榜2热搜榜
+        map.put("type",mParam2);//小说传1评书传2
+        map.put("banglei","1");//1周榜 2月榜3总榜
+//        map.put("pagenum",pageNo+"");//页码
+        map.put("pagesize","100");//每页数量
+        mPresenter.getAlbumInRank(map);
     }
 
     AdController builder;
@@ -232,33 +210,16 @@ public class BookListFragment extends BaseFragment<BookListPresenter>
     @Override
     public void onResume() {
         super.onResume();
-        fragment_tag =ADConstants.HOME_PAGE_LIST1;
-        switch (mParam1){
-            case Api.BOOK_LIST1:
-                fragment_tag =ADConstants.HOME_PAGE_LIST1;
-                break;
-            case Api.BOOK_LIST2:
-                fragment_tag =ADConstants.HOME_PAGE_LIST2;
-                break;
-            case Api.BOOK_LIST3:
-                fragment_tag =ADConstants.HOME_PAGE_LIST3;
-                break;
-            case Api.BOOK_LIST4:
-                fragment_tag =ADConstants.HOME_PAGE_LIST4;
-                break;
-        }
-
-        LogUtils.showLog("BookListFragment:onResume:"+fragment_tag);
+        LogUtils.showLog("BookListFragment:onResume:"+mParam3);
         if (isVisible){
             builder = new AdController
                     .Builder(getActivity())
                     .setContainer(ad_container_ll)
-                    .setPage(fragment_tag)
-                    .setTag_ad(mParam2)
+                    .setPage(mParam3)
+//                    .setTag_ad(mParam2)
                     .create();
             builder.show();
         }
-
     }
 
     @Override
@@ -275,13 +236,19 @@ public class BookListFragment extends BaseFragment<BookListPresenter>
         LogUtils.showLog("BookListFragment:setUserVisibleHint:"+isVisibleToUser);
         LogUtils.showLog("BookListFragment:setUserVisibleHint:"+fragment_tag);
         if (isVisibleToUser&&!StringUtils.isEmpty(fragment_tag)){
-            builder = new AdController
-                    .Builder(getActivity())
-                    .setContainer(ad_container_ll)
-                    .setPage(fragment_tag)
-                    .setTag_ad(mParam2)
-                    .create();
-            builder.show();
+//            builder = new AdController
+//                    .Builder(getActivity())
+//                    .setContainer(ad_container_ll)
+//                    .setPage(fragment_tag)
+//                    .setTag_ad(mParam2)
+//                    .create();
+//            builder.show();
         }
     }
+
+    @Override
+    public Context getLoadingContext() {
+        return null;
+    }
+
 }

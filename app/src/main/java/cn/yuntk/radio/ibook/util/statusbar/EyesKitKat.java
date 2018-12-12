@@ -19,9 +19,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import cn.yuntk.radio.R;
 
 import java.lang.reflect.Field;
+
+import cn.yuntk.radio.R;
 
 
 @TargetApi(Build.VERSION_CODES.KITKAT)

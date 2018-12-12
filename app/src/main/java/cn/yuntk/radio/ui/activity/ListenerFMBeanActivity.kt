@@ -10,14 +10,13 @@ import android.view.*
 import android.widget.LinearLayout
 import cn.yuntk.radio.Constants
 import cn.yuntk.radio.R
+import cn.yuntk.radio.ad.AdController
 import cn.yuntk.radio.adapter.BaseDataBindingAdapter
 import cn.yuntk.radio.base.BaseActivity
 import cn.yuntk.radio.base.ItemClickPresenter
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.bean.messageEvent.ListenEvent
 import cn.yuntk.radio.databinding.ActivityListenerBinding
-import cn.yuntk.radio.ibook.ads.ADConstants
-import cn.yuntk.radio.ibook.ads.AdController
 import cn.yuntk.radio.manager.PlayServiceManager
 import cn.yuntk.radio.utils.*
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -51,8 +50,8 @@ class ListenerFMBeanActivity : BaseActivity<ActivityListenerBinding>(), ItemClic
         registerEventBus()
         //广告展示
         builder = AdController.Builder(this)
-                .setContainer(mBinding.adContainerFl)
-                .setPage(ADConstants.LISTENING_PAGE)
+                .setNativeAdLayout(mBinding.adContainerFl)
+                .setPage(Constants.LISTENING_PAGE)
                 .create()
         builder.show()
     }

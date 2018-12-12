@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -11,6 +12,8 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Base64;
+
+import com.scwang.smartrefresh.layout.util.DensityUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -300,6 +303,41 @@ public class ImageUtils {
         return target;
     }
 
+    /**
+     * 将图片剪裁为圆形
+     */
+    public static Bitmap createCircleImage2(Bitmap source) {
+        if (source == null) {
+            return null;
+        }
+
+        source = setImgSize(source, DensityUtil.dp2px(144), DensityUtil.dp2px(144));
+        int length = Math.min(source.getWidth(), source.getHeight());
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        Bitmap target = Bitmap.createBitmap(length, length, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(target);
+        canvas.drawCircle(source.getWidth() / 2 , source.getHeight() / 2, length/2 , paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(source, 0, 0, paint);
+        return target;
+    }
+
+    //修改图片宽高
+    public static Bitmap setImgSize(Bitmap bm, int newWidth , int newHeight){
+        // 获得图片的宽高.
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        // 计算缩放比例.
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // 取得想要缩放的matrix参数.
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        // 得到新的图片.
+        Bitmap newbm = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
+        return newbm;
+    }
 
     public static void startAlbum(Activity activity) {
 //        Intent intent = new Intent(Intent.ACTION_PICK);

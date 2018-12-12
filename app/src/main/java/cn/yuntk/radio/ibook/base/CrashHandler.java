@@ -9,9 +9,6 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.util.LogUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import cn.yuntk.radio.XApplication;
+import cn.yuntk.radio.ibook.util.LogUtils;
 
 /**
  * UncaughtException处理类,当程序发生Uncaught异常的时候,有该类来接管程序,并记录发送错误报告.

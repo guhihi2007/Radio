@@ -7,11 +7,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import cn.yuntk.radio.R;
-import cn.yuntk.radio.ibook.XApplication;
+import cn.yuntk.radio.XApplication;
 import cn.yuntk.radio.ibook.util.DisplayUtil;
 
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.util.DisplayUtil;
 
 /**
  * 播放页Indicator
@@ -40,9 +38,9 @@ public class IndicatorLayout extends LinearLayout {
         for (int i = 0; i < count; i++) {
             ImageView imageView = new ImageView(getContext());
             imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-            int padding = DisplayUtil.dip2px(XApplication.getsInstance().getApplicationContext(),3);
+            int padding = DisplayUtil.dip2px(XApplication.getInstance().getApplicationContext(),3);
             imageView.setPadding(padding, 0, padding, 0);
-            imageView.setImageResource(i == 0 ? R.drawable.ic_play_page_indicator_selected : R.drawable.ic_play_page_indicator_unselected);
+            imageView.setImageResource(i == 0 ? R.drawable.ting_ic_play_page_indicator_selected : R.drawable.ting_ic_play_page_indicator_unselected);
             addView(imageView);
         }
     }
@@ -52,9 +50,9 @@ public class IndicatorLayout extends LinearLayout {
         for (int i = 0; i < count; i++) {
             ImageView imageView = (ImageView) getChildAt(i);
             if (i == position) {
-                imageView.setImageResource(R.drawable.ic_play_page_indicator_selected);
+                imageView.setImageResource(R.drawable.ting_ic_play_page_indicator_selected);
             } else {
-                imageView.setImageResource(R.drawable.ic_play_page_indicator_unselected);
+                imageView.setImageResource(R.drawable.ting_ic_play_page_indicator_unselected);
             }
         }
     }

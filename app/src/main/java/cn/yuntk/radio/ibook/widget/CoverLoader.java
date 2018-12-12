@@ -9,16 +9,16 @@ import android.os.Build;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import cn.yuntk.radio.R;
 import cn.yuntk.radio.ibook.bean.Music;
 import cn.yuntk.radio.ibook.util.DisplayUtil;
 import cn.yuntk.radio.ibook.util.ImageUtils;
 import cn.yuntk.radio.ibook.util.MusicUtils;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 专辑封面图片加载器
@@ -29,7 +29,7 @@ public class CoverLoader {
     private static final String KEY_NULL = "null";
 
     private Context context;
-    private Map<Type, LruCache<String, Bitmap>> cacheMap = new HashMap<>();
+    private Map<Type, LruCache<String, Bitmap>> cacheMap;
     private int roundLength = DisplayUtil.getScreenWidth() / 2;
 
     private enum Type {
@@ -141,14 +141,14 @@ public class CoverLoader {
     private Bitmap getDefaultCover(Type type) {
         switch (type) {
             case ROUND:
-                //play_page_disc1 R.drawable.play_page_default_cover_music
-                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_page_disc1);
+                //ting_play_page_disc1 R.drawable.ting_play_page_default_cover_music
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ting_play_page_disc1);
                 bitmap = ImageUtils.resizeImage(bitmap, roundLength, roundLength);
                 return ImageUtils.createCircleImage(bitmap);
             case BLUR:
-                return BitmapFactory.decodeResource(context.getResources(), R.drawable.play_page_default_bg);
+                return BitmapFactory.decodeResource(context.getResources(), R.drawable.ting_play_page_default_bg);
             default:
-                return BitmapFactory.decodeResource(context.getResources(), R.drawable.default_cover);
+                return BitmapFactory.decodeResource(context.getResources(), R.drawable.ting_default_cover);
         }
     }
 

@@ -5,8 +5,6 @@ import android.util.Log;
 
 import java.util.List;
 
-import cn.yuntk.radio.BuildConfig;
-
 /**
  * @author chengyong
  * @time 2015-6-23 上午11:33:49
@@ -17,7 +15,7 @@ public class LogUtils {
     /**
      * 日志输出时的TAG
      */
-    private static String mTag = "Lg_Radio_";
+    private static String mTag = "LT_Reader_";
     /**
      * 日志输出级别NONE
      */

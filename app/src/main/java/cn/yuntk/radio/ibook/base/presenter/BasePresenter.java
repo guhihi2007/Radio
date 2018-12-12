@@ -1,9 +1,10 @@
 package cn.yuntk.radio.ibook.base.presenter;
 
-import cn.yuntk.radio.ibook.base.model.IBaseModel;
-import cn.yuntk.radio.ibook.base.view.IBaseView;
 
 import java.lang.ref.WeakReference;
+
+import cn.yuntk.radio.ibook.base.model.IBaseModel;
+import cn.yuntk.radio.ibook.base.view.IBaseView;
 
 /**
  * 创建时间:2018/4/2

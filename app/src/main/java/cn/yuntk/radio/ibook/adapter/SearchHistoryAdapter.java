@@ -3,12 +3,13 @@ package cn.yuntk.radio.ibook.adapter;
 import android.content.Context;
 import android.view.View;
 
+
+import java.util.List;
+
 import cn.yuntk.radio.R;
 import cn.yuntk.radio.ibook.base.adapter.BaseRefreshAdapter;
 import cn.yuntk.radio.ibook.util.DialogUtils;
 import cn.yuntk.radio.ibook.widget.recycle.CommRecyclerViewHolder;
-
-import java.util.List;
 
 public class SearchHistoryAdapter extends BaseRefreshAdapter {
 

@@ -1,8 +1,6 @@
 package cn.yuntk.radio.api
 
 import cn.yuntk.radio.bean.ChannelSubBean
-import com.yuntk.ibook.ads.AdsConfig
-import com.yuntk.ibook.ads.BaseNetBean
 import io.reactivex.Observable
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded

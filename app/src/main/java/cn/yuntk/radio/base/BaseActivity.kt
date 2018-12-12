@@ -14,15 +14,15 @@ import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import cn.yuntk.radio.ADConstants
+import cn.yuntk.radio.Constants
+import cn.yuntk.radio.Constants.AD_APP_BACKGROUND_TIME
 import cn.yuntk.radio.bean.FMBean
-import cn.yuntk.radio.ibook.XApplication
-import cn.yuntk.radio.ibook.activity.SplashADActivity
-import cn.yuntk.radio.ibook.ads.ADConstants
-import cn.yuntk.radio.ibook.ads.ADConstants.AD_APP_BACKGROUND_TIME
-import cn.yuntk.radio.ibook.util.LogUtils
-import cn.yuntk.radio.ibook.util.NetworkUtils
+import cn.yuntk.radio.XApplication
 import cn.yuntk.radio.ibook.util.SharedPreferencesUtil
 import cn.yuntk.radio.manager.PlayServiceManager
+import cn.yuntk.radio.ui.activity.SplashActivityAD
+import cn.yuntk.radio.utils.NetworkUtils
 import cn.yuntk.radio.utils.log
 import cn.yuntk.radio.view.loading.LoadingDialog
 import cn.yuntk.radio.viewmodel.*
@@ -75,17 +75,17 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
 
     override fun onResume() {
         super.onResume()
-        if (XApplication.sInstance.isBackGroud) {
-            XApplication.sInstance.isBackGroud = false
-            log("BaseActivity 后台返回")
-            if (SharedPreferencesUtil.getInstance().getBoolean(ADConstants.AD_SPLASH_STATUS) && needSplashAD()) {
-                val intent = Intent(this, SplashADActivity::class.java)
-                startActivity(intent)
-            } else {
-                log("BaseActivity 后台返回 广告开关==" + SharedPreferencesUtil.getInstance().getBoolean(ADConstants.AD_SPLASH_STATUS) + "" +
-                        ",时间到了没有==" + needSplashAD())
-            }
-        }
+//        if (XApplication.sInstance.isBackGround) {
+//            XApplication.sInstance.isBackGround = false
+//            log("BaseActivity 后台返回")
+//            if (SharedPreferencesUtil.getInstance().getBoolean(Constants.AD_SPLASH_STATUS) && needSplashAD()) {
+//                val intent = Intent(this, SplashActivityAD::class.java)
+//                startActivity(intent)
+//            } else {
+//                log("BaseActivity 后台返回 广告开关==" + SharedPreferencesUtil.getInstance().getBoolean(Constants.AD_SPLASH_STATUS) + "" +
+//                        ",时间到了没有==" + needSplashAD())
+//            }
+//        }
     }
 
     override fun onStop() {
@@ -157,7 +157,7 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), Present
         val background = SharedPreferencesUtil.getInstance().getLong(AD_APP_BACKGROUND_TIME, 0)
         val gapTime = (current - background) / 1000
         val serverTime = SharedPreferencesUtil.getInstance().getLong(ADConstants.AD_SPREAD_PERIOD, 5)
-        return gapTime >= serverTime && serverTime != 0L && NetworkUtils.isConnected(XApplication.getsInstance())
+        return gapTime >= serverTime && serverTime != 0L && NetworkUtils.isConnected(XApplication.getInstance())
     }
 
 }

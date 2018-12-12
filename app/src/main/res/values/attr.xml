@@ -21,5 +21,14 @@
         <attr name="currentFM" format="float"/><!--当前收听的fm相对位置-->
         <attr name="name" format="string"/>
     </declare-styleable>
+    <!--侧滑控件自定义属性-->
+    <declare-styleable name="SwipeMenuLayout">
+        <attr name="swipeEnable" format="boolean"/>
+        <attr name="ios" format="boolean"/>
+        <attr name="leftSwipe" format="boolean"/>
+    </declare-styleable>
 
+    <declare-styleable name="AlignTextView">
+        <attr name="alignOnlyOneLine" format="boolean"/>
+    </declare-styleable>
 </resources>

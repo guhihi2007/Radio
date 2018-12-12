@@ -1,5 +1,6 @@
 package cn.yuntk.radio.ibook.bean;
 
+
 import cn.yuntk.radio.ibook.util.StringUtils;
 
 /*首页 小说 Item*/

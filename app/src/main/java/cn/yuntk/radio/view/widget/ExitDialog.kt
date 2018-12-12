@@ -5,12 +5,14 @@ import android.app.Dialog
 import android.content.ComponentName
 import android.content.Context
 import android.media.AudioManager
+import android.support.v4.media.session.MediaButtonReceiver
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import cn.yuntk.radio.R
-import cn.yuntk.radio.ibook.receiver.MediaButtonReceiver
+import cn.yuntk.radio.ibook.service.Actions
+import cn.yuntk.radio.ibook.service.FloatViewService
 
 /**
  * Author : Gupingping
@@ -44,6 +46,7 @@ class ExitDialog(context: Activity) : Dialog(context, R.style.BottomDialog) {
                 (context.getSystemService(Context.AUDIO_SERVICE) as AudioManager).unregisterMediaButtonEventReceiver(ComponentName(context, MediaButtonReceiver::class.java))
             }
             is_exit_app = true
+            FloatViewService.startCommand(context, Actions.SERVICE_GONE_WINDOW)//取消小说悬浮窗显示
             context.finish()
         }
         contentView.findViewById<TextView>(R.id.exit_cancel).setOnClickListener {

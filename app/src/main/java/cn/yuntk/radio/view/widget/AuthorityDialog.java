@@ -17,7 +17,7 @@ import cn.yuntk.radio.R;
  */
 public class AuthorityDialog extends PDialogHolder {
     private View empty_view, mlayout;
-    private TextView mTitle, mContent, mBtn;
+    private TextView  mContent, mBtn;
 
     public AuthorityDialog(@NonNull Context context) {
         super(context);
@@ -38,7 +38,6 @@ public class AuthorityDialog extends PDialogHolder {
     protected void findViews() {
         mlayout = findViewById(R.id.layout_view);
         empty_view = findViewById(R.id.blank_view);
-        mTitle = (TextView) findViewById(R.id.listener_title_tv);
         mContent = (TextView) findViewById(R.id.mContent);
         mBtn = (TextView) findViewById(R.id.authority_tv);
         mBtn.setOnClickListener(this);

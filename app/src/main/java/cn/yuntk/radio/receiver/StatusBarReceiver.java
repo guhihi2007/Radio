@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import cn.yuntk.radio.play.PlayManager;
 import cn.yuntk.radio.service.PlayService;
 import cn.yuntk.radio.utils.LogUtils;
 
@@ -37,14 +38,16 @@ public class StatusBarReceiver extends BroadcastReceiver {
 //        }else
         if (TextUtils.equals(extra, EXTRA_PLAY_PAUSE)) {
             LogUtils.e("StatusBarReceiver play_pause");
-            PlayService.startCommand(context, ACTION_MEDIA_PLAY_PAUSE);
+            PlayManager.Companion.getInstance().playPause();
+//            PlayService.startCommand(context, ACTION_MEDIA_PLAY_PAUSE);
 //        }else if (TextUtils.equals(extra, EXTRA_PRE)) {
 //            LogUtils.e("StatusBarReceiver pre");
 //            PlayService.startCommand(context, ACTION_MEDIA_PRE);
         }
         else if (TextUtils.equals(extra, EXTRA_STOP)) {
             LogUtils.e("StatusBarReceiver stop");
-            PlayService.startCommand(context, ACTION_MEDIA_STOP);
+//            PlayService.startCommand(context, ACTION_MEDIA_STOP);
+            PlayManager.Companion.getInstance().quit();
         }
 
     }

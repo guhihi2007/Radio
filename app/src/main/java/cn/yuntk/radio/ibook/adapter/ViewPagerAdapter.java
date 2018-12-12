@@ -4,9 +4,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import cn.yuntk.radio.ibook.base.BaseFragment;
 
 import java.util.List;
+
+import cn.yuntk.radio.ibook.base.BaseFragment;
 
 /*历史 fragment适配器*/
 public class ViewPagerAdapter<T extends BaseFragment> extends FragmentPagerAdapter {

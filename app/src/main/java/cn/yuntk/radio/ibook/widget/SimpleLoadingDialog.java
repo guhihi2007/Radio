@@ -33,7 +33,7 @@ public class SimpleLoadingDialog extends AlertDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContentView = LayoutInflater.from(mContext).inflate(R.layout.layout_simple_loading_dialog,null);
+        mContentView = LayoutInflater.from(mContext).inflate(R.layout.ting_layout_simple_loading_dialog,null);
         initViews();
         Window window = getWindow();
         window.getDecorView().setPadding(0, 0, 0, 0);

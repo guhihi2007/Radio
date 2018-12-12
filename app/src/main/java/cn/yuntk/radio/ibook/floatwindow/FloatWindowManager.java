@@ -15,9 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+
 import cn.yuntk.radio.R;
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.common.Constants;
+import cn.yuntk.radio.XApplication;
+import cn.yuntk.radio.ibook.common.TingConstants;
 import cn.yuntk.radio.ibook.util.DisplayUtil;
 
 import static android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
@@ -52,7 +53,7 @@ public class FloatWindowManager {
     private View.OnClickListener onClickListener;
 
     private FloatWindowManager() {
-        mContext = XApplication.getsInstance();
+        mContext = XApplication.getInstance();
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mStatusBarHeight = SystemBarUtils.getStatusBarHeight(mContext);
         mNavigationBarHeight = SystemBarUtils.getNavigationBarHeight(mContext);
@@ -89,7 +90,7 @@ public class FloatWindowManager {
 
     private void createSmallWindow() {
 
-        mSmallWindow = LayoutInflater.from(mContext).inflate(R.layout.listener_layout_float_window, null);
+        mSmallWindow = LayoutInflater.from(mContext).inflate(R.layout.ting_layout_float_window, null);
         FakeVideoView fakeVideoView = mSmallWindow.findViewById(R.id.video);
         fakeVideoView.setOnTouchHandler(new FakeVideoView.onTouchHandler() {
             @Override
@@ -164,7 +165,7 @@ public class FloatWindowManager {
         mSmallWindowParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         mSmallWindowParams.gravity = Gravity.TOP | Gravity.START;
         mSmallWindowParams.x = 0;
-        mSmallWindowParams.y = Constants.height-(DisplayUtil.dip2px(mContext,140f));
+        mSmallWindowParams.y = TingConstants.height-(DisplayUtil.dip2px(mContext,140f));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mSmallWindowParams.type = TYPE_APPLICATION_OVERLAY;

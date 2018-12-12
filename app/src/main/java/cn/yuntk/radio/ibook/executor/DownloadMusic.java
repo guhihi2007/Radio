@@ -9,7 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.webkit.MimeTypeMap;
 
 import cn.yuntk.radio.R;
-import cn.yuntk.radio.ibook.XApplication;
+import cn.yuntk.radio.XApplication;
 import cn.yuntk.radio.ibook.bean.DownloadMusicInfo;
 import cn.yuntk.radio.ibook.service.AppCache;
 import cn.yuntk.radio.ibook.util.FileUtils;

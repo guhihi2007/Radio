@@ -7,9 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import cn.yuntk.radio.R;
 
 import java.util.List;
+
+import cn.yuntk.radio.R;
 
 /**
  * Created by HanHailong on 15/10/19.
@@ -42,7 +43,7 @@ public class TagAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View view = LayoutInflater.from(mContext).inflate(R.layout.listener_tag_item, null);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.ting_tag_item, null);
         TextView textView = (TextView) view.findViewById(R.id.tv_tag);
 
         String t = mDataList.get(position);

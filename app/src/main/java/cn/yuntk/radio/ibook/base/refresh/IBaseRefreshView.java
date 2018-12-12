@@ -18,9 +18,10 @@ public interface IBaseRefreshView<T extends PageInfo> extends IBaseView {
      */
     void refreshData(int pageNo, int pageSize, boolean isLoadMore);
     //加载更多
-//    void loadMoreData(int pageNo,int pageSize);
+    void loadMoreData(int pageNo, int pageSize);
 
     void refreshSuccess(T data);
+
     void refreshFail(int code, String msg);
 
     void emptyView(boolean isEmpty);

@@ -5,6 +5,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
+
 import cn.yuntk.radio.ibook.bean.Music;
 import cn.yuntk.radio.ibook.util.FileUtils;
 import cn.yuntk.radio.ibook.widget.CoverLoader;
@@ -23,7 +24,7 @@ public class MediaSessionManager {
             | PlaybackStateCompat.ACTION_STOP
             | PlaybackStateCompat.ACTION_SEEK_TO;
 
-    private PlayService playService;
+    private TingPlayService tingPlayService;
     private MediaSessionCompat mediaSession;
 
     public static MediaSessionManager get() {
@@ -37,13 +38,13 @@ public class MediaSessionManager {
     private MediaSessionManager() {
     }
 
-    public void init(PlayService playService) {
-        this.playService = playService;
+    public void init(TingPlayService tingPlayService) {
+        this.tingPlayService = tingPlayService;
         setupMediaSession();
     }
 
     private void setupMediaSession() {
-        mediaSession = new MediaSessionCompat(playService, TAG);
+        mediaSession = new MediaSessionCompat(tingPlayService, TAG);
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS | MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS);
         mediaSession.setCallback(callback);
         mediaSession.setActive(true);

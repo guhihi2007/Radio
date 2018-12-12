@@ -15,16 +15,18 @@
  */
 package cn.yuntk.radio.ibook.api;
 
-import cn.yuntk.radio.ibook.bean.BookDetailBean;
-import cn.yuntk.radio.ibook.bean.BookListBean;
-import cn.yuntk.radio.ibook.bean.ClassifyListBean;
-import cn.yuntk.radio.ibook.bean.Mp3urlBean;
-import cn.yuntk.radio.ibook.bean.PsListBean;
+
+import java.util.HashMap;
+
+import cn.yuntk.radio.ibook.base.RootBean;
+import cn.yuntk.radio.ibook.base.RootListBean;
+import cn.yuntk.radio.ibook.bean.TCBean1;
+import cn.yuntk.radio.ibook.bean.TCBean3;
+import cn.yuntk.radio.ibook.bean.TCBean4;
+import cn.yuntk.radio.ibook.bean.TCBean5;
+import cn.yuntk.radio.ibook.bean.TCBean6;
 import cn.yuntk.radio.ibook.common.Api;
 import cn.yuntk.radio.ibook.common.ITestApi;
-
-import java.util.Map;
-
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -45,7 +47,7 @@ public class BookApi {
 
     public BookApi(OkHttpClient okHttpClient) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Api.APP_BASE_URL)
+                .baseUrl(Api.APP_BASE_URL_TC)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // 添加Rx适配器
                 .addConverterFactory(GsonConverterFactory.create()) // 添加Gson转换器
                 .client(okHttpClient)
@@ -59,41 +61,39 @@ public class BookApi {
         return instance;
     }
 
-//    public Observable<Recommend> getRecommend(String gender) {
-//        return service.getRecomend(gender);
-//    }
-
-    //获取小说列表
-    public Observable<BookListBean> getRecommend(String flag) {
-        switch (flag){
-            case Api.BOOK_LIST1:
-                return service.getBookList1();
-            case Api.BOOK_LIST2:
-                return service.getBookList2();
-            case Api.BOOK_LIST3:
-                return service.getBookList3();
-            case Api.BOOK_LIST4:
-                return service.getBookList4();
-                default:
-                    return service.getBookList1();
-        }
+    //获取首页小说列表
+    public Observable<RootListBean<TCBean3>> getAlbumInRank(HashMap<String,String> map) {
+        return service.getAlbumInRank(map);
     }
 
-    //    获取分类
-    public Observable<ClassifyListBean> getClassifyList(){
-        return service.getClassifyList();
+    //获取分类
+    public Observable<RootBean<TCBean1>> getBookTypeList(HashMap<String,String> map){
+        return service.getBookTypeList(map);
     }
-    //    获取评书列表
-    public Observable<PsListBean> getPsList(String id){
-        return service.getPsList(id);
+
+    //获取分类专辑列表
+    public Observable<RootListBean<TCBean3>> getAlbumByBookTypeid(HashMap<String,String> map){
+        return service.getAlbumByBookTypeid(map);
     }
-    //      获取一本小说详情
-    public Observable<BookDetailBean> getBookInfo(String id){
-        return service.getBookInfo(id);
+
+    //获取专辑详情
+    public Observable<RootBean<TCBean4>> getAlbumDetail(HashMap<String,String> map){
+        return service.getAlbumDetail(map);
     }
-    //    获取一个音频地址
-    public Observable<Mp3urlBean> getMp3Url(Map<String,String> params){
-        return service.getMp3Url(params);
+
+    //获取声音列表
+    public Observable<RootListBean<TCBean5>> getAlbumTracks(HashMap<String,String> map){
+        return service.getAlbumTracks(map);
+    }
+
+    //获取播放地址
+    public Observable<RootBean<TCBean6>> getPlayCdn(HashMap<String,String> map){
+        return service.getPlayCdn(map);
+    }
+
+    //搜索接口
+    public Observable<RootListBean<TCBean3>> serchAlbumForKeyword(HashMap<String,String> map){
+        return service.serchAlbumForKeyword(map);
     }
 
 }

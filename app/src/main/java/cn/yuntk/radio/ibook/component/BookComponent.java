@@ -15,13 +15,13 @@
  */
 package cn.yuntk.radio.ibook.component;
 
+
 import cn.yuntk.radio.ibook.activity.BookDetailActivity;
 import cn.yuntk.radio.ibook.activity.BookPlayActivity;
-import cn.yuntk.radio.ibook.activity.BookSearchActivtity;
-import cn.yuntk.radio.ibook.activity.StoryTellingListActivity;
+import cn.yuntk.radio.ibook.activity.SearchResultActivtity;
 import cn.yuntk.radio.ibook.fragment.BookListFragment;
 import cn.yuntk.radio.ibook.fragment.Index2Fragment;
-
+import cn.yuntk.radio.ibook.fragment.RankFragment;
 import dagger.Component;
 
 @Component(dependencies = AppComponent.class)
@@ -29,20 +29,14 @@ public interface BookComponent {
 
     BookListFragment inject(BookListFragment fragment);
 
-//    Index1Fragment inject(Index1Fragment fragment);
-//
     Index2Fragment inject(Index2Fragment fragment);
-//
-//    Index3Fragment inject(Index3Fragment fragment);
-//
-//    Index4Fragment inject(Index4Fragment fragment);
 
     BookDetailActivity inject(BookDetailActivity activity);
 
     BookPlayActivity inject(BookPlayActivity activity);
 
-    StoryTellingListActivity inject(StoryTellingListActivity activity);
+    RankFragment inject(RankFragment activity);
 
-    BookSearchActivtity inject(BookSearchActivtity activity);
+    SearchResultActivtity inject(SearchResultActivtity activity);
 
 }

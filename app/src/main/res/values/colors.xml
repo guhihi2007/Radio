@@ -64,6 +64,7 @@
     <color name="common_title_bg_color">#90040404</color>
     <color name="common_title_bg_text_color">#ffffff</color>
 
+    <!--从这里开始-->
     <color name="theme_color">#448ef5</color>
     <color name="common_white">#ffffff</color>
     <color name="btn_press">#22000000</color>
@@ -71,7 +72,7 @@
     <color name="book_read_top_text">#888888</color>
     <color name="ed_bg">#ededed</color>
     <color name="color_20">#202020</color>
-    <color name="color_d81e06">#d81e06</color>
+    <color name="color_theme_">#ff5d4d</color>
     <color name="color_707070">#707070</color>
     <color name="color_e5e5e5">#e5e5e5</color>
 
@@ -80,6 +81,12 @@
     <color name="white_24p">#3DFFFFFF</color>
     <color name="red_30p">#4CF44336</color>
     <color name="white_50p">#80FFFFFF</color>
+
+    <color name="text_76">#767676</color>
+    <color name="text_unselect">#ffa3a4</color>
+    <color name="text_78">#787878</color>
+    <color name="color_f2">#f2f2f2</color>
+    <color name="color_4f945c">#4f945c</color>
     <!--听书需要-->
 
 

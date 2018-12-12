@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cn.yuntk.radio.ibook.widget.SwipeMenuLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_swipe_view"
+    android:layout_width="match_parent"
+    android:layout_height="45dip"
+    android:clickable="true"
+    app:ios="false"
+    app:leftSwipe="false"
+    app:swipeEnable="false">
+
+    <android.support.constraint.ConstraintLayout
+    android:id="@+id/content_cl"
+    android:layout_width="match_parent"
+    android:layout_height="45dip"
+    android:paddingLeft="10dip"
+    android:paddingRight="10dip"
+    android:background="@android:color/white">
+
+    <TextView
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/book_info_tv"
+        android:text="水浒传"
+        android:textColor="@color/color_20"
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="40dip" />
+
+    <TextView
+        android:text="施耐庵"
+        android:textColor="@color/text_76"
+        android:id="@+id/book_author_tv"
+        android:gravity="center_vertical"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="40dip" />
+
+    <View
+        android:background="@color/color_e5e5e5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/book_info_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dip"/>
+
+</android.support.constraint.ConstraintLayout>
+
+    <View
+        android:layout_width="10.5dip"
+        android:layout_height="match_parent"
+        android:background="@color/transparent" />
+
+    <!-- 下面是侧滑菜单项 即：第2+个子view-->
+    <Button
+        android:visibility="gone"
+        android:id="@+id/btn_zd"
+        android:layout_width="50dip"
+        android:layout_height="40dp"
+        android:background="#d9dee4"
+        android:text="@string/to_top"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="50dip"
+        android:layout_height="40dp"
+        android:background="#F76E6B"
+        android:text="@string/delete"
+        android:textColor="@android:color/white"/>
+
+</cn.yuntk.radio.ibook.widget.SwipeMenuLayout>

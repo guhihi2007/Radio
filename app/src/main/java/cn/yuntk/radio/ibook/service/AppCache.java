@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
-import cn.yuntk.radio.ibook.activity.ScreenOffAcivity;
-import cn.yuntk.radio.ibook.bean.DownloadMusicInfo;
-import cn.yuntk.radio.ibook.bean.Music;
-import cn.yuntk.radio.ibook.widget.CoverLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.yuntk.radio.ibook.bean.DownloadMusicInfo;
+import cn.yuntk.radio.ibook.bean.Music;
+import cn.yuntk.radio.ibook.widget.CoverLoader;
 
 
 /**
@@ -70,10 +70,10 @@ public class AppCache {
         List<Activity> activityStack = mActivityStack;
         for (int i = activityStack.size() - 1; i >= 0; i--) {
             Activity activity = activityStack.get(i);
-            if ((activity instanceof ScreenOffAcivity)&&!activity.isFinishing()) {
-                activity.finish();
-                activityStack.remove(activity);
-            }
+//            if ((activity instanceof ScreenOffAcivity)&&!activity.isFinishing()) {
+//                activity.finish();
+//                activityStack.remove(activity);
+//            }
         }
     }
 

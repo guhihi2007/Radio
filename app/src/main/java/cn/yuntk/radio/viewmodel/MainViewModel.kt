@@ -4,24 +4,24 @@ import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import cn.yuntk.radio.BuildConfig
+import cn.yuntk.radio.Constants
 import cn.yuntk.radio.Constants.FOREIGN_CODE
 import cn.yuntk.radio.Constants.NATION_CODE
 import cn.yuntk.radio.Constants.NET_CODE
 import cn.yuntk.radio.Constants.PROVINCE_CODE
+import cn.yuntk.radio.ad.AdsConfig
 import cn.yuntk.radio.api.FMService
 import cn.yuntk.radio.api.RetrofitFactory
 import cn.yuntk.radio.api.YtkService
 import cn.yuntk.radio.bean.ChannelBean
 import cn.yuntk.radio.bean.FMBean
-import cn.yuntk.radio.ibook.ads.ADConstants
-import cn.yuntk.radio.ibook.ads.AdsManager
-import cn.yuntk.radio.ibook.util.LogUtils
-import cn.yuntk.radio.ibook.util.SharedPreferencesUtil
+import cn.yuntk.radio.utils.SPUtil
 import cn.yuntk.radio.utils.logE
 import com.google.gson.Gson
-import com.yuntk.ibook.ads.AdsConfig
+import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Executors
 
@@ -42,6 +42,7 @@ class MainViewModel : ViewModel() {
     val channelBean = ObservableArrayList<ChannelBean>()
 
     val disposable = CompositeDisposable()
+
     //请求频道信息
     fun loadFMBeanByChannel(pageViewMode: PageViewModel, channelCode: String, level: String = "3") {
 
@@ -123,70 +124,27 @@ class MainViewModel : ViewModel() {
         service.getAppConfig(BuildConfig.APPLICATION_ID, BuildConfig.FLAVOR.substring(BuildConfig.FLAVOR.indexOf("_"), BuildConfig.FLAVOR.length), BuildConfig.VERSION_NAME)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    "loadAdConfig Result==${it.message}".logE("MainViewModel")
-                    Executors.newCachedThreadPool().submit {
-                        saveConfig(it)
+                .subscribe(object : Observer<AdsConfig> {
+                    override fun onComplete() {
                     }
-                }, {
-                    "loadAdConfig Throwable==${it.message}".logE("MainViewModel")
+
+                    override fun onSubscribe(d: Disposable) {
+                        disposable.add(d)
+                    }
+
+                    override fun onNext(t: AdsConfig) {
+                        val gson = Gson()
+                        SPUtil.getInstance().putString(Constants.MUSIC_DETAIL, gson.toJson(t.data?.music_detail))
+                        SPUtil.getInstance().putString(Constants.HOME_PAGE, gson.toJson(t.data?.home_page))
+                        SPUtil.getInstance().putString(Constants.HOME_PAGE_NEW, gson.toJson(t.data?.home_page_new))
+                        SPUtil.getInstance().putString(Constants.LISTENING_PAGE, gson.toJson(t.data?.listening_page))
+                        SPUtil.getInstance().putString(Constants.START_PAGE, gson.toJson(t.data?.start_page))
+                        SPUtil.getInstance().putString(Constants.CATEGORY_PAGE, gson.toJson(t.data?.category_page))
+
+                    }
+
+                    override fun onError(e: Throwable) {
+                    }
                 })
-        AdsManager().getUAConfig()
-    }
-
-    //保存广告配置
-    private fun saveConfig(result: AdsConfig) {
-        val gson = Gson()
-        try {
-            SharedPreferencesUtil.getInstance().putString(ADConstants.MUSIC_DETAIL, gson.toJson(result.data!!.music_detail))
-            LogUtils.e("AdsManager----", "getMusic_detail===" + gson.toJson(result.data!!.music_detail))
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-
-
-        try {
-            SharedPreferencesUtil.getInstance().putString(ADConstants.HOME_PAGE_LIST1, gson.toJson(result.data!!.home_page))
-            SharedPreferencesUtil.getInstance().putString(ADConstants.HOME_PAGE_LIST2, gson.toJson(result.data!!.home_page))
-            SharedPreferencesUtil.getInstance().putString(ADConstants.HOME_PAGE_LIST3, gson.toJson(result.data!!.home_page))
-            SharedPreferencesUtil.getInstance().putString(ADConstants.HOME_PAGE_LIST4, gson.toJson(result.data!!.home_page))
-            LogUtils.e("AdsManager----", "getHome_page===" + gson.toJson(result.data!!.home_page))
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-
-
-        try {
-            SharedPreferencesUtil.getInstance().putString(ADConstants.HOME_PAGE_NEW, gson.toJson(result.data!!.home_page_new))
-            LogUtils.e("AdsManager----", "getHome_page_new===" + gson.toJson(result.data!!.home_page_new))
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-
-
-        try {
-            SharedPreferencesUtil.getInstance().putString(ADConstants.CATEGORY_PAGE, gson.toJson(result.data!!.category_page))
-            LogUtils.e("AdsManager----", "getCategory_page===" + gson.toJson(result.data!!.category_page))
-
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-
-
-        try {
-            SharedPreferencesUtil.getInstance().putString(ADConstants.LISTENING_PAGE, gson.toJson(result.data!!.listening_page))
-            LogUtils.e("AdsManager----", "getListening_page===" + gson.toJson(result.data!!.listening_page))
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-
-
-        try {
-            SharedPreferencesUtil.getInstance().putString(ADConstants.START_PAGE, gson.toJson(result.data!!.start_page))
-            LogUtils.e("AdsManager----", "getStart_page===" + gson.toJson(result.data!!.listening_page))
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-
     }
 }

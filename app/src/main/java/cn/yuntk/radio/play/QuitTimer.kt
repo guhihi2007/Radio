@@ -44,7 +44,7 @@ object QuitTimer {
                 mTimerCallback!!.onEvent(mTimerRemain)
                 mHandler!!.postDelayed(this, DateUtils.SECOND_IN_MILLIS)
             } else {
-                mPlayService!!.quit()
+                PlayManager.instance.quit()
             }
         }
     }

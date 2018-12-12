@@ -17,13 +17,14 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
-import cn.yuntk.radio.ibook.XApplication;
-import cn.yuntk.radio.ibook.common.Constants;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import cn.yuntk.radio.XApplication;
+import cn.yuntk.radio.ibook.common.TingConstants;
 
 /*
  *  @创建时间:  2016/11/16 0016 下午 4:33
@@ -87,6 +88,26 @@ public class PackageUtils {
         }
         return VersionCode;
     }
+
+    /**
+     * 获取应用程序名称
+     */
+    public static String getAppName(Context context)
+    {
+        try
+        {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(
+                    context.getPackageName(), 0);
+            int labelRes = packageInfo.applicationInfo.labelRes;
+            return context.getResources().getString(labelRes);
+        } catch (PackageManager.NameNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     /**
      * 获取当前App进程的id
@@ -184,11 +205,11 @@ public class PackageUtils {
     }
 
     /*
-     * 通过包名和类名，打开外部app
-     * packageName 要打开的包名
-     *
-     * className要打开的类名
-     * */
+    * 通过包名和类名，打开外部app
+    * packageName 要打开的包名
+    *
+    * className要打开的类名
+    * */
     public static void launch2App(Context context, String packageName, String className) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -198,8 +219,8 @@ public class PackageUtils {
     }
 
     /*
-     * 通过包名，打开外部app
-     * */
+    * 通过包名，打开外部app
+    * */
     public static void doStartApplicationWithPackageName(Context context, String packagename) {
 
         // 通过包名获取此APP详细信息，包括Activities、services、versioncode、name等等
@@ -325,7 +346,7 @@ public class PackageUtils {
             if (!TextUtils.isEmpty(marketPkg))
                 intent.setPackage(marketPkg);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            XApplication.getsInstance().getApplicationContext().startActivity(intent);
+            XApplication.getInstance().getApplicationContext().startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -382,8 +403,7 @@ public class PackageUtils {
 
     /**
      * 获取application中指定的meta-data 调用方法时key就是UMENG_CHANNEL
-     *
-     * @return 如果没有获取成功(没有对应值 ， 或者异常)，则返回值为空
+     * @return 如果没有获取成功(没有对应值，或者异常)，则返回值为空
      */
     public static String getAppMetaData(Context ctx, String key) {
         if (ctx == null || TextUtils.isEmpty(key)) {
@@ -481,24 +501,24 @@ public class PackageUtils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     }
 
-
     public static String getUserAgent() {
         String userAgent = "";
 //        系统版本
-        String systemVersion = android.os.Build.VERSION.RELEASE.substring(0, 1);
+        String systemVersion = android.os.Build.VERSION.RELEASE.substring(0,1);
         int ss = 9;
-        try {
-            ss = Integer.valueOf(systemVersion) + 4;
-        } catch (Exception e) {
+        try{
+             ss = Integer.valueOf(systemVersion)+4;
+        }catch (Exception e){
 
         }
 
-        String ua_ = SharedPreferencesUtil.getInstance().getString(Constants.UAConfig_);
-        if (!StringUtils.isEmpty(ua_)) {
-            userAgent = ua_ + " (iPhone; iOS " + ss + ".3.2; Scale/2.00)";
-        } else {
-            userAgent = Constants.UAConfig + " (iPhone; iOS " + ss + ".3.2; Scale/2.00)";
+        String ua_ = SharedPreferencesUtil.getInstance().getString(TingConstants.UAConfig_);
+        if (!StringUtils.isEmpty(ua_)){
+            userAgent = ua_+" (iPhone; iOS "+ ss+".3.2; Scale/2.00)";
+        }else {
+            userAgent = TingConstants.UAConfig+" (iPhone; iOS "+ ss+".3.2; Scale/2.00)";
         }
         return userAgent;
     }
+
 }

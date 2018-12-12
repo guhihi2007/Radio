@@ -2,9 +2,6 @@ package cn.yuntk.radio.api
 
 import cn.yuntk.radio.Constants.HOST
 import cn.yuntk.radio.Constants.YTK_HOST
-import cn.yuntk.radio.ibook.api.HeaderParams
-import cn.yuntk.radio.ibook.api.Logger
-import cn.yuntk.radio.ibook.api.LoggingInterceptor
 import com.google.gson.Gson
 import okhttp3.Interceptor
 import java.util.concurrent.TimeUnit

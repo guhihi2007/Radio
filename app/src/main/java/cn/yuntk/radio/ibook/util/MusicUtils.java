@@ -11,11 +11,12 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
-import cn.yuntk.radio.ibook.bean.Music;
-import cn.yuntk.radio.ibook.widget.CoverLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.yuntk.radio.ibook.bean.Music;
+import cn.yuntk.radio.ibook.widget.CoverLoader;
 
 /**
  * 歌曲工具类

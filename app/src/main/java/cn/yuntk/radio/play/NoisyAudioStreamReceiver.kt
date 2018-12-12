@@ -3,8 +3,8 @@ package cn.yuntk.radio.play
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import cn.yuntk.radio.service.PlayService
-import cn.yuntk.radio.Constants.ACTION_MEDIA_PLAY_PAUSE
+import cn.yuntk.radio.Constants
+import cn.yuntk.radio.utils.LogUtils
 
 /**
  *  来电/耳机拔出时暂停播放
@@ -15,6 +15,22 @@ import cn.yuntk.radio.Constants.ACTION_MEDIA_PLAY_PAUSE
 class NoisyAudioStreamReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        PlayService.startCommand(context, ACTION_MEDIA_PLAY_PAUSE)
+//        PlayService.startCommand(context, ACTION_MEDIA_PLAY_PAUSE)
+        if (intent.action == Constants.HEADSET_PLUG) {
+            if (intent.hasExtra("state")) {
+                when (intent.getIntExtra("state", 0)) {
+                    0 -> {
+                        LogUtils.e("headset not connected")
+                        PlayManager.instance.playPause()
+                    }
+                    1 -> {
+                        if (!PlayManager.instance.isPlaying()) {
+                            PlayManager.instance.playPause()
+                            LogUtils.e(" headset  connected")
+                        }
+                    }
+                }
+            }
+        }
     }
 }

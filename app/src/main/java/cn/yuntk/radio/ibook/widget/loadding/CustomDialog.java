@@ -22,7 +22,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import cn.yuntk.radio.R;
 
 
@@ -37,7 +36,7 @@ public class CustomDialog extends Dialog {
     }
 
     public static CustomDialog instance(Activity activity) {
-        LoadingView v = (LoadingView) View.inflate(activity, R.layout.listener_common_progress_view, null);
+        LoadingView v = (LoadingView) View.inflate(activity, R.layout.ting_common_progress_view, null);
         v.setColor(ContextCompat.getColor(activity, R.color.theme_color));
         CustomDialog dialog = new CustomDialog(activity, R.style.loading_dialog);
         dialog.setContentView(v,

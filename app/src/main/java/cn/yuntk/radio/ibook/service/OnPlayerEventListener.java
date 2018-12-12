@@ -1,6 +1,7 @@
 package cn.yuntk.radio.ibook.service;
 
-import cn.yuntk.radio.ibook.bean.Music;
+
+import cn.yuntk.radio.ibook.bean.TCBean5;
 
 /**
  * 播放进度监听器
@@ -11,7 +12,7 @@ public interface  OnPlayerEventListener {
     /**
      * 切换歌曲
      */
-    void onChange(Music music);
+    void onChange(TCBean5 music);
 
     /**
      * 继续播放
