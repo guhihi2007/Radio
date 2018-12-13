@@ -127,19 +127,21 @@ public class LocationUtil {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
 //            sendRequest();
             fmActivity.myNoification(LocationUtil.class.getSimpleName(),"no");
-        }else {
+        }else if (locationMode.size()>0){
             if (locationMode.contains(LocationManager.GPS_PROVIDER)&&priorityMode==PriorityMode.GPS){
                 location=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }else if (locationMode.size()>0&&priorityMode==PriorityMode.NETWORK){
+            }else if (locationMode.contains(LocationManager.NETWORK_PROVIDER)&&priorityMode==PriorityMode.NETWORK){
+                location=locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }else if (locationMode.size()==2){
                 location=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }else {
+                location=locationManager.getLastKnownLocation(locationMode.get(0));
             }
             if (location!=null) {
                 lat = location.getLatitude();
                 lng = location.getLongitude();
-            }else {
-                locationManager.requestLocationUpdates(priorityMode==PriorityMode.GPS ? LocationManager.GPS_PROVIDER:LocationManager.NETWORK_PROVIDER,2000,10,locationListener);
+                fmActivity.myNoification(LocationUtil.class.getSimpleName(),"ok");
             }
-            fmActivity.myNoification(LocationUtil.class.getSimpleName(),"ok");
         }
     }
     private int REQUEST_PERMISSION_CODE=33;
