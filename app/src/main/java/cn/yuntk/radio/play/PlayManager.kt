@@ -102,7 +102,6 @@ class PlayManager private constructor() {
     }
 
     fun play(fmBean: FMBean, context: Activity?) {
-        //TODO 检查网络
         if (context != null && !NetworkUtils.isAvailable(context)) {
             context.toast("网络异常")
             return

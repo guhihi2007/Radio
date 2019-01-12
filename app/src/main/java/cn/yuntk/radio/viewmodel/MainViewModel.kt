@@ -9,6 +9,7 @@ import cn.yuntk.radio.Constants.FOREIGN_CODE
 import cn.yuntk.radio.Constants.NATION_CODE
 import cn.yuntk.radio.Constants.NET_CODE
 import cn.yuntk.radio.Constants.PROVINCE_CODE
+import cn.yuntk.radio.XApplication
 import cn.yuntk.radio.ad.AdsConfig
 import cn.yuntk.radio.api.FMService
 import cn.yuntk.radio.api.RetrofitFactory
@@ -17,6 +18,7 @@ import cn.yuntk.radio.bean.ChannelBean
 import cn.yuntk.radio.bean.FMBean
 import cn.yuntk.radio.utils.SPUtil
 import cn.yuntk.radio.utils.logE
+import cn.yuntk.radio.utils.toast
 import com.google.gson.Gson
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -58,6 +60,7 @@ class MainViewModel : ViewModel() {
 
                     }
                 }) {
+                    XApplication.getInstance().toast("loadFailed== ${it.message} ")
                     "请求失败 查询已存数据库电台".logE("MainViewModel")
                     when (channelCode) {
                         NATION_CODE,
@@ -80,7 +83,7 @@ class MainViewModel : ViewModel() {
 
                                     })
                         }
-                        else ->{
+                        else -> {
                             loadFailed.set(true)
                         }
                     }
@@ -89,26 +92,27 @@ class MainViewModel : ViewModel() {
                 }
 
     }
+
     /**
      * 请求频道信息(不包含省市列表)，请求最终结果；
      * 未曾使用，未曾写完；由于我想到的判断数据是否全部加载完成的方法不够合理，所以还没有使用过
      */
-    private fun loadFMBeanByChannel(channelCode: List<String>,level: String ="3"){
+    private fun loadFMBeanByChannel(channelCode: List<String>, level: String = "3") {
         val service = RetrofitFactory.instance.create(FMService::class.java)
-        for (temp in channelCode){
+        for (temp in channelCode) {
             service.getChannel(level, "1", temp, "1")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         val result = it.result
                         if (result != null) {
-                            if (result[0].isExisUrl!=1){
-                                val resultList=ArrayList<String>()
+                            if (result[0].isExisUrl != 1) {
+                                val resultList = ArrayList<String>()
                                 for (f in result) {
                                     resultList.add(f.radioId.toString())
                                 }
-                                loadFMBeanByChannel(resultList,"4")
-                            }else {
+                                loadFMBeanByChannel(resultList, "4")
+                            } else {
                                 fmBeanList.addAll(result)
                             }
                         }

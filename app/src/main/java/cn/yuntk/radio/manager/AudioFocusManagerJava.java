@@ -5,7 +5,6 @@ import android.media.AudioManager;
 import android.util.Log;
 
 import cn.yuntk.radio.play.PlayManager;
-import cn.yuntk.radio.utils.LogUtils;
 
 import static android.content.Context.AUDIO_SERVICE;
 

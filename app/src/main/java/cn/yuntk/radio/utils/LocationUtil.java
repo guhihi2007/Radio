@@ -18,7 +18,6 @@ import com.yanzhenjie.permission.PermissionListener;
 import java.util.List;
 import java.util.Locale;
 
-import cn.yuntk.radio.base.Notification;
 import cn.yuntk.radio.ui.activity.FMActivity;
 
 

@@ -1,7 +1,6 @@
 package cn.yuntk.radio.view;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.view.ViewCompat;
@@ -9,11 +8,9 @@ import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-import cn.yuntk.radio.Constants;
 import cn.yuntk.radio.base.Presenter;
 import cn.yuntk.radio.bean.FMBean;
 import cn.yuntk.radio.manager.PlayServiceManager;
-import cn.yuntk.radio.utils.SPUtil;
 
 /**
  * Author : Gupingping

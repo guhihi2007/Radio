@@ -192,6 +192,7 @@ class FMActivity : BaseActivity<FMBinding>(), MyViewTouch, Notification {
                         orderResult()
                         //此时所有电台均已获取
                         if (resultFMBean.size == 0) {
+                            current=0
                             Toast.makeText(this, "加载失败", Toast.LENGTH_SHORT).show()
                             fmActivityBean.loadFailed = true
                         } else {
@@ -212,13 +213,14 @@ class FMActivity : BaseActivity<FMBinding>(), MyViewTouch, Notification {
                             fmActivityBean.loading = true
                             isInit = false
                             saveData()
+                            currentFMBean = resultFMBean[current]
+                            fmActivityBean.province = "当前位置：" + province
+                            mBinding.myView.invalidate()
+                            upDataFavoriteImageView()
                         }
-                        currentFMBean = resultFMBean[current]
-                        fmActivityBean.province = "当前位置：" + province
                         mBinding.fmActivityBean = fmActivityBean
-                        mBinding.myView.invalidate()
                         loadingDialog.dismiss()
-                        upDataFavoriteImageView()
+
                     }
                 })
     }

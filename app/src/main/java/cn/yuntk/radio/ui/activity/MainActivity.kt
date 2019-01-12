@@ -25,6 +25,7 @@ import cn.yuntk.radio.Constants.PROVINCE_CODE
 import cn.yuntk.radio.Constants.TIMIMG
 import cn.yuntk.radio.Constants.UPDATE
 import cn.yuntk.radio.Constants.channelList
+import cn.yuntk.radio.FmNative
 
 import cn.yuntk.radio.R
 import cn.yuntk.radio.ad.AdController

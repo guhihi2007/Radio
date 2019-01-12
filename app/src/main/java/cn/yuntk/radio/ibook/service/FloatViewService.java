@@ -33,8 +33,6 @@ import cn.yuntk.radio.ibook.util.LogUtils;
 import cn.yuntk.radio.ibook.util.PackageUtils;
 import cn.yuntk.radio.ibook.util.SystemUtils;
 import cn.yuntk.radio.ibook.util.ToastUtil;
-import cn.yuntk.radio.manager.PlayServiceManager;
-import cn.yuntk.radio.play.PlayManager;
 
 import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
@@ -153,7 +151,7 @@ public class FloatViewService extends Service implements View.OnTouchListener,Vi
         wmParams.windowAnimations = android.R.style.Animation_Translucent;
 
         //调整悬浮窗显示的停靠位置为左侧置顶
-        wmParams.gravity = Gravity.LEFT | Gravity.CENTER;
+        wmParams.gravity = Gravity.LEFT | Gravity.TOP;
 
         // 以屏幕底部为原点，设置x、y初始值
         wmParams.x = 0;

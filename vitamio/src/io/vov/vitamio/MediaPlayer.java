@@ -39,7 +39,6 @@ import android.util.SparseArray;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import io.vov.vitamio.utils.ContextUtils;
 import io.vov.vitamio.utils.FileUtils;
 import io.vov.vitamio.utils.Log;
 

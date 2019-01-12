@@ -30,7 +30,7 @@ public class TingPlayService extends Service {
         Log.i(TAG, "onCreate: " + getClass().getSimpleName());
         AudioPlayer.get().init(this);
         MediaSessionManager.get().init(this);
-        Notifier.get().init(this);
+//        Notifier.get().init(this);
         QuitTimer.get().init(this);
     }
 
@@ -62,6 +62,6 @@ public class TingPlayService extends Service {
     private void stop() {
         AudioPlayer.get().stopPlayer();
         QuitTimer.get().stop();
-        Notifier.get().cancelAll();
+//        Notifier.get().cancelAll();//没有和收音机兼容，先不用
     }
 }

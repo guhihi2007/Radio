@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.content.ContentResolverCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.View
@@ -13,6 +15,7 @@ import cn.yuntk.radio.R.id.*
 import cn.yuntk.radio.ad.AdController
 import cn.yuntk.radio.utils.jumpActivity
 import cn.yuntk.radio.utils.lg
+import cn.yuntk.radio.utils.toast
 import cn.yuntk.radio.view.widget.AuthorityDialog
 import cn.yuntk.radio.view.widget.SetPermissionDialog
 import com.yanzhenjie.permission.AndPermission
@@ -28,6 +31,9 @@ class SplashActivity : AppCompatActivity() {
 
     private var builder: AdController? = null
     private val WRITE_EXTERNAL_STORAGE = "android.permission.WRITE_EXTERNAL_STORAGE"
+    private val PHONE = "android.permission.READ_PHONE_STATE"
+    private val LOCATION = "android.permission.ACCESS_FINE_LOCATION"
+    private val FOREGROUND = "android.permission.FOREGROUND_SERVICE"
     private val REQUEST_PERMISSION_CODE = 100
     private var isForResult: Boolean = false
     private val FORRESULT_CODE: Int = 400
@@ -41,7 +47,28 @@ class SplashActivity : AppCompatActivity() {
 
 
     private fun askPermissions() {
-        if (hasStoragePermission()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (hasStoragePermission() && hasPhonePermission() && hasLocationPermission() && hasForegroundPermission()) {
+                builder = AdController.Builder(this)
+                        .setPage(Constants.START_PAGE)
+                        .setContainer(splash_container)
+                        .setSkipView(skip_view)
+                        .setSplashHolder(splash_holder)
+                        .setLogo(app_logo)
+                        .create()
+                builder?.show()
+                return
+            } else {
+                val dialog = object : AuthorityDialog(this) {
+                    override fun onClick(v: View?) {
+                        sendRequest()
+                        dismiss()
+                        return
+                    }
+                }
+                dialog.show()
+            }
+        } else if (hasStoragePermission() && hasPhonePermission()) {
 //            XApplication.isFromStart = true
             builder = AdController.Builder(this)
                     .setPage(Constants.START_PAGE)
@@ -67,6 +94,18 @@ class SplashActivity : AppCompatActivity() {
         return AndPermission.hasPermission(this, WRITE_EXTERNAL_STORAGE)
     }
 
+    private fun hasPhonePermission(): Boolean {
+        return AndPermission.hasPermission(this, PHONE)
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        return AndPermission.hasPermission(this, LOCATION)
+    }
+
+    private fun hasForegroundPermission(): Boolean {
+        return AndPermission.hasPermission(this, FOREGROUND)
+    }
+
     private fun sendRequest() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 
@@ -74,16 +113,17 @@ class SplashActivity : AppCompatActivity() {
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                     , Manifest.permission.FOREGROUND_SERVICE
-                ,Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-                    .callback(permissionListener).start()
+                    , Manifest.permission.ACCESS_FINE_LOCATION
+                    , Manifest.permission.ACCESS_COARSE_LOCATION
+            ).callback(permissionListener).start()
+
         } else {
             AndPermission.with(this).requestCode(REQUEST_PERMISSION_CODE).permission(
                     Manifest.permission.READ_PHONE_STATE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ,Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-                    .callback(permissionListener).start()
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            ).callback(permissionListener).start()
         }
 
     }

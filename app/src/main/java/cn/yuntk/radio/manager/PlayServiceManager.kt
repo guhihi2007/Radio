@@ -62,20 +62,20 @@ object PlayServiceManager {
 
     @JvmStatic
     fun getListenerState(): Int {
-        return PlayManager.instance.getListenerState() ?: 0
+        return PlayManager.instance.getListenerState()
     }
 
     @JvmStatic
     fun isListenerFMBean(): Boolean {
-        return PlayManager.instance.isPlaying() ?: false
+        return PlayManager.instance.isPlaying()
     }
 
     fun isListenerIdle(): Boolean {
-        return PlayManager.instance.isIdle() ?: false
+        return PlayManager.instance.isIdle()
     }
 
     fun getPageList(): List<FMBean> {
-        return PlayManager.instance.getPageList() ?: ArrayList<FMBean>()
+        return PlayManager.instance.getPageList()
     }
 
     fun next(activity: Activity): FMBean? {

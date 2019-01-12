@@ -1,12 +1,14 @@
 package cn.yuntk.radio.ibook.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,8 @@ import cn.yuntk.radio.ibook.receiver.StatusBarReceiver;
 import cn.yuntk.radio.ibook.util.FileUtils;
 import cn.yuntk.radio.ibook.widget.CoverLoader;
 
+import static android.app.Notification.VISIBILITY_SECRET;
+
 
 /**
  * Created by wcy on 2017/4/18.
@@ -33,7 +37,8 @@ public class Notifier {
     private static final int NOTIFICATION_ID = 0x111;
     private TingPlayService tingPlayService;
     private NotificationManager notificationManager;
-
+    private static final String CHANNEL_ID = "novel_id";
+    private static final String NOTIFICATION_NAME = "novel_name";
     public static Notifier get() {
         return SingletonHolder.instance;
     }
@@ -70,6 +75,23 @@ public class Notifier {
     }
 
     private Notification buildNotification(Context context, Music music, boolean isPlaying) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                    NOTIFICATION_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.canBypassDnd();//是否绕过请勿打扰模式
+            channel.enableLights(true);//闪光灯
+            channel.setLockscreenVisibility(VISIBILITY_SECRET);//锁屏显示通知
+            channel.setLightColor(Color.RED);// 闪关灯的灯光颜色
+            channel.canShowBadge();// 桌面launcher的消息角标
+            channel.setSound(null, null);
+            channel.enableVibration(false);// 是否允许震动
+            channel.getGroup();// 获取通知取到组
+            channel.setBypassDnd(true);//设置可绕过 请勿打扰模式
+            channel.shouldShowLights();//是否会有灯光
+            notificationManager.createNotificationChannel(channel);
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, CHANNEL_ID);
+            notification.setAutoCancel(false);
+        }
         Intent intent = new Intent(context, TingMainActivity.class);
         intent.putExtra(Extras.EXTRA_NOTIFICATION, true);
         intent.setAction(Intent.ACTION_VIEW);
@@ -79,6 +101,7 @@ public class Notifier {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setContentIntent(pendingIntent)
+                .setChannelId(CHANNEL_ID)
                 .setSmallIcon(R.drawable.ting_ic_notification)
                 .setCustomContentView(getRemoteViews(context, music, isPlaying));
         return builder.build();

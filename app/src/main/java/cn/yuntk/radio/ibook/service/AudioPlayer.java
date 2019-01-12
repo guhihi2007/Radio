@@ -371,7 +371,7 @@ public class AudioPlayer {
                 m.setType(1);//在线
             }
 
-        Notifier.get().showPlay(m);
+//        Notifier.get().showPlay(m);//没有和收音机兼容，先不用
         MediaSessionManager.get().updateMetaData(m);
         MediaSessionManager.get().updatePlaybackState();
         } catch (IOException e) {
@@ -441,7 +441,7 @@ public class AudioPlayer {
             }else {
                 m.setType(1);//在线
             }
-            Notifier.get().showPlay(m);
+//            Notifier.get().showPlay(m);//没有和收音机兼容，先不用
             MediaSessionManager.get().updatePlaybackState();
             context.registerReceiver(noisyReceiver, noisyFilter);
 
@@ -479,7 +479,7 @@ public class AudioPlayer {
             m.setType(1);//在线
         }
 
-        Notifier.get().showPause(m);
+//        Notifier.get().showPause(m);//没有和收音机兼容，先不用
         MediaSessionManager.get().updatePlaybackState();
         try{
             context.unregisterReceiver(noisyReceiver);

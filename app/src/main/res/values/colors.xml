@@ -30,46 +30,12 @@
 
     <!--听书需要-->
     <color name="transparent">#00000000</color>
-    <color name="light">#FFEEEEEE</color>
-    <color name="black">#000000</color>
-    <color name="grey">#333333</color>
-    <color name="global_bg">#9000</color>
-    <color name="color_green_01d9ae">#01D9AE</color>
-    <color name="color_gray_d9d9d9">#d9d9d9</color>
-    <color name="color_activity_blue_bg">#f7389fff</color>
-    <color name="split_line_grey_color_d9d9d9">#D9D9D9</color>
-    <color name="green_4DC0A4">#4DC0A4</color>
-    <color name="gray7">#c5c4c4</color>
-    <color name="GreyWhite">#F7F7F7</color>
-    <color name="im_list_select_hover">#dbdbdb</color>
-    <color name="color_aaaaaa_content_text">#ffaaaaaa</color>
-    <color name="title_color_01d9ae">#01D9AE</color>
-    <color name="color_b3b3b3">#b3b3b3</color>
-    <color name="color_red_ccfa3c55">#ccfa3c55</color>
-    <color name="color_black_b3000000">#b3000000</color>
-    <color name="color_grey_eaeaea">#eaeaea</color>
-    <color name="color_black_333333">#333333</color>
-    <color name="color_grey_999999">#999999</color>
-    <color name="color_grey_555555">#555555</color>
-    <color name="color_green_disable">#a2efe0</color>
-    <color name="color_green_00d3a9">#ff00D3A9</color>
-    <color name="color_blue_0888ff">#0888ff</color>
-    <color name="action_bar_black_title_1f1f1f">#1f1f1f</color>
-    <color name="action_bar_black_title_color">#252525</color>
-    <color name="contact_search_hit">#02d3a9</color>
-    <color name="color_black_333333_90_transparent">#e5333333</color>
-    <color name="color_black_000000_88_transparent">#e0000000</color>
 
     <!--title-->
-    <color name="common_title_bg_color">#90040404</color>
     <color name="common_title_bg_text_color">#ffffff</color>
 
     <!--从这里开始-->
     <color name="theme_color">#448ef5</color>
-    <color name="common_white">#ffffff</color>
-    <color name="btn_press">#22000000</color>
-    <color name="read_theme_yellow_tc">#444444</color>
-    <color name="book_read_top_text">#888888</color>
     <color name="ed_bg">#ededed</color>
     <color name="color_20">#202020</color>
     <color name="color_theme_">#ff5d4d</color>
@@ -86,7 +52,6 @@
     <color name="text_unselect">#ffa3a4</color>
     <color name="text_78">#787878</color>
     <color name="color_f2">#f2f2f2</color>
-    <color name="color_4f945c">#4f945c</color>
     <!--听书需要-->
 
 

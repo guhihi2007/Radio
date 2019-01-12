@@ -38,7 +38,7 @@ import static android.app.Notification.VISIBILITY_SECRET;
 public class Notifier {
     private static final int NOTIFICATION_ID = 0x111;
     private static final String CHANNEL_ID = "radio_id";
-    private static final String NOTIFICATION_NAME = "fairy_notification";
+    private static final String NOTIFICATION_NAME = "radio_name";
     private PlayService playService;
     private NotificationManager notificationManager;
 
@@ -56,6 +56,7 @@ public class Notifier {
     public void init(PlayService playService) {
         this.playService = playService;
         notificationManager = (NotificationManager) playService.getSystemService(Context.NOTIFICATION_SERVICE);
+        createNotificationChannel();
     }
 
     public void showPlay(FMBean fmBean) {
@@ -78,6 +79,31 @@ public class Notifier {
     }
 
     private Notification buildNotification(Context context, FMBean fmBean, boolean isPlaying) {
+
+        createNotificationChannel();
+
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(Constants.EXTRA_NOTIFICATION, true);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setContentIntent(pendingIntent)
+                .setChannelId(CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setOngoing(true)
+                .setCustomBigContentView(getBigRemoteViews(context, fmBean, isPlaying))
+                .setCustomContentView(getRemoteViews(context, fmBean, isPlaying));
+
+
+        return builder.build();
+
+    }
+
+    private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
                     NOTIFICATION_NAME, NotificationManager.IMPORTANCE_DEFAULT);
@@ -92,24 +118,7 @@ public class Notifier {
             channel.setBypassDnd(true);//设置可绕过 请勿打扰模式
             channel.shouldShowLights();//是否会有灯光
             notificationManager.createNotificationChannel(channel);
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, CHANNEL_ID);
-            notification.setAutoCancel(false);
         }
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra(Constants.EXTRA_NOTIFICATION, true);
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setOngoing(true)
-                .setCustomBigContentView(getBigRemoteViews(context, fmBean, isPlaying))
-                .setCustomContentView(getRemoteViews(context, fmBean, isPlaying));
-        return builder.build();
-
     }
 
     @SuppressLint("StaticFieldLeak")

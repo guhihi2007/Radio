@@ -6,11 +6,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import cn.yuntk.radio.play.PlayManager;
-import cn.yuntk.radio.service.PlayService;
 import cn.yuntk.radio.utils.LogUtils;
-
-import static cn.yuntk.radio.Constants.ACTION_MEDIA_PLAY_PAUSE;
-import static cn.yuntk.radio.Constants.ACTION_MEDIA_STOP;
 
 
 /**

@@ -18,13 +18,8 @@ package io.vov.vitamio;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build.VERSION;
 
-import io.vov.vitamio.utils.CPU;
 import io.vov.vitamio.utils.ContextUtils;
-import io.vov.vitamio.utils.IOUtils;
-import io.vov.vitamio.utils.Log;
-
 
 
 /**

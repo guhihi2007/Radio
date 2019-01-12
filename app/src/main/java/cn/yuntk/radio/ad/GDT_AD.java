@@ -36,25 +36,29 @@ public class GDT_AD extends AbsADParent {
 
     @Override
     protected void showAdView(final AD.AdType type) {
-        switch (type) {
+        XApplication.getMainThreadHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                switch (type) {
 
-            case BANNER:
+                    case BANNER:
 
-                showBannerView();
-                break;
-            case INSET:
+                        showBannerView();
+                        break;
+                    case INSET:
 
-                showInsertView();
+                        showInsertView();
 
-                break;
-            case SPLASH:
-                showSplashView();
-                break;
-            case NATIVE:
-                showNativeView();
-                break;
-        }
-
+                        break;
+                    case SPLASH:
+                        showSplashView();
+                        break;
+                    case NATIVE:
+                        showNativeView();
+                        break;
+                }
+            }
+        });
     }
 
     private void showNativeView() {
@@ -164,145 +168,52 @@ public class GDT_AD extends AbsADParent {
 
     @Override
     public void destroy(AD.AdType type) {
-        switch (type) {
+        XApplication.getMainThreadHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                switch (type) {
 
-            case SPLASH:
+                    case SPLASH:
 
-                break;
-            case INSET:
-                if (insert_gdt != null) {
-                    insert_gdt.destroy();
+                        break;
+                    case INSET:
+                        if (insert_gdt != null) {
+                            insert_gdt.destroy();
+                        }
+
+                        break;
+                    case BANNER:
+
+                        if (banner_gdt != null) {
+                            banner_gdt.destroy();
+                        }
+
+                        break;
+                    case NATIVE:
+                        if (nativeLayout != null && (nativeLayout.isShown() || nativeLayout.getChildCount() > 0)) {
+                            nativeLayout.removeAllViews();
+                            nativeLayout.setVisibility(View.GONE);
+                        }
+                        if (nativeExpressADView != null) {
+                            nativeExpressADView.destroy();
+                        }
+                        break;
                 }
-
-                break;
-            case BANNER:
-
-                if (banner_gdt != null) {
-                    banner_gdt.destroy();
-                }
-
-                break;
-            case NATIVE:
-                if (nativeLayout != null && (nativeLayout.isShown() || nativeLayout.getChildCount() > 0)) {
-                    nativeLayout.removeAllViews();
-                    nativeLayout.setVisibility(View.GONE);
-                }
-                if (nativeExpressADView != null) {
-                    nativeExpressADView.destroy();
-                }
-                break;
-        }
+            }
+        });
     }
 
 
     private void showSplashView() {
-        XApplication.getMainThreadHandler().post(new Runnable() {
-            @Override
-            public void run() {
-                if (mActivity != null) {
-                    try {
-                        new SplashAD(mActivity, mContainer, mSkipVew, BuildConfig.GDT_APP_KEY, BuildConfig.GDT_SPLASH_ID, new SplashADListener() {
-                            @Override
-                            public void onADDismissed() {
-                                LogUtils.i(TAG, "onADDismissed");
-                                if (null != mActivity) {
-                                    if (isLoading) {//不是启动页就finish
-                                        LogUtils.i(TAG, "onADDismissed isLoading finish");
-                                        mActivity.finish();
-                                        return;
-                                    }
-                                    ((SplashActivity) mActivity).checkIn();
-                                } else {
-                                    EventBus.getDefault().post(new LoadEvent(true));
-                                }
-                            }
-
-
-                            @Override
-                            public void onNoAD(final AdError adError) {
-                                if (null != mActivity) {
-                                    XApplication.getMainThreadHandler().post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            LogUtils.i(TAG, "onNoAD==" + adError.getErrorCode() + ",Message==" + adError.getErrorMsg());
-                                            listener.onNoAD("splash", "GDT_AD", "开屏");
-                                            if (isLoading) {
-                                                mActivity.finish();
-                                                return;
-                                            }
-                                            ((SplashActivity) mActivity).checkIn();
-                                        }
-                                    });
-
-                                } else {
-                                    EventBus.getDefault().post(new LoadEvent(true));
-                                }
-
-                            }
-
-                            @Override
-                            public void onADPresent() {
-                                if (null != mActivity) {
-                                    if (mSkipVew != null) {
-                                        gone(splashHolder);
-                                        visible(mSkipVew, mLogo);
-                                        mSkipVew.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                LogUtils.e("mSkipVew setOnClickListener");
-                                                if (isLoading) {//不是启动页就finish
-                                                    LogUtils.i(TAG, "onADDismissed isLoading finish");
-                                                    mActivity.finish();
-                                                    return;
-                                                }
-                                                ((SplashActivity) mActivity).checkIn();
-                                            }
-                                        });
-
-                                    }
-                                    listener.onShowAD("splash", "GDT_AD", "开屏");
-
-                                    LogUtils.i(TAG, "onADPresent");
-                                } else {
-                                    EventBus.getDefault().post(new LoadEvent(true));
-                                }
-                            }
-
-                            @Override
-                            public void onADClicked() {
-
-                                if (null != mActivity) {
-                                    listener.onClickAD("splash", "GDT_AD", "开屏");
-                                    LogUtils.i(TAG, "onADClicked");
-                                } else {
-                                    EventBus.getDefault().post(new LoadEvent(true));
-                                }
-                            }
-
-                            @Override
-                            public void onADTick(long l) {
-                                LogUtils.i(TAG, "SplashADTick: " + l + "ms");
-                                mSkipVew.setText(String.format("点击跳过 %d", Math.round(l / 1000f)));
-                                if (l < 1000) {
-                                    if (null != mActivity) {
-                                        if (isLoading) {//不是启动页就finish
-                                            LogUtils.i(TAG, "onADDismissed isLoading finish");
-                                            mActivity.finish();
-                                            return;
-                                        }
-                                        ((SplashActivity) mActivity).checkIn();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onADExposure() {
-
-                            }
-                        }, 0);
-                    } catch (Throwable e) {
+        if (mActivity != null) {
+            try {
+                new SplashAD(mActivity, mContainer, mSkipVew, BuildConfig.GDT_APP_KEY, BuildConfig.GDT_SPLASH_ID, new SplashADListener() {
+                    @Override
+                    public void onADDismissed() {
+                        LogUtils.i(TAG, "onADDismissed");
                         if (null != mActivity) {
-                            if (isLoading) {
+                            if (isLoading) {//不是启动页就finish
+                                LogUtils.i(TAG, "onADDismissed isLoading finish");
                                 mActivity.finish();
                                 return;
                             }
@@ -311,89 +222,176 @@ public class GDT_AD extends AbsADParent {
                             EventBus.getDefault().post(new LoadEvent(true));
                         }
                     }
+
+
+                    @Override
+                    public void onNoAD(final AdError adError) {
+                        if (null != mActivity) {
+                            XApplication.getMainThreadHandler().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    LogUtils.i(TAG, "onNoAD==" + adError.getErrorCode() + ",Message==" + adError.getErrorMsg());
+                                    listener.onNoAD("splash", "GDT_AD", "开屏");
+                                    if (isLoading) {
+                                        mActivity.finish();
+                                        return;
+                                    }
+                                    ((SplashActivity) mActivity).checkIn();
+                                }
+                            });
+
+                        } else {
+                            EventBus.getDefault().post(new LoadEvent(true));
+                        }
+
+                    }
+
+                    @Override
+                    public void onADPresent() {
+                        if (null != mActivity) {
+                            if (mSkipVew != null) {
+                                gone(splashHolder);
+                                visible(mSkipVew, mLogo);
+                                mSkipVew.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LogUtils.e("mSkipVew setOnClickListener");
+                                        if (isLoading) {//不是启动页就finish
+                                            LogUtils.i(TAG, "onADDismissed isLoading finish");
+                                            mActivity.finish();
+                                            return;
+                                        }
+                                        ((SplashActivity) mActivity).checkIn();
+                                    }
+                                });
+
+                            }
+                            listener.onShowAD("splash", "GDT_AD", "开屏");
+
+                            LogUtils.i(TAG, "onADPresent");
+                        } else {
+                            EventBus.getDefault().post(new LoadEvent(true));
+                        }
+                    }
+
+                    @Override
+                    public void onADClicked() {
+
+                        if (null != mActivity) {
+                            listener.onClickAD("splash", "GDT_AD", "开屏");
+                            LogUtils.i(TAG, "onADClicked");
+                        } else {
+                            EventBus.getDefault().post(new LoadEvent(true));
+                        }
+                    }
+
+                    @Override
+                    public void onADTick(long l) {
+                        LogUtils.i(TAG, "SplashADTick: " + l + "ms");
+                        mSkipVew.setText(String.format("点击跳过 %d", Math.round(l / 1000f)));
+                        if (l < 1000) {
+                            if (null != mActivity) {
+                                if (isLoading) {//不是启动页就finish
+                                    LogUtils.i(TAG, "onADDismissed isLoading finish");
+                                    mActivity.finish();
+                                    return;
+                                }
+                                ((SplashActivity) mActivity).checkIn();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onADExposure() {
+
+                    }
+                }, 0);
+            } catch (Throwable e) {
+                if (null != mActivity) {
+                    if (isLoading) {
+                        mActivity.finish();
+                        return;
+                    }
+                    ((SplashActivity) mActivity).checkIn();
+                } else {
+                    EventBus.getDefault().post(new LoadEvent(true));
                 }
             }
-        });
+        }
     }
 
     /**
      * Banner广告
      */
     private void showBannerView() {
-        XApplication.getMainThreadHandler().post(new Runnable() {
-            @Override
-            public void run() {
-                if (mActivity != null && !mActivity.isFinishing()) {
-                    try {
+        if (mActivity != null && !mActivity.isFinishing()) {
+            try {
+                if (banner_gdt == null) {
+                    banner_gdt = new BannerView(mActivity, ADSize.BANNER, BuildConfig.GDT_APP_KEY, BuildConfig.GDT_BANNER_ID);
+                    LogUtils.i(TAG, "初始化广点通Banner广告");
 
-                        if (banner_gdt == null) {
-                            banner_gdt = new BannerView(mActivity, ADSize.BANNER, BuildConfig.GDT_APP_KEY, BuildConfig.GDT_BANNER_ID);
-                            LogUtils.i(TAG, "初始化广点通Banner广告");
+                }
+                banner_gdt.setRefresh(30);
+                banner_gdt.setADListener(new AbstractBannerADListener() {
 
+                    @Override
+                    public void onNoAD(AdError adError) {
+                        if (null != mActivity) {
+                            LogUtils.i(TAG, "banner_gdt_NoAD:" + adError);
+                            listener.onNoAD("Banner", "GDT_AD", "banner");
+                            mContainer.setVisibility(View.GONE);
+                            listener.onFailedAD(adError.getErrorCode(), AD.AdOrigin.gdt);
                         }
-                        banner_gdt.setRefresh(30);
-                        banner_gdt.setADListener(new AbstractBannerADListener() {
 
-                            @Override
-                            public void onNoAD(AdError adError) {
-                                if (null != mActivity) {
-                                    LogUtils.i(TAG, "banner_gdt_NoAD:" + adError);
-                                    listener.onNoAD("Banner", "GDT_AD", "banner");
-                                    mContainer.setVisibility(View.GONE);
-                                    listener.onFailedAD(adError.getErrorCode(), AD.AdOrigin.gdt);
-                                }
+                    }
 
-                            }
-
-                            @Override
-                            public void onADReceiv() {
-                                mContainer.setVisibility(View.VISIBLE);
+                    @Override
+                    public void onADReceiv() {
+                        mContainer.setVisibility(View.VISIBLE);
 //                                if (BuildConfig.READ_PAGE.equals(mPage)) {
 //                                    mContainer.setForeground(isNight ? getNightDrawable() : getDayDrawable());
 //                                    banner_gdt.setForeground(isNight ? getNightDrawable() : getDayDrawable());
 //                                }
-                                if (null != mActivity) {
-                                    LogUtils.i(TAG, "banner_gdt_onADReceiv");
-                                    listener.onShowAD("Banner", "GDT_AD", "banner");
-                                }
-                            }
-
-                            @Override
-                            public void onADClicked() {
-                                super.onADClicked();
-                                if (null != mActivity) {
-                                    LogUtils.i(TAG, "banner_gdt_onADClicked");
-                                    listener.onClickAD("Banner", "GDT_AD", "banner");
-                                }
-                            }
-
-                            @Override
-                            public void onADClosed() {
-                                super.onADClosed();
-                                mContainer.setVisibility(View.GONE);
-                                LogUtils.i(TAG, "banner_gdt_onADClosed");
-                            }
-
-                            @Override
-                            public void onADLeftApplication() {
-                                super.onADLeftApplication();
-                                LogUtils.i(TAG, "banner_gdt_onADLeftApplication");
-
-                            }
-                        });
-
-                        if (mContainer != null) {
-                            mContainer.removeAllViews();
-                            mContainer.addView(banner_gdt);
-                            banner_gdt.loadAD();
+                        if (null != mActivity) {
+                            LogUtils.i(TAG, "banner_gdt_onADReceiv");
+                            listener.onShowAD("Banner", "GDT_AD", "banner");
                         }
-                    } catch (Throwable e) {
-                        LogUtils.i(TAG, "初始化广点通Banner广告Exception==" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onADClicked() {
+                        super.onADClicked();
+                        if (null != mActivity) {
+                            LogUtils.i(TAG, "banner_gdt_onADClicked");
+                            listener.onClickAD("Banner", "GDT_AD", "banner");
+                        }
+                    }
+
+                    @Override
+                    public void onADClosed() {
+                        super.onADClosed();
+                        mContainer.setVisibility(View.GONE);
+                        LogUtils.i(TAG, "banner_gdt_onADClosed");
+                    }
+
+                    @Override
+                    public void onADLeftApplication() {
+                        super.onADLeftApplication();
+                        LogUtils.i(TAG, "banner_gdt_onADLeftApplication");
 
                     }
+                });
+
+                if (mContainer != null) {
+                    mContainer.removeAllViews();
+                    mContainer.addView(banner_gdt);
+                    banner_gdt.loadAD();
                 }
+            } catch (Throwable e) {
+                LogUtils.i(TAG, "初始化广点通Banner广告Exception==" + e.getMessage());
+
             }
-        });
+        }
     }
 
 

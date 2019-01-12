@@ -248,7 +248,7 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "FM收音机"]
+            manifestPlaceholders = [app_name_channel    : "收音机-有声FM"]
         }
         Raido_huawei{
             //渠道
@@ -288,7 +288,7 @@ android {
             buildConfigField "String", "AD_GOOGLE_NATIVE", '"ca-app-pub-2144172051563531/1065857240"'
 
             applicationId 'cn.yuntk.radio'
-            manifestPlaceholders = [app_name_channel    : "收音机-广播电台"]
+            manifestPlaceholders = [app_name_channel    : "收音机-有声FM"]
         }
         greendao {
             schemaVersion 1
