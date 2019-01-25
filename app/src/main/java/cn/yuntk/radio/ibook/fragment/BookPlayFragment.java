@@ -289,7 +289,8 @@ public class BookPlayFragment extends BaseFragment implements SeekBar.OnSeekBarC
                     XApplication.getMainThreadHandler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mAlbumCoverView.setCoverBitmap(finalResource);
+                            if (mAlbumCoverView != null)
+                                mAlbumCoverView.setCoverBitmap(finalResource);
                         }
                     }, 100);
                 }

@@ -22,9 +22,10 @@ object RetrofitFactory {
 
         Retrofit.Builder()
                 .baseUrl(HOST)
-                .client(OkHttpClient.Builder()
-                        .connectTimeout(9, TimeUnit.SECONDS)
-                        .build())
+//                .client(OkHttpClient.Builder()
+//                        .connectTimeout(9, TimeUnit.SECONDS)
+//                        .build())
+                .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // 添加Rx适配器
                 .addConverterFactory(GsonConverterFactory.create())// 添加Gson转换器
                 .build()
