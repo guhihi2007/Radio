@@ -10,3 +10,4 @@
 .externalNativeBuild
 /build
 vitamio/build/
+/gradle.properties

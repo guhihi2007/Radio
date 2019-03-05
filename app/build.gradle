@@ -89,7 +89,7 @@ android {
         }
     }
 
-    productFlavors {
+    productFlavors  {
         Raido_anzhi {
             //渠道
             buildConfigField "String", "APP_CHANNEL", '"_anzhi"'
