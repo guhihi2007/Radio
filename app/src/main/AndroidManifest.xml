@@ -62,9 +62,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="${app_name_channel}"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:networkSecurityConfig="@xml/network_security_config"
         tools:replace="android:allowBackup"><!--replace字段因feedback:3.1.6 冲突添加-->
         <activity
             android:name=".ui.activity.SplashActivity"
@@ -72,6 +72,7 @@
             android:theme="@style/AppTheme.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
